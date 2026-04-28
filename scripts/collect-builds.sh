@@ -19,7 +19,7 @@ fi
 mkdir -p "$TARGET_DIR"
 
 # ======== 原有构建逻辑 ========
-find ./packages -maxdepth 1 -type d -name "app-*" | while read -r dir; do
+find ./packages -maxdepth 1 -type d -name "mcp-*" | while read -r dir; do
   project_name=$(basename "$dir")
   # 注意这里根据需求选择是否保留前缀：
   clean_name="${project_name}"         # 保留前缀（目标目录：app-purple）

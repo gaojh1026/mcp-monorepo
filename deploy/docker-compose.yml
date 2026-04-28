@@ -1,0 +1,10 @@
+services:
+    mcp-gateway:
+        build:
+            context: ..
+            dockerfile: deploy/gateway.Dockerfile
+        environment:
+            PORT: "8787"
+            HOST: "0.0.0.0"
+        ports:
+            - "8787:8787"
