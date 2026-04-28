@@ -1,0 +1,20 @@
+{
+    "name": "fe-app-monorepo",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "pnpm run --recursive --parallel dev",
+        "build": "pnpm run --recursive --parallel build && pnpm collect",
+        "preview": "pnpm run --recursive --parallel preview",
+        "lint": "pnpm run --recursive lint",
+        "format": "pnpm exec prettier --write .",
+        "format:check": "pnpm exec prettier --check .",
+        "collect": "sh scripts/collect-builds.sh",
+        "clean": "sh scripts/clean-builds.sh",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
+}

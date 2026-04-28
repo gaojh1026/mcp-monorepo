@@ -1,0 +1,5 @@
+# pnpm-workspace.yaml 用于定义 monorepo 中包含哪些包（package），pnpm 会根据这里的配置管理依赖和工作区。
+packages:
+    - 'packages/*' # 匹配 packages 目录下的所有子包
+    - 'common' # 单独包含 common 目录（通常为公共包）
+    - '!**/test/**' # 排除所有 test 目录下的内容，不作为 workspace 包
