@@ -3,49 +3,49 @@ import { z } from 'zod'
 
 const poems = [
     {
-        title: '静夜思',
+        title: '哈哈静夜思',
         author: '李白',
         dynasty: '唐',
         content: ['床前明月光', '疑是地上霜', '举头望明月', '低头思故乡']
     },
     {
-        title: '春晓',
+        title: '哈哈春晓',
         author: '孟浩然',
         dynasty: '唐',
         content: ['春眠不觉晓', '处处闻啼鸟', '夜来风雨声', '花落知多少']
     },
     {
-        title: '登鹳雀楼',
+        title: '哈哈登鹳雀楼',
         author: '王之涣',
         dynasty: '唐',
         content: ['白日依山尽', '黄河入海流', '欲穷千里目', '更上一层楼']
     },
     {
-        title: '相思',
+        title: '哈哈相思',
         author: '王维',
         dynasty: '唐',
         content: ['红豆生南国', '春来发几枝', '愿君多采撷', '此物最相思']
     },
     {
-        title: '悯农',
+        title: '哈哈悯农',
         author: '李绅',
         dynasty: '唐',
         content: ['锄禾日当午', '汗滴禾下土', '谁知盘中餐', '粒粒皆辛苦']
     },
     {
-        title: '江雪',
+        title: '哈哈江雪',
         author: '柳宗元',
         dynasty: '唐',
         content: ['千山鸟飞绝', '万径人踪灭', '孤舟蓑笠翁', '独钓寒江雪']
     },
     {
-        title: '咏鹅',
+        title: '哈哈咏鹅',
         author: '骆宾王',
         dynasty: '唐',
         content: ['鹅鹅鹅', '曲项向天歌', '白毛浮绿水', '红掌拨清波']
     },
     {
-        title: '望庐山瀑布',
+        title: '哈哈望庐山瀑布',
         author: '李白',
         dynasty: '唐',
         content: [
@@ -56,7 +56,7 @@ const poems = [
         ]
     },
     {
-        title: '绝句',
+        title: '哈哈绝句',
         author: '杜甫',
         dynasty: '唐',
         content: [
@@ -67,7 +67,7 @@ const poems = [
         ]
     },
     {
-        title: '枫桥夜泊',
+        title: '哈哈枫桥夜泊',
         author: '张继',
         dynasty: '唐',
         content: [
@@ -78,7 +78,7 @@ const poems = [
         ]
     },
     {
-        title: '游子吟',
+        title: '哈哈游子吟',
         author: '孟郊',
         dynasty: '唐',
         content: [
@@ -91,7 +91,7 @@ const poems = [
         ]
     },
     {
-        title: '出塞',
+        title: '哈哈出塞',
         author: '王昌龄',
         dynasty: '唐',
         content: [

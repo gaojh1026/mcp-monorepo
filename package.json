@@ -12,6 +12,10 @@
         "format:check": "pnpm exec prettier --check .",
         "collect": "sh scripts/collect-builds.sh",
         "clean": "sh scripts/clean-builds.sh",
+        "docker:build": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest .",
+        "docker:build:mirror": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest --build-arg NPM_REGISTRY=https://registry.npmmirror.com .",
+        "docker:up": "docker compose -f deploy/docker-compose.yml up -d --build",
+        "docker:down": "docker compose -f deploy/docker-compose.yml down",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "devDependencies": {
