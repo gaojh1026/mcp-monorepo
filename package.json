@@ -16,8 +16,8 @@
         "lint": "eslint .",
         "format": "prettier -w .",
         "lint-staged": "lint-staged",
-        "docker:build": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest .",
-        "docker:build:mirror": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest --build-arg NPM_REGISTRY=https://registry.npmmirror.com .",
+        "docker:build": "TAG=${TAG:-$(date +%Y%m%d-%H%M%S)} && docker build -f deploy/gateway.Dockerfile -t mcp-gateway:$TAG . && echo \"Built image: mcp-gateway:$TAG\"",
+        "docker:build:mirror": "TAG=${TAG:-$(date +%Y%m%d-%H%M%S)} && docker build -f deploy/gateway.Dockerfile -t mcp-gateway:$TAG --build-arg NPM_REGISTRY=https://registry.npmmirror.com . && echo \"Built image: mcp-gateway:$TAG\"",
         "docker:up": "docker compose -f deploy/docker-compose.yml up -d --build",
         "docker:down": "docker compose -f deploy/docker-compose.yml down",
         "test": "echo \"Error: no test specified\" && exit 1"

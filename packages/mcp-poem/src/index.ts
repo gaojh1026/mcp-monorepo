@@ -1,5 +1,7 @@
 import { MCPServer } from 'mcp-framework'
 import { RandomPoemTool } from './tools/RandomPoemTool.js'
+import { RandomQuoteTool } from './tools/RandomQuoteTool.js'
+import { WelcomeMessageTool } from './tools/WelcomeMessageTool.js'
 
 const port = Number(process.env.PORT ?? 8788)
 const host = process.env.HOST ?? '0.0.0.0'
@@ -19,11 +21,13 @@ const server = new MCPServer({
 })
 
 server.addTool(RandomPoemTool)
+server.addTool(RandomQuoteTool)
+server.addTool(WelcomeMessageTool)
 
 await server.start()
 
 console.log(`@mcp/poem server running on http://${host}:${port}${endpoint}`)
-console.log('Available tools: random_poem')
+console.log('Available tools: random_poem, random_quote, welcome_message')
 
 const shutdown = async () => {
     console.log('Shutting down @mcp/poem server...')
