@@ -1,0 +1,31 @@
+{
+    "externalServices": {
+        "playwright": {
+            "spawn": {
+                "command": "node",
+                "args": [
+                    "./cli.js",
+                    "--host",
+                    "localhost",
+                    "--port",
+                    "8931",
+                    "--allowed-hosts",
+                    "*"
+                ],
+                "cwd": "../mcp-playwright",
+                "env": {},
+                "shell": false
+            },
+            "upstream": {
+                "baseUrl": "http://localhost:8931",
+                "path": "/mcp"
+            },
+            "ready": {
+                "type": "tcp",
+                "host": "localhost",
+                "port": 8931,
+                "timeoutMs": 30000
+            }
+        }
+    }
+}
