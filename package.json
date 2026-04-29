@@ -15,7 +15,6 @@
         "clean": "sh scripts/clean-builds.sh",
         "lint": "eslint .",
         "format": "prettier -w .",
-        "prepare": "husky",
         "lint-staged": "lint-staged",
         "docker:build": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest .",
         "docker:build:mirror": "docker build -f deploy/gateway.Dockerfile -t mcp-gateway:latest --build-arg NPM_REGISTRY=https://registry.npmmirror.com .",

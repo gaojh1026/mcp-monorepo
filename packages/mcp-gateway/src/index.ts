@@ -23,9 +23,9 @@ const port = Number(process.env.PORT ?? 8787)
 
 /**
  * HTTP 服务器监听地址
- * 默认为 127.0.0.1（仅本地访问），生产环境建议设为 0.0.0.0
+ * 默认为 0.0.0.0（容器/局域网可访问）
  */
-const host = process.env.HOST ?? '127.0.0.1'
+const host = process.env.HOST ?? '0.0.0.0'
 
 /**
  * 请求体最大字节数，默认为 4MB
