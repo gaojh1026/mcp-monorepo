@@ -9,6 +9,7 @@ COPY common/package.json ./common/package.json
 COPY packages/mcp-gateway/package.json ./packages/mcp-gateway/package.json
 COPY packages/mcp-fetch/package.json ./packages/mcp-fetch/package.json
 COPY packages/mcp-poem/package.json ./packages/mcp-poem/package.json
+COPY packages/mcp-playwright/package.json ./packages/mcp-playwright/package.json
 
 RUN corepack enable \
   && corepack prepare pnpm@8.15.8 --activate \
