@@ -24,7 +24,7 @@
     "dtest": "MCP_IN_DOCKER=1 playwright test --project=chromium-docker",
     "build": "echo OK",
     "npm-publish": "npm run lint && npm run test && npm publish",
-    "docker-build": "docker build --no-cache -t playwright-mcp-dev:latest .",
+    "docker-build": "docker build -f ../../Dockerfile --target playwright-mcp --no-cache -t playwright-mcp-dev:latest ../..",
     "docker-rm": "docker rm playwright-mcp-dev",
     "docker-run": "docker run -it -p 8080:8080 --name playwright-mcp-dev playwright-mcp-dev:latest",
     "roll": "node roll.js"
