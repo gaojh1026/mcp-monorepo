@@ -74,6 +74,81 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 
 - `http://localhost:8787/<service>/mcp`（例如 `http://localhost:8787/fetch/mcp`）
 
+### @mcp/gateway 架构与流程
+
+网关进程做三件事：**启动时汇总「有哪些 MCP 服务」**、**对外暴露一套 HTTP（含 CORS）**、**把 `/<serviceId>/mcp` 交给本进程内的 `mcp-framework`（本地服务）或原样反代到外部上游（外部服务）**。
+
+#### 包内目录结构（`packages/mcp-gateway/src`）
+
+| 路径 | 说明 |
+|------|------|
+| `index.ts` | 入口：解析仓库根、`loadServices`、拉起外部依赖进程、`createGatewayHttpServer`、`listen` |
+| `lib/runtime.ts` | `PORT` / `HOST` / `MAX_BODY_BYTES`，以及通过 `pnpm-workspace.yaml` 向上查找 monorepo 根目录 |
+| `lib/http.ts` | JSON body 读取、CORS、JSON-RPC 错误、`req.url` 临时改为 `/mcp` 以适配 SDK、解析 `/{serviceId}/mcp` 路径 |
+| `modules/services/registry.ts` | 扫描 `packages/mcp-*`（排除 `mcp-gateway`）构建 `MCPServer`，并合并 `mcp-gateway.external-services.json` |
+| `modules/services/external.ts` | 外部服务：TCP 端口探测、按需 `spawn`、等待就绪、HTTP(S) 反向代理 |
+| `modules/services/panelHtml.ts` | `GET /services` 内嵌的管理页 HTML |
+| `modules/gateway/httpServer.ts` | `http.Server`：OPTIONS、`/health`、`/services`、`/{id}/mcp` 路由与本地 MCP Streamable HTTP 会话 |
+
+#### 启动阶段（顺序）
+
+1. **`findRepoRoot`**：从 `process.cwd()` 向上查找含 `pnpm-workspace.yaml` 的目录作为仓库根。
+2. **`loadServices(repoRoot)`**：在 `packages/` 下遍历 `mcp-*` 目录；若存在 `dist/tools` 或 `src/tools`（或开发模式下 `MCP_GATEWAY_DEV=1` 强制用 `src`），则为该包创建 `MCPServer` 并尽量预初始化；再读取 `packages/mcp-gateway/mcp-gateway.external-services.json`，将其中声明的 **external** 服务合并进同一个 `Map<serviceId, McpService>`（同名 **external 会覆盖** 已扫描到的本地服务）。
+3. **`ensureExternalServicesStarted`**：对每个 `type === 'external'` 的项，若 ready 端口暂不可连则按配置 **spawn** 子进程，再 **轮询 TCP** 直到就绪或超时。
+4. **`createGatewayHttpServer(services)`** + **`listen(port, host)`**：开始接受 HTTP。
+
+#### HTTP 路由与 MCP 会话（运行时）
+
+对普通请求（先处理 `OPTIONS` 预检并带 CORS）大致顺序为：
+
+1. **`GET /health`**：返回 JSON，含 `ok` 与当前已注册的 `services`（所有 `serviceId` 列表）。
+2. **`GET /services`**：返回内嵌管理页，便于在浏览器里查看列表、探测 `/{id}/mcp`、做初始化与工具调用测试。
+3. **路径不是 `/{serviceId}/mcp`**：返回 `404 Not Found`。
+4. **`serviceId` 不在 Map 中**：`404 Service Not Found`。
+5. **服务为 `external`**：**反向代理**到配置的 `upstream.baseUrl` + `upstream.path`，请求体与流式响应透传，并补全 CORS 相关响应头。
+6. **服务为 `local`（本进程 MCP）**：
+   - 将对外路径 **`/{serviceId}/mcp`** 临时改写为 **`/mcp`** 后交给 `@modelcontextprotocol/sdk` 的 **`StreamableHTTPServerTransport`**（与 SDK 默认端点一致）。
+   - **POST** 会读取 JSON body（受 **`MAX_BODY_BYTES`** 限制）。
+   - 若请求头带有已在内存 **`sessions`** 里登记的 **`mcp-session-id`**：复用该会话的 **transport** 处理本次 JSON-RPC。
+   - 若无 session 但 body 为 **`initialize`**（或 session 已失效但再次 **initialize**）：新建 transport 与 `createSDKServerForSession()`，在会话初始化回调里写入 **`sessions`**；连接关闭时清理 session 并关闭 SDK server。
+   - 无合法 session 且非初始化：返回 **400**（无 session）；有 session 但找不到：返回 **404 Session not found**（JSON-RPC 包装）。
+
+总览（启动 + 一次 MCP 路径请求）：
+
+```mermaid
+flowchart TB
+  subgraph boot [启动]
+    A[findRepoRoot] --> B[loadServices 扫描包 + 外部 JSON]
+    B --> C[ensureExternalServicesStarted]
+    C --> D[listen HTTP]
+  end
+  subgraph req [请求]
+    D --> E{路径}
+    E -->|/health| F[返回服务列表 JSON]
+    E -->|/services| G[返回管理页 HTML]
+    E -->|/{id}/mcp| H{服务类型}
+    H -->|external| I[反代到 upstream]
+    H -->|local| J{session / initialize}
+    J -->|已有 session| K[transport.handleRequest]
+    J -->|initialize| L[新建 transport + sdkServer 写入 sessions]
+    J -->|否则| M[400 / 404 JSON-RPC]
+  end
+```
+
+#### 本地服务与外部服务
+
+| 类型 | 注册方式 | 运行时行为 |
+|------|----------|------------|
+| **local** | 自动发现 `packages/mcp-*`（排除网关包），同进程 **`MCPServer`** | 按 MCP Streamable HTTP 管理 **session** 与工具调用 |
+| **external** | 仅来自 **`mcp-gateway.external-services.json`** | 网关负责 **进程与端口就绪**（可选 spawn）+ **HTTP 反代**；不在网关进程内加载 `mcp-framework` |
+
+#### 相关文件与环境变量
+
+- **外部服务清单**：`packages/mcp-gateway/mcp-gateway.external-services.json`（可选；不存在则仅本地扫描结果）。
+- **`PORT` / `HOST`**：网关监听（默认 `8787`、`0.0.0.0`）。
+- **`MAX_BODY_BYTES`**：POST JSON body 上限（默认约 4MB）。
+- **`MCP_GATEWAY_DEV=1`**：开发时若本地包尚无 `dist/tools`，可强制用 **`src`** 作为 `MCPServer` 的 `basePath`（见 `registry` 内 `pickBasePath` 逻辑）。
+
 ### 给别人用的配置示例
 
 不同客户端字段可能叫法不同，你给出的写法可以这样配（URL 指向服务的 `/mcp`）：
