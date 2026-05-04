@@ -11,13 +11,13 @@
 
 ### 本地运行
 
-1) 安装依赖：
+1. 安装依赖：
 
 ```bash
 pnpm install
 ```
 
-2) 启动所有有 `dev` 脚本的服务：
+2. 启动所有有 `dev` 脚本的服务：
 
 ```bash
 pnpm dev
@@ -53,12 +53,12 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 
 ```json
 {
-  "mcpServers": {
-    "fetch": {
-      "type": "streamable_http",
-      "url": "https://YOUR_DOMAIN_OR_IP/fetch/mcp"
+    "mcpServers": {
+        "fetch": {
+            "type": "streamable_http",
+            "url": "https://YOUR_DOMAIN_OR_IP/fetch/mcp"
+        }
     }
-  }
 }
 ```
 
@@ -68,6 +68,6 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 
 ### 新增一个 MCP 服务（推荐做法）
 
-1) 复制一份 `packages/mcp-fetch` 为 `packages/mcp-<name>`
-2) 修改新包的 `package.json#name`、`src/index.ts` 里的 `name/version`
-3) 在 `src/tools/` 里新增你的工具类（每个文件一个 Tool）
+1. 复制一份 `packages/mcp-fetch` 为 `packages/mcp-<name>`
+2. 修改新包的 `package.json#name`、`src/index.ts` 里的 `name/version`
+3. 在 `src/tools/` 里新增你的工具类（每个文件一个 Tool）

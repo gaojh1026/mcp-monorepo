@@ -6,24 +6,9 @@
     "main": "",
     "module": "s",
     "types": "",
-    "files": [
-        "index.ts",
-        "hooks",
-        "styles",
-        "components",
-        "assets",
-        "config"
-    ],
-    "exports": {
-        "./hooks/*": "./hooks/*",
-        "./styles/*": "./styles/*",
-        "./components/*": "./components/*",
-        "./assets/*": "./assets/*",
-        "./config/*": "./config/*"
-    },
-    "peerDependencies": {
-        "vue": ">=3.3.0"
-    },
+    "files": [],
+    "exports": {},
+    "peerDependencies": {},
     "license": "MIT",
-    "description": "Blink monorepo shared common package (components, hooks, assets, styles)"
+    "description": ""
 }
