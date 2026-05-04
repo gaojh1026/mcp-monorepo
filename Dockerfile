@@ -25,10 +25,9 @@ FROM node:22-alpine AS deps
 WORKDIR /repo
 ARG NPM_REGISTRY=https://registry.npmjs.org
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY common/package.json ./common/package.json
-COPY packages/mcp-gateway/package.json ./packages/mcp-gateway/package.json
-COPY packages/mcp-poem/package.json ./packages/mcp-poem/package.json
-COPY packages/mcp-playwright/package.json ./packages/mcp-playwright/package.json
+# 保留目录结构，匹配 packages 下任意子包；新增 mcp-* 无需再手写一行 COPY
+COPY --parents common/package.json ./
+COPY --parents packages/*/package.json ./
 RUN corepack enable \
   && corepack prepare pnpm@8.15.8 --activate \
   && pnpm config set registry "${NPM_REGISTRY}" \
