@@ -17,11 +17,38 @@
 pnpm install
 ```
 
-2. 启动所有有 `dev` 脚本的服务：
+2. 启动所有有 `dev` 脚本的服务（**并行**跑各个 workspace 包里的 `dev`）：
 
 ```bash
 pnpm dev
 ```
+
+当前仓库里声明了 `dev` 的包会一起启动（子包未定义 `dev` 则跳过）：例如 `@mcp/gateway` 默认 `8787`、`@mcp/poem` 默认 `8788`。若只想跑其中一个，用 `pnpm -C packages/<包目录> dev`（见下文「单包开发」）。
+
+### 根目录脚本（`package.json`）
+
+在仓库根目录执行，含义如下。
+
+| 脚本 | 作用 |
+|------|------|
+| `pnpm dev` | `pnpm -r --parallel --if-present run dev`：对所有 workspace 递归执行 `dev`（有则执行、无则跳过），**多进程并行**。适合本地同时开发网关 + 各 MCP 子服务。 |
+| `pnpm start` | `pnpm -r --parallel --if-present run start`：并行执行各包 `start`（一般为 `node dist/...`）。**需先**在各包或根目录执行过 `pnpm build`，否则可能缺少 `dist`。 |
+| `pnpm start:gateway` | 先 `pnpm stop`（释放占用 **8787** 的进程），再**仅**构建并启动 `packages/mcp-gateway`（`build` → `start`）。适合只要网关、或生产式本地验证网关一条链。 |
+| `pnpm stop` | 查找占用 **8787** 端口的进程并 `kill -9`（网关默认端口），等价于根目录里对 `lsof` / `xargs` 的一行封装。 |
+| `pnpm build` | `pnpm -r --parallel --if-present run build`：并行执行各包 `build`（本仓库里多为 `tsc` 编译到 `dist`；个别包可能是占位脚本）。**构建阶段在 CI / 发布 / Docker 里主要跑的就是这一类编译**。 |
+| `pnpm preview` | 并行执行各包 `preview`（若存在）。当前子包若未定义 `preview`，则不会报错（`--if-present`）。 |
+| `pnpm collect` | 执行 `scripts/collect-builds.sh`：清空或按需清理根目录 `dist/`，再把各 `packages/mcp-*` 下的 `dist` 聚合拷贝到根目录 `dist/<包名>/`，便于统一部署产物。 |
+| `pnpm clean` | 执行 `scripts/clean-builds.sh`：删除根目录 `dist` 以及各包下的 `dist` 目录。 |
+| `pnpm lint` | 全仓库 ESLint。 |
+| `pnpm format` | Prettier 写回格式化；`pnpm format:check` 为只检查不修改。 |
+| `pnpm lint-staged` | 运行 `lint-staged`（通常配合 git hooks）。 |
+| `pnpm docker:build` | 根目录 `Dockerfile` 构建默认阶段（网关镜像），`TAG` 未设时用时间戳；依赖走镜像内默认 npm registry。 |
+| `pnpm docker:build:mirror` | 同上，但传入 `NPM_REGISTRY=npmmirror`，适合国内网络构建。 |
+| `pnpm test` | 根目录占位脚本（未接 workspace 测试）；子包如有自己的 `test` 请在对应目录执行，例如 `pnpm -C packages/mcp-poem test`。 |
+
+**开发阶段**：日常改代码用 `pnpm dev` 或只跑某个包 `pnpm -C packages/mcp-gateway dev` 等；需要模拟生产进程时用 `pnpm build` 后 `pnpm start` 或 `pnpm start:gateway`。
+
+**构建阶段**：以 `pnpm build` 为主；若要把各 `mcp-*` 的 `dist` 收到一处，再执行 `pnpm collect`。发布/镜像构建流程里通常包含 `install` → `build`（根 `Dockerfile` 内也是类似顺序）。
 
 ### 示例：@mcp/fetch
 
