@@ -15,6 +15,10 @@ dist-ssr
 coverage
 *.local
 
+# 网关 / 本地 MCP 可选读取的密钥（勿提交）
+.env
+packages/mcp-gateway/.env
+
 /cypress/videos/
 /cypress/screenshots/
 

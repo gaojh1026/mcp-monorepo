@@ -45,7 +45,7 @@ export const setCorsHeaders = (res: ServerResponse, includeMaxAge = false) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'Content-Type, mcp-session-id, Accept, Authorization, X-API-Key'
+        'Content-Type, mcp-session-id, Accept, Authorization, X-API-Key, x-firecrawl-api-key'
     )
     res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id')
     if (includeMaxAge) res.setHeader('Access-Control-Max-Age', '86400')

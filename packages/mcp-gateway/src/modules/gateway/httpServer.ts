@@ -101,7 +101,6 @@ export const createGatewayHttpServer = (services: Map<string, McpService>) => {
             }
 
             const sessionIdHeader = req.headers['mcp-session-id']
-            console.log('sessionIdHeader---',sessionIdHeader)
             const sessionId = Array.isArray(sessionIdHeader)
                 ? sessionIdHeader[0]
                 : sessionIdHeader

@@ -26,6 +26,29 @@
                 "port": 8931,
                 "timeoutMs": 30000
             }
+        },
+        "firecrawl": {
+            "spawn": {
+                "command": "node",
+                "args": ["dist/index.js"],
+                "cwd": "../mcp-firecrawl",
+                "env": {
+                    "HTTP_STREAMABLE_SERVER": "true",
+                    "PORT": "8940",
+                    "HOST": "127.0.0.1"
+                },
+                "shell": false
+            },
+            "upstream": {
+                "baseUrl": "http://127.0.0.1:8940",
+                "path": "/mcp"
+            },
+            "ready": {
+                "type": "tcp",
+                "host": "127.0.0.1",
+                "port": 8940,
+                "timeoutMs": 60000
+            }
         }
     }
 }
