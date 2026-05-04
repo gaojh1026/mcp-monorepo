@@ -89,7 +89,9 @@ export const withInternalPath = async (
 }
 
 /**
- * 解析 `/{serviceId}/mcp` 形式路径
+ * @description 解析 `/{serviceId}/mcp` 形式路径
+ * @param pathname - 路径
+ * @returns {serviceId: string} - 服务 ID
  */
 export const parseServicePath = (pathname: string) => {
     const parts = pathname.split('/').filter(Boolean)
