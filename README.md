@@ -82,8 +82,9 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 
 | 路径 | 说明 |
 |------|------|
-| `index.ts` | 入口：解析仓库根、`loadServices`、拉起外部依赖进程、`createGatewayHttpServer`、`listen` |
+| `index.ts` | 入口：解析仓库根、加载可选 `.env`、`loadServices`、拉起外部依赖进程、`createGatewayHttpServer`、`listen` |
 | `lib/runtime.ts` | `PORT` / `HOST` / `MAX_BODY_BYTES`，以及通过 `pnpm-workspace.yaml` 向上查找 monorepo 根目录 |
+| `lib/dotenv.ts` | 启动时可选加载仓库根与 `packages/mcp-gateway` 下的 `.env`（不覆盖已有环境变量） |
 | `lib/http.ts` | JSON body 读取、CORS、JSON-RPC 错误、`req.url` 临时改为 `/mcp` 以适配 SDK、解析 `/{serviceId}/mcp` 路径 |
 | `modules/services/registry.ts` | 扫描 `packages/mcp-*`（排除 `mcp-gateway`）构建 `MCPServer`，并合并 `mcp-gateway.external-services.json` |
 | `modules/services/external.ts` | 外部服务：TCP 端口探测、按需 `spawn`、等待就绪、HTTP(S) 反向代理 |
@@ -93,9 +94,10 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 #### 启动阶段（顺序）
 
 1. **`findRepoRoot`**：从 `process.cwd()` 向上查找含 `pnpm-workspace.yaml` 的目录作为仓库根。
-2. **`loadServices(repoRoot)`**：在 `packages/` 下遍历 `mcp-*` 目录；若存在 `dist/tools` 或 `src/tools`（或开发模式下 `MCP_GATEWAY_DEV=1` 强制用 `src`），则为该包创建 `MCPServer` 并尽量预初始化；再读取 `packages/mcp-gateway/mcp-gateway.external-services.json`，将其中声明的 **external** 服务合并进同一个 `Map<serviceId, McpService>`（同名 **external 会覆盖** 已扫描到的本地服务）。
-3. **`ensureExternalServicesStarted`**：对每个 `type === 'external'` 的项，若 ready 端口暂不可连则按配置 **spawn** 子进程，再 **轮询 TCP** 直到就绪或超时。
-4. **`createGatewayHttpServer(services)`** + **`listen(port, host)`**：开始接受 HTTP。
+2. **`loadOptionalEnvFiles(repoRoot)`**（若存在）：读取根目录与 `packages/mcp-gateway` 下的 `.env`，合并进 `process.env`（不覆盖已有变量）。
+3. **`loadServices(repoRoot)`**：在 `packages/` 下遍历 `mcp-*` 目录；若存在 `dist/tools` 或 `src/tools`（或开发模式下 `MCP_GATEWAY_DEV=1` 强制用 `src`），则为该包创建 `MCPServer` 并尽量预初始化；再读取 `packages/mcp-gateway/mcp-gateway.external-services.json`，将其中声明的 **external** 服务合并进同一个 `Map<serviceId, McpService>`（同名 **external 会覆盖** 已扫描到的本地服务）。
+4. **`ensureExternalServicesStarted`**：对每个 `type === 'external'` 的项，若 ready 端口暂不可连则按配置 **spawn** 子进程，再 **轮询 TCP** 直到就绪或超时。
+5. **`createGatewayHttpServer(services)`** + **`listen(port, host)`**：开始接受 HTTP。
 
 #### HTTP 路由与 MCP 会话（运行时）
 
@@ -118,7 +120,8 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 ```mermaid
 flowchart TB
   subgraph boot [启动]
-    A[findRepoRoot] --> B[loadServices 扫描包 + 外部 JSON]
+    A[findRepoRoot] --> A2[loadOptionalEnvFiles]
+    A2 --> B[loadServices 扫描包 + 外部 JSON]
     B --> C[ensureExternalServicesStarted]
     C --> D[listen HTTP]
   end
@@ -145,9 +148,62 @@ flowchart TB
 #### 相关文件与环境变量
 
 - **外部服务清单**：`packages/mcp-gateway/mcp-gateway.external-services.json`（可选；不存在则仅本地扫描结果）。
+- **可选 `.env`**：网关启动时会读取仓库根目录 **`.env`** 与 **`packages/mcp-gateway/.env`**，合并进 `process.env`（**不覆盖**已在 shell 中设置的变量），便于配置 `FIRECRAWL_API_KEY` 等；二者已在 **`.gitignore`** 中忽略，**切勿将密钥提交进 Git**。
 - **`PORT` / `HOST`**：网关监听（默认 `8787`、`0.0.0.0`）。
 - **`MAX_BODY_BYTES`**：POST JSON body 上限（默认约 4MB）。
 - **`MCP_GATEWAY_DEV=1`**：开发时若本地包尚无 `dist/tools`，可强制用 **`src`** 作为 `MCPServer` 的 `basePath`（见 `registry` 内 `pickBasePath` 逻辑）。
+
+### 将第三方 MCP 适配为网关（流程总结）
+
+把「现成的 / 开源的」MCP 项目接进本仓库网关时，按下面顺序做即可。本仓库 **`mcp-firecrawl`** 即按该流程以外部服务方式接入，可作为对照。
+
+#### 1. 选择接入形态：本地包还是外部进程
+
+| 形态 | 适用情况 | 路由 |
+|------|----------|------|
+| **local（自动发现）** | 包内使用 **`mcp-framework`**，且存在 **`src/tools`** 或 **`dist/tools`**（开发可加 `MCP_GATEWAY_DEV=1` 走 `src`） | `http(s)://<网关>/<id>/mcp`，`<id>` = 目录名去掉前缀 `mcp-`（如 `mcp-poem` → `poem`） |
+| **external（配置驱动）** | 独立进程、其它框架（如 **FastMCP**）、默认仅 **stdio**、或不便改成 `tools` 目录结构 | 同上，由 **`mcp-gateway.external-services.json`** 注册同名 `id` |
+
+若 `packages/mcp-*` 里已有一个本地包，又与 **external** 配置了**相同 `id`**，以外部配置为准（会覆盖本地同名项，见 `registry` 日志警告）。
+
+#### 2. 外部服务：子进程必须提供 Streamable HTTP（或等价 HTTP MCP）
+
+网关对外统一是 **`/{serviceId}/mcp`**；对 **external** 则把请求**反代**到 `upstream.baseUrl` + `upstream.path`。
+
+- 子进程必须在某 **TCP 端口** 上监听，且 MCP 路径一般为 **`/mcp`**（以该上游实现为准）。
+- 若上游默认只有 **stdio**，需按其文档打开 **HTTP / Streamable HTTP** 等模式。示例（本仓库 **firecrawl**）：设置 **`HTTP_STREAMABLE_SERVER=true`**，并用 **`PORT` / `HOST`** 指定监听地址；编译入口一般为 **`node dist/index.js`**。
+
+#### 3. 编辑 `packages/mcp-gateway/mcp-gateway.external-services.json`
+
+在根对象的 **`externalServices`** 下增加一项，键名为 URL 中的 **`serviceId`**，值为：
+
+- **`spawn`**（可选但常用）：`command`、`args`、`cwd`（相对 **`packages/mcp-gateway`** 时常用 `../mcp-<子包名>`）、`env`（仅子进程额外变量）。
+- **`upstream`**：`baseUrl`（如 `http://127.0.0.1:8940`）与 **`path`**（一般为 **`/mcp`**）。
+- **`ready`**：`type: "tcp"`、`host`、`port`、`timeoutMs`；若启动时端口未监听，网关会先 **spawn** 再轮询直至端口可连。
+
+**环境变量合并**：`external.ts` 里子进程环境为 **`{ ...process.env, ...spawn.env }`**，因此写在仓库 **`.env`** / **`packages/mcp-gateway/.env`** 或 shell 里 **`export`** 的 `FIRECRAWL_API_KEY`、`FIRECRAWL_API_URL` 等会一并传入子进程，无需全部写进 JSON。
+
+#### 4. 本机地址与网络约定
+
+建议 **`upstream` / `ready.host` / 子进程 `HOST`** 与你在客户端里写的地址一致，优先使用 **`127.0.0.1`**，避免 **`localhost`** 在 IPv4 / IPv6 下解析不一致导致反代 **502**。
+
+#### 5. CORS 与自定义请求头
+
+若 Cursor 或浏览器需要在预检里声明额外头（例如 **`x-firecrawl-api-key`**），在网关 **`packages/mcp-gateway/src/lib/http.ts`** 与 **`modules/services/external.ts`** 中，为 **`Access-Control-Allow-Headers`** 按需追加，与现有项并列维护即可。
+
+#### 6. 子进程健壮性（建议在上游包内修改）
+
+鉴权或配置错误时，应 **`throw` 可序列化错误**返回给 MCP 客户端，**避免 `process.exit`**：否则一次失败请求会结束整个子进程，端口不再监听，网关持续 **502**，客户端表现为**看不到工具**。
+
+#### 7. 验证与客户端配置
+
+1. 若有健康检查：`curl http://127.0.0.1:<子进程端口>/health`（以该服务为准）。
+2. **`GET http://<网关主机>:<网关端口>/health`**：确认返回的 **`services`** 数组中含对应 **`serviceId`**。
+3. **Cursor**：在 **`~/.cursor/mcp.json`** 或项目 **`.cursor/mcp.json`** 中配置 **`type": "streamable_http"`** 与 **`url": "http://127.0.0.1:<网关端口>/<serviceId>/mcp"`**；保存后重载 MCP 或重启 Cursor。详见上文「给别人用的配置示例」。
+
+#### 8. 可选：为子包增加本地调试脚本
+
+在第三方包 **`package.json`** 中可增加 **`dev`** / **`start:http`** 等脚本，固定 **Streamable HTTP** 与端口，便于**不经过网关**单独起进程调试；网关侧 **`ready.port`** 已占用时不会重复 **spawn**，可与手动启动并存。
 
 ### 给别人用的配置示例
 
