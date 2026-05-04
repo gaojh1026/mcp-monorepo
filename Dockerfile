@@ -1,94 +1,72 @@
-# =============================================================================
-# 多阶段镜像说明
-# -----------------------------------------------------------------------------
-# 1) 默认（不写 --target）：构建 mcp-gateway 生产镜像，入口为网关 dist。
-# 2) Playwright MCP：构建时加 --target playwright-mcp，产出独立 MCP 容器镜像。
+################################################################################
 #
-# 常用命令（均在仓库根目录执行）：
-#   docker build -f Dockerfile -t mcp-gateway:TAG .
-#   docker build -f Dockerfile -t mcp-gateway:TAG --build-arg NPM_REGISTRY=https://registry.npmmirror.com .
-#   docker build -f Dockerfile -t playwright-mcp:TAG --target playwright-mcp .
+#   本文件产出两种镜像（多阶段构建）
 #
-# 可选构建参数：
-#   NPM_REGISTRY              — pnpm  registry，默认 https://registry.npmjs.org
-#   PLAYWRIGHT_BROWSERS_PATH  — Playwright 浏览器目录，默认 /ms-playwright
-# =============================================================================
+#   ┌─────────────────────────────────────────────────────────────────────────┐
+#   │ ① 默认镜像：mcp-gateway（不写 --target 时，构建流水线以「最后一个       │
+#   │    FROM」为准，即文末的 runtime 阶段）                                   │
+#   │    · 构建：docker build -f Dockerfile -t mcp-gateway:<TAG> .            │
+#   │    · 国内：加 --build-arg NPM_REGISTRY=https://registry.npmmirror.com    │
+#   │    · 运行：node packages/mcp-gateway/dist/index.js                      │
+#   ├─────────────────────────────────────────────────────────────────────────┤
+#   │ ② Playwright MCP：独立镜像，与网关阶段无依赖                             │
+#   │    · 构建：docker build -f Dockerfile -t pw-mcp:<TAG> \                 │
+#   │             --target playwright-mcp .                                    │
+#   │    · 可选：--build-arg PLAYWRIGHT_BROWSERS_PATH=/ms-playwright（默认）   │
+#   └─────────────────────────────────────────────────────────────────────────┘
+#
+################################################################################
 
-# -----------------------------------------------------------------------------
-# Stage: deps — 仅复制 workspace 清单并安装依赖（利于缓存）
-# -----------------------------------------------------------------------------
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# STAGE: deps  |  mcp-gateway  |  仅复制各包 package.json + 锁文件后 pnpm install
+#                不把源码 COPY 进来，改业务代码时本层缓存仍可复用
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FROM node:22-alpine AS deps
-
 WORKDIR /repo
-
 ARG NPM_REGISTRY=https://registry.npmjs.org
-
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY common/package.json ./common/package.json
 COPY packages/mcp-gateway/package.json ./packages/mcp-gateway/package.json
 COPY packages/mcp-poem/package.json ./packages/mcp-poem/package.json
 COPY packages/mcp-playwright/package.json ./packages/mcp-playwright/package.json
-
 RUN corepack enable \
   && corepack prepare pnpm@8.15.8 --activate \
   && pnpm config set registry "${NPM_REGISTRY}" \
   && pnpm install --frozen-lockfile
 
-# -----------------------------------------------------------------------------
-# Stage: build — 拷贝源码并全量构建 workspace
-# -----------------------------------------------------------------------------
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# STAGE: build  |  mcp-gateway  |  拷贝 common/packages 后执行 workspace 构建
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FROM deps AS build
-
 COPY common ./common
 COPY packages ./packages
-
 RUN pnpm -r --if-present run build
 
-# -----------------------------------------------------------------------------
-# Stage: playwright-base — @playwright/mcp 运行时依赖（生产 npm + 系统库）
-# -----------------------------------------------------------------------------
-FROM node:22-bookworm-slim AS playwright-base
-
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# STAGE: playwright-mcp  |  @playwright/mcp 完整镜像（npm 生产依赖 + Chromium） 额外不需要的
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+FROM node:22-bookworm-slim AS playwright-mcp
 ARG PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-ENV PLAYWRIGHT_BROWSERS_PATH=${PLAYWRIGHT_BROWSERS_PATH}
-
+ARG USERNAME=node
+ENV NODE_ENV=production \
+  PLAYWRIGHT_BROWSERS_PATH=${PLAYWRIGHT_BROWSERS_PATH}
 WORKDIR /app
-
 COPY packages/mcp-playwright/package.json packages/mcp-playwright/package-lock.json ./
-
 RUN --mount=type=cache,target=/root/.npm,sharing=locked,id=npm-playwright-cache \
   npm ci --omit=dev \
-  && npx -y playwright-core install-deps chromium
-
-# -----------------------------------------------------------------------------
-# Stage: playwright-mcp — 安装 Chromium 产物 + 业务入口（与网关无依赖关系）
-# -----------------------------------------------------------------------------
-FROM playwright-base AS playwright-mcp
-
-ARG USERNAME=node
-
-ENV NODE_ENV=production
-
-RUN npx -y playwright-core install --no-shell chromium \
+  && npx -y playwright-core install-deps chromium \
+  && npx -y playwright-core install --no-shell chromium \
   && chown -R "${USERNAME}:${USERNAME}" node_modules "${PLAYWRIGHT_BROWSERS_PATH}"
-
 USER ${USERNAME}
-
 COPY --chown=${USERNAME}:${USERNAME} packages/mcp-playwright/cli.js packages/mcp-playwright/package.json /app/
-
 WORKDIR /home/${USERNAME}
-
 ENTRYPOINT ["node", "/app/cli.js", "--headless", "--browser", "chromium", "--no-sandbox"]
 
-# -----------------------------------------------------------------------------
-# Stage: runtime — mcp-gateway 默认最终阶段
-# -----------------------------------------------------------------------------
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# STAGE: runtime  |  mcp-gateway 默认最终阶段 | 仅复制构建产物，Alpine 体积小
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FROM node:22-alpine AS runtime
-
 WORKDIR /repo
-
 ENV NODE_ENV=production
-
 COPY --from=build /repo ./
-
 CMD ["node", "packages/mcp-gateway/dist/index.js"]
