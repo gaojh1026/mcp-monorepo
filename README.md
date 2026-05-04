@@ -220,6 +220,33 @@ flowchart TB
 }
 ```
 
+#### Firecrawl：调用方使用自己的 API Key（不经你服务器上的公共密钥）
+
+默认子进程从环境变量读 **`FIRECRAWL_API_KEY`**，适合只有你本机用。若要把 **`https://<你的网关>/firecrawl/mcp`** 给多人用、且**每人自带 Firecrawl 密钥**，需要让子进程进入 **`CLOUD_SERVICE`** 模式：从每次 MCP 请求的 **HTTP 头** 取 Key（与官方「云端托管」语义一致），网关反代会**原样转发**客户端发来的 `Authorization` / `x-firecrawl-api-key` 等头。
+
+1. **服务端**：在 **`packages/mcp-gateway/mcp-gateway.external-services.json`** 的 `firecrawl.spawn.env` 中已包含 **`CLOUD_SERVICE": "true"`**（本仓库默认如此）。此时**不必**在服务器 `.env` 里配置公共 `FIRECRAWL_API_KEY`（未配置时启动也不会再误报警告）。
+2. **调用方 Cursor**：在 **`mcp.json`** 里为同一 URL 增加 **`headers`**，并用 Cursor 支持的 **`${env:变量名}`** 从本机环境读取密钥，避免把明文写进配置文件、也不要把密钥提交到 Git：
+
+```json
+{
+    "mcpServers": {
+        "firecrawl-shared-gateway": {
+            "type": "streamable_http",
+            "url": "https://YOUR_DOMAIN_OR_IP/firecrawl/mcp",
+            "headers": {
+                "Authorization": "Bearer ${env:FIRECRAWL_API_KEY}"
+            }
+        }
+    }
+}
+```
+
+也可使用 **`x-firecrawl-api-key": "${env:FIRECRAWL_API_KEY}"`**（与 `mcp-firecrawl` 实现一致）。调用方需在本机为 Cursor 配置好 **`FIRECRAWL_API_KEY`** 环境变量（例如在 shell profile、`launchd` 或 Cursor 启动脚本中导出）。
+
+3. **传输安全**：对外暴露时请使用 **HTTPS**（如已有 `https://mcp-gateway-v2.orb.local/...`），避免 API Key 在公网明文传输。
+
+4. **行为说明**：`CLOUD_SERVICE=true` 时 Firecrawl MCP 会启用其 **Safe mode** 等对工具能力的限制，与官方云端行为对齐；若你更在意「自建 API + 无 Key」等模式，可改回去掉 `CLOUD_SERVICE` 并改用 **`FIRECRAWL_API_URL`** 等服务端环境配置（见 `mcp-firecrawl` 源码与上游文档）。
+
 ### 部署思路（推荐：单网关）
 
 运行 `@mcp/gateway` 一个服务即可。网关会自动发现 `packages/mcp-*`（排除 `mcp-gateway`），并把每个服务挂载到 `/<service>/mcp`。

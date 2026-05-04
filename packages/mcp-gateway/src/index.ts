@@ -15,13 +15,17 @@ const services = await loadServices(repoRoot)
 await ensureExternalServicesStarted(services)
 
 const firecrawl = services.get('firecrawl')
+const firecrawlUsesPerClientApiKey =
+    firecrawl?.type === 'external' &&
+    String(firecrawl.spawn.env?.CLOUD_SERVICE ?? '').toLowerCase() === 'true'
 if (
     firecrawl?.type === 'external' &&
+    !firecrawlUsesPerClientApiKey &&
     !process.env.FIRECRAWL_API_KEY &&
     !process.env.FIRECRAWL_API_URL
 ) {
     console.warn(
-        '[mcp-gateway] firecrawl: 未检测到 FIRECRAWL_API_KEY 或 FIRECRAWL_API_URL。请在 shell 中 export，或在仓库根 `.env` / `packages/mcp-gateway/.env` 中配置，否则 MCP 初始化会失败。'
+        '[mcp-gateway] firecrawl: 未检测到 FIRECRAWL_API_KEY 或 FIRECRAWL_API_URL（且子进程未设置 CLOUD_SERVICE=true）。请在 shell / .env 中配置密钥，或在 mcp-gateway.external-services.json 的 firecrawl.spawn.env 中设置 CLOUD_SERVICE 为 true，以改为由客户端请求头传入各自密钥。'
     )
 }
 
