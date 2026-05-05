@@ -17,7 +17,7 @@
         "format": "prettier -w .",
         "lint-staged": "lint-staged",
         "docker:build": "TAG=${TAG:-$(date +%Y%m%d-%H%M%S)} && docker build -f Dockerfile -t mcp-gateway:$TAG . && echo \"Built image: mcp-gateway:$TAG\"",
-        "docker:build:mirror": "TAG=${TAG:-$(date +%Y%m%d)} && docker build -f Dockerfile -t mcp-gateway:$TAG --build-arg NPM_REGISTRY=https://registry.npmmirror.com . && echo \"Built image: mcp-gateway:$TAG\"",
+        "docker:build:mirror": "TAG=${TAG:-$(date +%Y%m%d-%H%M%S)} && docker build -f Dockerfile -t mcp-gateway:$TAG --build-arg NPM_REGISTRY=https://registry.npmmirror.com . && echo \"Built image: mcp-gateway:$TAG\"",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "devDependencies": {
