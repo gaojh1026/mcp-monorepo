@@ -74,7 +74,7 @@ const handleServicesPanel = (
     res: ServerResponse,
     url: URL
 ) => {
-    if (req.method !== 'GET' || url.pathname !== '/services') return false
+    if (req.method !== 'GET' || url.pathname !== '/') return false
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
     res.end(SERVICES_PANEL_HTML)
     return true
