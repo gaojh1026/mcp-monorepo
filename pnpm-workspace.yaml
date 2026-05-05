@@ -1,5 +1,7 @@
 # pnpm-workspace.yaml 用于定义 monorepo 中包含哪些包（package），pnpm 会根据这里的配置管理依赖和工作区。
 packages:
     - 'packages/*' # 匹配 packages 目录下的所有子包
+    # mcp-context7 为嵌套 monorepo，子包须作为根 workspace 成员安装依赖，否则 Docker / 根目录 install 不会装到 tsc、tsup
+    - 'packages/mcp-context7/packages/*'
     - 'common' # 单独包含 common 目录（通常为公共包）
     - '!**/test/**' # 排除所有 test 目录下的内容，不作为 workspace 包
