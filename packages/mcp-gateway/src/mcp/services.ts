@@ -26,7 +26,9 @@ import {
     readJsonFile,
     resolveMaybeRelative,
     isTcpPortOpen,
-    waitForTcpReady
+    waitForTcpReady,
+    MCP_GATEWAY_CORS_ALLOW_HEADERS,
+    MCP_GATEWAY_CORS_EXPOSE_HEADERS
 } from '../utils/helpers.js'
 
 /** 扫描 `package.json` 时仅需的字段，用于构造 `MCPServer` 的元数据。 */
@@ -344,9 +346,8 @@ export const proxyExternalRequest = async (
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods':
                         'GET, POST, DELETE, OPTIONS',
-                    'Access-Control-Allow-Headers':
-                        'Content-Type, mcp-session-id, Accept, Authorization, X-API-Key, x-firecrawl-api-key',
-                    'Access-Control-Expose-Headers': 'mcp-session-id'
+                    'Access-Control-Allow-Headers': MCP_GATEWAY_CORS_ALLOW_HEADERS,
+                    'Access-Control-Expose-Headers': MCP_GATEWAY_CORS_EXPOSE_HEADERS
                 }
 
                 if (!res.headersSent) {

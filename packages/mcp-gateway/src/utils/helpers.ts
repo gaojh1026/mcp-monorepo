@@ -10,6 +10,17 @@ import { isAbsolute, resolve } from 'node:path'
 import { MAX_BODY_BYTES } from './env.js'
 
 /**
+ * 网关与反代上游 MCP（含 Context7 Streamable HTTP）共用的 CORS 允许请求头列表。
+ */
+export const MCP_GATEWAY_CORS_ALLOW_HEADERS =
+    'Content-Type, mcp-session-id, MCP-Session-Id, MCP-Protocol-Version, Accept, Authorization, X-API-Key, x-firecrawl-api-key, X-Context7-API-Key, Context7-API-Key'
+
+/**
+ * 客户端需读取的响应头（会话 id 等），大小写两种写法以兼容不同客户端。
+ */
+export const MCP_GATEWAY_CORS_EXPOSE_HEADERS = 'mcp-session-id, MCP-Session-Id'
+
+/**
  * 读取 JSON 文件并解析为泛型类型（调用方负责与文件内容一致）。
  * @param path - 绝对或相对路径（由调用方保证可读）。
  */
@@ -114,11 +125,8 @@ export const readJsonBody = async (req: IncomingMessage) => {
 export const setCorsHeaders = (res: ServerResponse, includeMaxAge = false) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Content-Type, mcp-session-id, Accept, Authorization, X-API-Key, x-firecrawl-api-key'
-    )
-    res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id')
+    res.setHeader('Access-Control-Allow-Headers', MCP_GATEWAY_CORS_ALLOW_HEADERS)
+    res.setHeader('Access-Control-Expose-Headers', MCP_GATEWAY_CORS_EXPOSE_HEADERS)
     if (includeMaxAge) res.setHeader('Access-Control-Max-Age', '86400')
 }
 

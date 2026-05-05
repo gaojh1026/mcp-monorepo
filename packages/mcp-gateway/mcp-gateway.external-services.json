@@ -50,6 +50,31 @@
                 "port": 8940,
                 "timeoutMs": 60000
             }
+        },
+        "context7": {
+            "spawn": {
+                "command": "node",
+                "args": [
+                    "dist/index.js",
+                    "--transport",
+                    "http",
+                    "--port",
+                    "8950"
+                ],
+                "cwd": "../mcp-context7/packages/mcp",
+                "env": {},
+                "shell": false
+            },
+            "upstream": {
+                "baseUrl": "http://127.0.0.1:8950",
+                "path": "/mcp"
+            },
+            "ready": {
+                "type": "tcp",
+                "host": "127.0.0.1",
+                "port": 8950,
+                "timeoutMs": 60000
+            }
         }
     }
 }
