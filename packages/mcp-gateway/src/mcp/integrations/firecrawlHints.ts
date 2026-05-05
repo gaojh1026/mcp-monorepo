@@ -6,7 +6,9 @@
 import type { McpService } from '../services.js'
 
 /**
- * 若注册了外部 firecrawl 且未启用「每客户端密钥」模式，又缺少云端 API 环境变量，则打印配置提示。
+ * Firecrawl 外部服务启动后的配置提示：
+ * - `CLOUD_SERVICE=true`：提示必须走请求头鉴权，避免误以为 `FIRECRAWL_API_KEY` 会生效。
+ * - 非上述模式且缺少 `FIRECRAWL_API_KEY` / `FIRECRAWL_API_URL`：提示补全环境变量或改为按请求鉴权。
  *
  * @param services - 已加载的服务表
  */
@@ -18,6 +20,11 @@ export const warnIfFirecrawlApiConfigMissing = (
         firecrawl?.type === 'external' &&
         String(firecrawl.spawn.env?.CLOUD_SERVICE ?? '').toLowerCase() ===
             'true'
+    if (firecrawl?.type === 'external' && firecrawlUsesPerClientApiKey) {
+        console.warn(
+            '[mcp-gateway] firecrawl: 已启用 CLOUD_SERVICE=true（按请求鉴权）。经网关连接时，MCP 客户端必须在每条请求中携带 x-firecrawl-api-key 或 x-api-key（或 Bearer）；仅配置子进程环境变量 FIRECRAWL_API_KEY 不会用于 HTTP 鉴权。若希望使用 .env 中的 FIRECRAWL_API_KEY，请从 firecrawl.spawn.env 中移除 CLOUD_SERVICE。'
+        )
+    }
     if (
         firecrawl?.type === 'external' &&
         !firecrawlUsesPerClientApiKey &&
