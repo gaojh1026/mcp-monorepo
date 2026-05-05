@@ -3,36 +3,32 @@
  * @module mcp-gateway
  */
 
-import { findRepoRoot, port, host } from './lib/runtime.js'
-import { loadOptionalEnvFiles } from './lib/dotenv.js'
-import { loadServices } from './modules/services/registry.js'
-import { ensureExternalServicesStarted } from './modules/services/external.js'
-import { createGatewayHttpServer } from './modules/gateway/httpServer.js'
+import { findRepoRoot, port, host, loadOptionalEnvFiles } from './utils/env.js'
+import { loadServices, ensureExternalServicesStarted } from './mcp/services.js'
+import { createGatewayHttpServer } from './mcp/httpGateway.js'
+import { warnIfFirecrawlApiConfigMissing } from './mcp/integrations/firecrawlHints.js'
 
+// 查找仓库根目录并加载可选的 .env 文件
 const repoRoot = findRepoRoot(process.cwd())
+
+// 加载可选的 .env 文件
 loadOptionalEnvFiles(repoRoot)
+
+// 加载服务
 const services = await loadServices(repoRoot)
+
+// 确保外部服务已启动
 await ensureExternalServicesStarted(services)
 
-const firecrawl = services.get('firecrawl')
-const firecrawlUsesPerClientApiKey =
-    firecrawl?.type === 'external' &&
-    String(firecrawl.spawn.env?.CLOUD_SERVICE ?? '').toLowerCase() === 'true'
-if (
-    firecrawl?.type === 'external' &&
-    !firecrawlUsesPerClientApiKey &&
-    !process.env.FIRECRAWL_API_KEY &&
-    !process.env.FIRECRAWL_API_URL
-) {
-    console.warn(
-        '[mcp-gateway] firecrawl: 未检测到 FIRECRAWL_API_KEY 或 FIRECRAWL_API_URL（且子进程未设置 CLOUD_SERVICE=true）。请在 shell / .env 中配置密钥，或在 mcp-gateway.external-services.json 的 firecrawl.spawn.env 中设置 CLOUD_SERVICE 为 true，以改为由客户端请求头传入各自密钥。'
-    )
-}
+// 警告 Firecrawl API 配置缺失
+warnIfFirecrawlApiConfigMissing(services)
 
+// 创建绑定 `services` 的网关 HTTP 服务器
 const server = createGatewayHttpServer(services)
 
+// 监听 HTTP 服务器
 server.listen(port, host, () => {
     console.log(
-        `MCP Gateway listening on ${host}:${port} (routes: /<service>/mcp)`
+        `✅ MCP Gateway listening on ${host}:${port} (routes: /<service>/mcp)`
     )
 })

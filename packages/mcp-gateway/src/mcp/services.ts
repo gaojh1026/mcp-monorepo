@@ -1,21 +1,33 @@
 /**
- * @fileoverview 网关侧 MCP 服务注册表。
+ * @fileoverview 网关侧 MCP 服务：注册表（本地包 + 外部 JSON）与外部进程（TCP 就绪、spawn、HTTP 反代）。
  *
- * 职责概览：
+ * **注册表**职责概览：
  * 1. **本地服务**：遍历 monorepo 下 `packages/mcp-*`（跳过 `mcp-gateway`），根据 `package.json`
  *    与源码/构建目录创建 `MCPServer`，供网关同进程托管。
  * 2. **外部服务**：读取 `mcp-gateway.external-services.json`，将子进程启动参数、上游 HTTP
  *    与就绪探测（TCP）合并为 `ExternalMcpService`，与本地条目共用同一 `Map` 的 `id` 键。
  *
  * 外部配置若与本地 `id` 冲突，以外部为准并打警告日志。
- * @module mcp-gateway/modules/services/registry
+ *
+ * **外部 MCP**：TCP 就绪、可选 spawn、HTTP(S) 反代。
+ * @module mcp-gateway/mcp/services
  */
 
-import { readdir, readFile } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
+import { request as httpRequest } from 'node:http'
+import { request as httpsRequest } from 'node:https'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { readdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import { isAbsolute, join, resolve } from 'node:path'
+import { join, resolve } from 'node:path'
 import type { ChildProcess } from 'node:child_process'
 import { MCPServer } from 'mcp-framework'
+import {
+    readJsonFile,
+    resolveMaybeRelative,
+    isTcpPortOpen,
+    waitForTcpReady
+} from '../utils/helpers.js'
 
 /** 扫描 `package.json` 时仅需的字段，用于构造 `MCPServer` 的元数据。 */
 type PackageJson = {
@@ -71,13 +83,6 @@ export type ExternalMcpService = {
 export type McpService = LocalMcpService | ExternalMcpService
 
 /**
- * 读取 JSON 文件并解析为泛型类型（调用方负责与文件内容一致）。
- * @param path - 绝对或相对路径（由调用方保证可读）。
- */
-const readJson = async <T>(path: string): Promise<T> =>
-    JSON.parse(await readFile(path, 'utf8')) as T
-
-/**
  * 为 `MCPServer` 选择 `basePath`：必须指向包含 `tools` 子目录的构建根或源码根。
  *
  * 优先级：`dist/tools` → `src/tools`；若均不存在且 `MCP_GATEWAY_DEV=1` 则回退 `src`，
@@ -93,18 +98,6 @@ const pickBasePath = (packageDir: string) => {
     if (existsSync(srcTools)) return join(packageDir, 'src')
     if (process.env.MCP_GATEWAY_DEV === '1') return join(packageDir, 'src')
     return null
-}
-
-/**
- * 将配置文件中的路径解析为绝对路径：已是绝对路径则原样返回，否则相对 `baseDir` 拼接。
- * 用于外部服务 `spawn.cwd` 等字段，使 JSON 里可写相对 `mcp-gateway` 包目录的路径。
- *
- * @param baseDir - 解析相对路径时的基准目录（此处为网关包目录）。
- * @param maybeRelativePath - 配置中的路径字符串。
- */
-const resolveMaybeRelative = (baseDir: string, maybeRelativePath: string) => {
-    if (isAbsolute(maybeRelativePath)) return maybeRelativePath
-    return resolve(baseDir, maybeRelativePath)
 }
 
 /**
@@ -173,7 +166,9 @@ export const loadServices = async (
 
         const id = entry.name.slice('mcp-'.length)
         const packageDir = join(packagesDir, entry.name)
-        const pkg = await readJson<PackageJson>(join(packageDir, 'package.json'))
+        const pkg = await readJsonFile<PackageJson>(
+            join(packageDir, 'package.json')
+        )
 
         const basePath = pickBasePath(packageDir)
         if (!basePath) {
@@ -213,7 +208,7 @@ export const loadServices = async (
     const configDir = resolve(repoRoot, 'packages', 'mcp-gateway')
     try {
         const externalConfig =
-            await readJson<ExternalServicesConfigFile>(externalConfigPath)
+            await readJsonFile<ExternalServicesConfigFile>(externalConfigPath)
         const externalServices = externalConfig.externalServices
         if (externalServices) {
             for (const [id, cfg] of Object.entries(externalServices)) {
@@ -258,4 +253,120 @@ export const loadServices = async (
     }
 
     return services
+}
+
+/**
+ * 为所有 `external` 服务 spawn（若端口未开）并等待 TCP ready
+ */
+export const ensureExternalServicesStarted = async (
+    services: Map<string, McpService>
+) => {
+    const externalServices = Array.from(services.values()).filter(
+        (s): s is ExternalMcpService => s.type === 'external'
+    )
+
+    const started = await Promise.all(
+        externalServices.map(async service => {
+            const portOpen = await isTcpPortOpen(
+                service.ready.host,
+                service.ready.port,
+                300
+            )
+            if (!portOpen) {
+                const env = { ...process.env, ...(service.spawn.env ?? {}) }
+                const child = spawn(service.spawn.command, service.spawn.args, {
+                    cwd: service.spawn.cwd,
+                    env,
+                    shell: service.spawn.shell ?? false,
+                    stdio: 'inherit'
+                })
+
+                service.process = child
+
+                child.once('exit', (code, signal) => {
+                    console.warn(
+                        `[mcp-gateway] external service '${service.id}' exited (code=${code}, signal=${signal})`
+                    )
+                })
+            }
+
+            await waitForTcpReady(
+                service.ready.host,
+                service.ready.port,
+                service.ready.timeoutMs
+            )
+        })
+    )
+
+    void started
+}
+
+/**
+ * 将请求反代到外部服务 upstream（含流式响应）
+ */
+export const proxyExternalRequest = async (
+    req: IncomingMessage,
+    res: ServerResponse,
+    service: ExternalMcpService,
+    url: URL
+) => {
+    const upstreamPath = service.upstream.path.startsWith('/')
+        ? service.upstream.path
+        : `/${service.upstream.path}`
+    const targetUrl = new URL(upstreamPath, service.upstream.baseUrl)
+    targetUrl.search = url.search
+
+    const proxyHeaders: Record<string, string> = {}
+    for (const [k, v] of Object.entries(req.headers)) {
+        if (v === undefined) continue
+        proxyHeaders[k] = Array.isArray(v) ? v[0] : v
+    }
+    proxyHeaders.host = targetUrl.host
+    proxyHeaders['x-forwarded-host'] = targetUrl.host
+    proxyHeaders['x-forwarded-port'] = targetUrl.port
+    proxyHeaders['x-forwarded-proto'] = targetUrl.protocol.replace(':', '')
+
+    const isHttps = targetUrl.protocol === 'https:'
+    const requester = isHttps ? httpsRequest : httpRequest
+
+    await new Promise<void>((resolve, reject) => {
+        const proxyReq = requester(
+            {
+                method: req.method,
+                protocol: targetUrl.protocol,
+                hostname: targetUrl.hostname,
+                port: targetUrl.port,
+                path: targetUrl.pathname + targetUrl.search,
+                headers: proxyHeaders
+            },
+            proxyRes => {
+                const corsHeaders: Record<string, string> = {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods':
+                        'GET, POST, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers':
+                        'Content-Type, mcp-session-id, Accept, Authorization, X-API-Key, x-firecrawl-api-key',
+                    'Access-Control-Expose-Headers': 'mcp-session-id'
+                }
+
+                if (!res.headersSent) {
+                    res.writeHead(
+                        proxyRes.statusCode ?? 502,
+                        Object.assign({}, proxyRes.headers as any, corsHeaders)
+                    )
+                }
+                proxyRes.pipe(res)
+
+                proxyRes.on('end', () => resolve())
+            }
+        )
+
+        proxyReq.on('error', err => reject(err))
+        req.on('aborted', () => proxyReq.destroy())
+
+        req.pipe(proxyReq)
+    }).catch(err => {
+        if (res.headersSent) return
+        res.writeHead(502).end(`Bad Gateway: ${(err as Error).message}`)
+    })
 }

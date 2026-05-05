@@ -133,9 +133,10 @@ const server = new FastMCP<SessionData>({
     } else {
       // For self-hosted instances, API key is optional if FIRECRAWL_API_URL is provided
       if (!process.env.FIRECRAWL_API_KEY && !process.env.FIRECRAWL_API_URL) {
-        throw new Error(
-          'Either FIRECRAWL_API_KEY or FIRECRAWL_API_URL must be set in the server environment (spawn env or shell before starting the gateway)'
+        console.error(
+          'Either FIRECRAWL_API_KEY or FIRECRAWL_API_URL must be provided'
         );
+        process.exit(1);
       }
       return { firecrawlApiKey: process.env.FIRECRAWL_API_KEY };
     }

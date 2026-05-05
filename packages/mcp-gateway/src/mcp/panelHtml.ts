@@ -1,6 +1,6 @@
 /**
  * @fileoverview `/services` 内嵌管理面板 HTML
- * @module mcp-gateway/modules/services/panelHtml
+ * @module mcp-gateway/mcp/panelHtml
  */
 export const SERVICES_PANEL_HTML = `<!doctype html>
 <html lang="zh-CN">
