@@ -1,0 +1,557 @@
+{
+  "meta": {
+    "title": "MCP Probe Kit - AI駆動の完全開発ツールキット | 開発ライフサイクル全体をカバーする22のツール",
+    "description": "MCP Probe Kitは、要件分析、コード開発、品質保証、バグ修正、リリース管理をカバーする22のAI駆動開発ツールを提供します。Cursor、Cline、Claude Desktopをサポートし、100%構造化出力を実現。",
+    "keywords": "MCP Probe Kit, AI開発ツール, コード生成, コードレビュー, Gitツール, UI開発, 開発効率, Cursor, Cline, Claude, MCPサーバー"
+  },
+  "nav": {
+    "home": "ドキュメント",
+    "docs": "ドキュメント",
+    "mainSite": "メインサイト",
+    "github": "GitHub",
+    "npm": "npm"
+  },
+  "hero": {
+    "title": "🚀 MCP Probe Kit",
+    "subtitle": "AI開発強化ツールキット · ドキュメントセンター",
+    "version": "v3.0.16",
+    "quickStart": "クイックスタート",
+    "visitMainSite": "ByteZoneXを訪問"
+  },
+  "sections": {
+    "quickStart": {
+      "title": "クイックスタート",
+      "description": "5分でMCP Probe Kit v3.0.16を始める",
+      "installConfig": "インストールと設定"
+    },
+    "tools": {
+      "title": "ツールドキュメント",
+      "description": "22の実用的なツールの完全なリファレンス。コードグラフ洞察とオーケストレーションを含む",
+      "allTools": "すべてのツール"
+    },
+    "guides": {
+      "title": "ガイド",
+      "description": "移行ガイドとベストプラクティス",
+      "migration": "v2.x → v3.0 移行ガイド",
+      "bestPractices": "ベストプラクティス"
+    },
+    "resources": {
+      "title": "リソース",
+      "description": "ソースコードとコミュニティサポート",
+      "mainSite": "ByteZoneX メインサイト",
+      "githubRepo": "GitHubリポジトリ",
+      "npmPackage": "npmパッケージ",
+      "issues": "問題追跡"
+    }
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "license": "MIT License",
+    "mainSite": "メインサイト ByteZoneX"
+  },
+  "sidebar": {
+    "quickStart": "クイックスタート",
+    "home": "ドキュメントホーム",
+    "installation": "インストールと設定",
+    "toolsDocs": "ツールドキュメント",
+    "allTools": "すべてのツール",
+    "guides": "ガイド",
+    "migration": "移行ガイド",
+    "examples": "ベストプラクティス",
+    "followUs": "フォローする",
+    "getTechSharing": "技術情報を入手"
+  },
+  "gettingStarted": {
+    "title": "インストールと設定",
+    "subtitle": "5分でMCP Probe Kit v3.0.10を始める。Cursor、Cline、Claude Desktopをサポート",
+    "breadcrumb": {
+      "home": "ドキュメント",
+      "quickStart": "クイックスタート",
+      "installation": "インストール"
+    },
+    "step1": {
+      "title": "インストール方法を選択",
+      "npx": {
+        "title": "npxで直接使用",
+        "recommended": "推奨",
+        "description": "インストール不要、最新バージョンを直接使用：",
+        "advantage": "利点：",
+        "advantageText": "手動更新不要、起動時に自動的に最新バージョンを使用",
+        "copy": "コピー"
+      },
+      "global": {
+        "title": "グローバルインストール",
+        "description": "システムにグローバルインストール：",
+        "configFile": "設定ファイル：",
+        "note": "注意：",
+        "noteText": "手動で実行する必要があります",
+        "updateText": "バージョンを更新"
+      },
+      "windowsGraph": {
+        "title": "Windows 向けグラフツール補足",
+        "description": "グラフ関連ツールは、GitNexus を既定で npx 経由で起動するため、Windows では初回起動が遅くなる場合があります。",
+        "item1": "初回のコールドスタートでは、npx が依存関係を確認またはダウンロードするため 20 秒以上かかることがあります。",
+        "item2": "GitNexus の一部依存関係は tree-sitter ネイティブモジュールを使用しており、Windows では Visual Studio Build Tools が必要になる場合があります。",
+        "item3": "MCP クライアントが env をサポートしている場合は、プリインストール済みの gitnexus CLI を優先し、GitNexus のタイムアウトを引き上げてください。",
+        "item4": "Windows では winget で Build Tools をすばやくインストールできます：winget install Microsoft.VisualStudio.2022.BuildTools",
+        "quickInstallTitle": "クイックインストールコマンド：",
+        "exampleTitle": "プリインストール済み gitnexus CLI を使う設定例："
+      },
+      "source": {
+        "title": "ソースからビルド",
+        "description": "ソースコードからビルド、開発者向け：",
+        "step1": "1. リポジトリをクローン",
+        "step2": "2. 依存関係をインストールしてビルド",
+        "step3": "3. 設定ファイル",
+        "tip": "ヒント：",
+        "tipText": "Windowsユーザーはフルパスを使用してください、例：",
+        "note": "注意：",
+        "noteText": "コード変更後は再実行が必要",
+        "compileText": "コンパイル"
+      }
+    },
+    "step2": {
+      "title": "設定ファイルを見つける",
+      "description": "使用しているMCPクライアントに応じて、対応する設定ファイルを見つけます：",
+      "cursor": {
+        "title": "Cursor / Cline",
+        "description": "プロジェクトルートディレクトリに作成または編集",
+        "tip": "ヒント：",
+        "tipText": "CursorとClineはプロジェクトレベルの設定を使用し、各プロジェクトは独立したMCPサーバー設定を持つことができます。"
+      },
+      "claudeWin": {
+        "title": "Claude Desktop (Windows)",
+        "path": "設定ファイルパス：",
+        "example": "例："
+      },
+      "claudeMac": {
+        "title": "Claude Desktop (macOS)",
+        "path": "設定ファイルパス："
+      }
+    },
+    "step3": {
+      "title": "インストールを確認",
+      "description": "設定完了後、以下の手順で確認：",
+      "step1": "MCPクライアントを再起動（Cursor / Cline / Claude Desktop）",
+      "step2": "チャットウィンドウに入力：",
+      "step2Command": "gencommitツールを使用してテストコミットメッセージを生成してください",
+      "step3": "Conventional Commits仕様に従ったコミットメッセージが返されれば、インストール成功！",
+      "success": "成功例：",
+      "successText": "AIが次のようなメッセージを返します",
+      "successExample": "メッセージ",
+      "successCode": "feat: ユーザー認証機能を追加",
+      "issues": "よくある問題：",
+      "issue1": "「ツールが見つかりません」→ 設定ファイルの形式を確認",
+      "issue2": "「コマンドが見つかりません」→ Node.jsがインストールされているか確認",
+      "issue3": "Windowsユーザー → npx方式を使用していることを確認"
+    },
+    "step4": {
+      "title": "委譲オーケストレーションプロトコル",
+      "description": "オーケストレーションツールは操作を直接実行せず、実行可能なプランを返します。",
+      "keyFields": "キーフィールド：",
+      "planExample": "プラン例",
+      "tip": "ポイント：",
+      "tipText": "順番に実行",
+      "tipText2": "し、",
+      "tipText3": "ファイルが実際にディスクに書き込まれることを確認"
+    },
+    "faq": {
+      "title": "⚠️ よくある問題",
+      "q1": {
+        "title": "問題1：npxキャッシュによるモジュール解決エラー",
+        "error": "エラーメッセージ：",
+        "solution": "解決策：",
+        "solutionText": "npxキャッシュをクリア",
+        "restart": "その後MCPクライアントを再起動"
+      },
+      "q2": {
+        "title": "問題2：MCPサーバー接続失敗",
+        "possibleReasons": "考えられる原因：",
+        "reason1": "Node.jsバージョンが低すぎる（>= 16.0.0が必要）",
+        "reason2": "依存関係がインストールされていないか破損している",
+        "reason3": "設定ファイルの形式エラー",
+        "solution": "解決策：",
+        "step1": "Node.jsバージョンを確認：",
+        "step2": "v16未満の場合、Node.jsをアップグレードしてください",
+        "step3": "キャッシュをクリアして再インストール：",
+        "step4": "設定ファイルのJSON形式が正しいか確認"
+      },
+      "q3": {
+        "title": "問題3：Windows でグラフツールの初回起動が遅い、またはタイムアウトする",
+        "affected": "影響を受けるツール：",
+        "error": "典型的なエラー：",
+        "reasons": "よくある原因：",
+        "reason1": "`npx -y gitnexus@latest mcp` はコールドスタートのため、初回は依存関係の確認やダウンロードに 20 秒以上かかることがあります。",
+        "reason2": "GitNexus が依存する tree-sitter ネイティブモジュールは、Windows で Visual Studio Build Tools を必要とする場合があります。",
+        "solution": "推奨対応：",
+        "step1": "C++ ワークロード付きの Visual Studio Build Tools をインストールしてください。",
+        "step2": "依存関係のインストール完了後にもう一度実行し、初回のコールドスタートを通常レイテンシと混同しないでください。",
+        "step3": "クライアントが env をサポートしている場合は、プリインストール済みの gitnexus CLI を優先し、MCP_GITNEXUS_CONNECT_TIMEOUT_MS と MCP_GITNEXUS_TIMEOUT_MS を引き上げてください。"
+      }
+    },
+    "common": {
+      "copy": "コピー",
+      "copied": "コピーしました"
+    }
+  },
+  "migration": {
+    "breadcrumb": {
+      "home": "ドキュメント",
+      "guides": "ガイド",
+      "migration": "移行ガイド"
+    },
+    "title": "v3.0 移行ガイド",
+    "subtitle": "v2.xからv3.0へスムーズに移行し、重大な変更と新機能を理解する",
+    "overview": {
+      "title": "概要",
+      "description": "MCP Probe Kit v3.0は大規模なバージョンアップデートで、22ツールに最適化され、より強力な機能とより良い開発体験をもたらします。",
+      "migrationTime": "移行時間：",
+      "migrationTimeText": "ほとんどのプロジェクトは10〜15分で移行を完了でき、v2.xのコアツールはv3.0で互換性を維持しています。"
+    },
+    "changes": {
+      "title": "主な変更点",
+      "toolsOptimization": {
+        "title": "1. ツールの最適化",
+        "description": "v2.x: 39ツール → v3.x: 22ツール（低頻度ツールを削除、高価値ツールを保持）"
+      },
+      "workflows": {
+        "title": "2. 新しいワークフローオーケストレーション",
+        "description": "11個の",
+        "description2": "ワークフローオーケストレーションツール、エンドツーエンドの自動化開発プロセスを提供：",
+        "startFeature": "機能開発ワークフロー",
+        "startBugfix": "バグ修正ワークフロー",
+        "startUi": "UI開発ワークフロー",
+        "startProduct": "製品設計ワークフロー",
+        "startRalph": "Ralph Loop自動化開発"
+      },
+      "uiTools": {
+        "title": "3. 新しいUI/UXツールセット",
+        "description": "完全なUI/UXツールチェーン：",
+        "designSystem": "インテリジェントデザインシステムジェネレーター",
+        "uiSearch": "UI/UXデータベース検索",
+        "syncUiData": "UI/UXデータ同期",
+        "componentCatalog": "コンポーネントカタログ初期化",
+        "renderUi": "UIレンダリングエンジン"
+      },
+      "codeInsight": {
+        "title": "4. 新しいコードグラフ洞察",
+        "description": "code_insight は docs/graph-insights 配下の基線グラフ文書を維持し、start_feature/start_bugfix は計画前に GitNexus インデックスを更新してタスク単位の収束分析を行います。"
+      },
+      "structuredOutput": {
+        "title": "5. 構造化出力のアップグレード",
+        "description": "コアおよびオーケストレーションツールは構造化出力を優先し、一貫性のある予測可能な出力形式で、ツールの連携と状態追跡を容易にします。"
+      }
+    },
+    "steps": {
+      "title": "移行手順",
+      "step1": {
+        "title": "ステップ1：バージョンを更新",
+        "npxNote": "# npxを使用する場合（推奨）",
+        "npxDesc": "# 操作不要、自動的に最新バージョンを使用",
+        "globalNote": "# グローバルインストールの場合"
+      },
+      "step2": {
+        "title": "ステップ2：設定ファイルを確認",
+        "description": "v3.0の設定ファイル形式はv2.xと完全に互換性があり、変更は不要です。",
+        "compatible": "後方互換性：",
+        "compatibleText": "v2.xのコアツールはv3.0で互換性を維持し、シームレスなアップグレードが可能です。"
+      }
+    },
+    "help": {
+      "title": "ヘルプを取得",
+      "description": "移行中に問題が発生した場合：",
+      "viewDocs": "表示",
+      "toolsReference": "完全なツールリファレンス",
+      "askIn": "で質問",
+      "askQuestion": "質問する",
+      "reportIn": "で報告",
+      "reportBug": "バグを報告"
+    },
+    "complete": {
+      "title": "🎉 移行完了！",
+      "description": "v3.0の強力な機能を探索開始",
+      "viewTools": "すべてのツールを表示",
+      "learnBestPractices": "ベストプラクティスを学ぶ"
+    }
+  },
+  "examples": {
+    "breadcrumb": {
+      "home": "ドキュメント",
+      "guides": "ガイド",
+      "examples": "ベストプラクティス"
+    },
+    "title": "ベストプラクティス",
+    "subtitle": "MCP Probe Kitは完全な開発プロセスを統合、要件からデプロイまでのベストプラクティスガイド",
+    "overview": {
+      "title": "完全な開発プロセス",
+      "description": "MCP Probe Kitの22のツールは、要件分析からコードデプロイまでの完全な開発プロセスをカバーしています。以下は推奨されるベストプラクティスです。",
+      "coreIdea": "コア哲学：",
+      "coreIdeaText": "ワークフローオーケストレーションツール（start_*）を通じて開発プロセス全体を連携し、AIを開発アシスタントにします。"
+    },
+    "stage0": {
+      "title": "ステージ0：製品設計（要件からプロトタイプまで）",
+      "workflow": {
+        "title": "0.1 完全な製品設計ワークフロー（推奨）",
+        "description": "使用",
+        "description2": "ワークフローオーケストレーション、ワンクリックで要件からHTMLプロトタイプまでの完全な製品設計を完了。",
+        "example1": "あなた: 製品要件ドキュメント project.md があります、完全な製品設計を生成してください",
+        "productName": "オンライン教育プラットフォーム",
+        "autoExecute": "→ 自動実行：",
+        "autoLoop": "→ AI自動ループ：",
+        "step1": "✓ ステップ1: プロジェクトコンテキストの確認/生成",
+        "step2": "✓ ステップ2: PRDドキュメントの生成",
+        "step3": "✓ ステップ3: プロトタイプ設計ドキュメントの生成",
+        "step4": "✓ ステップ4: デザインシステムの生成",
+        "step5": "→ ステップ5: HTMLインタラクティブプロトタイプの生成",
+        "step6": "✓ ステップ6: プロジェクトコンテキストインデックスの更新",
+        "outputs": "→ 出力ファイル："
+      },
+      "prd": {
+        "title": "0.2 PRDドキュメントを個別に生成",
+        "description": "使用",
+        "description2": "ツールで製品要件ドキュメントを個別に生成。",
+        "example1": "あなた: オンライン教育プラットフォームのPRDを生成してください",
+        "description3": "オンライン教育プラットフォーム、コース管理、ビデオ再生、課題提出をサポート",
+        "aiCreate": "→ AIがガイダンスに基づいて docs/prd/product-requirements.md を作成",
+        "includes": "PRDに含まれるもの：",
+        "item1": "- 製品概要（ビジョン、ターゲットユーザー、コア価値）",
+        "item2": "- 機能要件（コア機能、ユーザーストーリー）",
+        "item3": "- 機能優先度（P0/P1/P2）",
+        "item4": "- 非機能要件（パフォーマンス、セキュリティ、互換性）",
+        "item5": "- ページリスト"
+      },
+      "prototype": {
+        "title": "0.3 HTMLインタラクティブプロトタイプの生成",
+        "description": "使用",
+        "description2": "ツールでプロトタイプドキュメントに基づいてHTMLプロトタイプを生成。",
+        "desc": "プロトタイプドキュメントに基づいてすべてのページのHTMLプロトタイプを生成",
+        "step1": "✓ docs/prototype/ 下のすべてのプロトタイプドキュメントを読み取り",
+        "step2": "✓ docs/design-system.json を読み取ってデザイン仕様を取得",
+        "step3": "✓ 各ページのHTMLファイルを生成",
+        "step4": "✓ インデックスページ index.html を生成",
+        "features": "→ 特徴：",
+        "feature1": "- デザインシステムの色とフォントを使用",
+        "feature2": "- ページナビゲーションを含む",
+        "feature3": "- レスポンシブデザイン"
+      },
+      "summary": {
+        "title": "0.4 製品設計ワークフローまとめ",
+        "recommended": "推奨プロセス：",
+        "step1": "要件ドキュメントを準備（Markdown形式）",
+        "step2": "使用",
+        "step2b": "でワンクリックで完全な製品設計を生成",
+        "step3": "ブラウザでHTMLプロトタイプを表示",
+        "step4": "チームでプロトタイプをレビューし、フィードバックを収集",
+        "step5": "フィードバックに基づいてプロトタイプドキュメントを調整",
+        "step6": "使用",
+        "step6b": "でHTMLプロトタイプを再生成",
+        "step7": "確認後、開発フェーズに進む"
+      }
+    },
+    "stage1": {
+      "title": "ステージ 1：要件分析と計画",
+      "init": {
+        "title": "1.1 新規プロジェクト初期化",
+        "description": "使用",
+        "description2": "でSpec-Driven Development方式に従ってプロジェクトドキュメントを生成。",
+        "example1": "あなた: タスク管理システムを作成したい",
+        "input": "タスク管理システム、タスク作成、割り当て、追跡、リマインダーをサポート",
+        "generate": "→ 生成：要件ドキュメント、設計ドキュメント、タスクリスト"
+      },
+      "interview": {
+        "title": "1.2 要件の明確化（誤解を回避）",
+        "description": "使用",
+        "description2": "ツールで構造化された要件インタビューを実施。",
+        "example1": "あなた: ユーザーログイン機能を追加",
+        "desc": "ユーザーログイン機能を実装",
+        "aiAsk": "→ AIが質問します：",
+        "q1": "- どのログイン方法をサポートしますか？（メール/電話/サードパーティ）",
+        "q2": "- ログイン状態を記憶する必要がありますか？",
+        "q3": "- パスワードルールは何ですか？",
+        "q4": "- 認証コードは必要ですか？",
+        "generate": "→ 生成：インタビュー記録ドキュメント"
+      },
+      "estimate": {
+        "title": "1.3 作業量見積もり",
+        "description": "使用",
+        "description2": "ツールで開発時間とリソースを見積もり。",
+        "task": "ユーザー認証機能を実装",
+        "output": "→ 出力：",
+        "sp": "- ストーリーポイント：8 SP",
+        "time": "- 時間範囲：楽観的 3日 / 通常 5日 / 悲観的 8日",
+        "risk": "- リスク：サードパーティログイン統合が遅延する可能性"
+      },
+      "codeInsight": {
+        "title": "1.4 既存コードグラフの洞察",
+        "description": "使用",
+        "description2": "GitNexus インデックスを更新し、基線 graph-insights 文書を保存したうえで、タスク単位の呼び出し連鎖・コンテキスト・影響範囲を分析します。",
+        "example1": "あなた: ログインとトークン更新の呼び出し連鎖を分析し、どのモジュールに影響するか教えてください",
+        "goal": "既存のログインとトークン更新フローを見つける",
+        "taskContext": "認証モジュールを変更する準備",
+        "output": "→ 出力：",
+        "item1": "- 関連する実行フロー / 呼び出し連鎖",
+        "item2": "- 重要なシンボルとファイル位置",
+        "item3": "- _meta.graph.snapshotUri / markdownFilePath",
+        "item4": "- 後続ワークフローが再利用する docs/graph-insights/latest.* と project-context 索引入口"
+      }
+    },
+    "common": {
+      "bestPractice": "ベストプラクティス"
+    },
+    "stage2": {
+      "title": "ステージ 2：機能開発",
+      "workflow": {
+        "title": "2.1 完全な機能開発ワークフロー（推奨）",
+        "description": "使用",
+        "description2": "ワークフローオーケストレーションで、仕様から見積もりまでワンクリックで完了。",
+        "example1": "あなた: ユーザー認証機能を開発",
+        "step1": "✓ プロジェクトコンテキストを確認し、不足している graph-insights を補完して GitNexus インデックスを更新",
+        "step2": "✓ 機能仕様ドキュメント生成",
+        "step3": "✓ 開発作業量を見積もり",
+        "step4": "✓ 完全な開発計画を出力"
+      },
+      "ui": {
+        "title": "2.2 UI開発ワークフロー",
+        "description": "使用",
+        "description2": "ワークフローで、デザインシステムからコードまで一気通貫。",
+        "example1": "あなた: ログインページを作成",
+        "step1": "✓ デザインシステムを確認/生成",
+        "step2": "✓ コンポーネントディレクトリを初期化",
+        "step3": "✓ UIテンプレートを検索/生成",
+        "step4": "✓ 最終的なReactコードをレンダリング"
+      },
+      "codegen": {
+        "title": "2.3 コード生成",
+        "description": "必要に応じて各種生成ツールを使用：",
+        "genapi": "APIドキュメント生成（OpenAPI/Swagger）",
+        "gensql": "自然言語からSQLクエリ生成",
+        "genmock": "テストデータ生成",
+        "gentest": "ユニットテスト生成"
+      }
+    },
+    "stage3": {
+      "title": "ステージ 3：コード品質保証",
+      "review": {
+        "title": "3.1 包括的コードレビュー（推奨）",
+        "description": "使用",
+        "description2": "ワークフローで、コードレビュー、セキュリティスキャン、パフォーマンス分析を一度に完了。",
+        "example1": "あなた: このコードをレビューしてください",
+        "step1": "✓ コードレビュー（品質、スタイル、ベストプラクティス）",
+        "step2": "✓ セキュリティスキャン（SQLインジェクション、XSS、CSRF）",
+        "step3": "✓ パフォーマンス分析（アルゴリズム、メモリ、データベース）",
+        "step4": "✓ 総合レポート出力"
+      },
+      "single": {
+        "title": "3.2 個別チェック",
+        "description": "特定の問題に対して個別ツールを使用：",
+        "codeReview": "コードレビュー",
+        "securityScan": "セキュリティスキャン",
+        "perf": "パフォーマンス分析",
+        "refactor": "リファクタリング提案"
+      }
+    },
+    "stage4": {
+      "title": "ステージ 4：バグ修正",
+      "bugfix": {
+        "title": "4.1 体系的なバグ修正（推奨）",
+        "description": "使用",
+        "description2": "ワークフローで、既定で TBP 8段階の真因分析を先に行い、その後に修正とテストへ進みます。",
+        "example1": "あなた: ログイン機能がエラーを出しています",
+        "step1": "✓ プロジェクトコンテキストを確認し、不足している graph-insights を補完して GitNexus インデックスを更新",
+        "step2": "✓ TBP-1〜4 で現象、時系列、共通パターンを整理",
+        "step3": "✓ TBP-5/6 で故障境界と因果関係の真因を確定",
+        "step4": "✓ 証拠連鎖から修正方針とリスクを提示",
+        "step5": "✓ 検証手順と回帰テストを生成"
+      },
+      "quick": {
+        "title": "4.2 クイックバグ分析",
+        "description": "使用",
+        "description2": "ツールで TBP 8段階の高速 RCA を行い、修正と検証の指針を返します。"
+      }
+    },
+    "stage5": {
+      "title": "ステージ 5：リリース管理",
+      "release": {
+        "title": "5.1 自動化リリースプロセス（推奨）",
+        "description": "使用",
+        "description2": "ワークフローで、Changelogと PR説明を自動生成。",
+        "example1": "あなた: v2.0.0をリリース準備",
+        "step1": "✓ CHANGELOG生成（feat/fix/breakingで分類）",
+        "step2": "✓ PR説明生成（変更概要、影響範囲）",
+        "step3": "✓ リリースチェックリスト出力"
+      },
+      "git": {
+        "title": "5.2 Gitワークフロー",
+        "description": "Gitツールでコラボレーション効率を向上：",
+        "gencommit": "標準的なコミットメッセージ生成",
+        "genchangelog": "CHANGELOG生成",
+        "genpr": "PR説明生成",
+        "resolveConflict": "マージコンフリクト解決"
+      }
+    },
+    "stage6": {
+      "title": "ステージ 6：プロジェクトメンテナンス",
+      "onboard": {
+        "title": "6.1 新メンバーオンボーディング",
+        "description": "使用",
+        "description2": "ワークフローで、プロジェクトを迅速に理解。",
+        "example1": "新メンバー: プロジェクトに参加したばかりで、プロジェクト構造を理解する必要があります",
+        "step1": "✓ コンテキストドキュメント生成",
+        "step2": "✓ 開発ガイドライン出力"
+      },
+      "doc": {
+        "title": "6.2 ドキュメントメンテナンス",
+        "description": "使用",
+        "description2": "ワークフローで、プロジェクトドキュメントをワンクリックで完成。",
+        "step1": "✓ コードコメント生成（JSDoc/TSDoc）",
+        "step2": "✓ READMEドキュメント生成",
+        "step3": "✓ APIドキュメント生成",
+        "step4": "✓ 完全なドキュメントセット出力"
+      }
+    },
+    "ralph": {
+      "title": "高度な実践：Ralph Wiggum Loop",
+      "advancedPractice": "高度な実践",
+      "loop": {
+        "title": "自動化ループ開発",
+        "description": "使用",
+        "description2": "で自動化開発ループを開始、AIが目標達成まで継続的に反復。",
+        "example1": "あなた: ユーザー認証機能を実装",
+        "round1": "第1ラウンド：要件分析 → コード生成",
+        "round2": "第2ラウンド：テスト実行 → エラー修正",
+        "round3": "第3ラウンド：コードレビュー → コード最適化",
+        "until": "まで：テスト合格 + 要件満足"
+      },
+      "warning": {
+        "title": "⚠️ 安全性に関する注意：",
+        "text": "Ralph Loopはデフォルトで複数の安全保護（最大反復回数、実行時間、コード変更量制限）を有効にし、暴走を防止します。"
+      }
+    },
+    "summary": {
+      "title": "ベストプラクティスまとめ",
+      "coreTitle": "コア原則：",
+      "principle1": "ワークフローオーケストレーションツール（start_*）を優先 - 完全なプロセスを自動化",
+      "principle2": "要件フェーズでinterviewを使用 - 誤解を回避",
+      "principle3": "開発前にestimateを使用 - 時間を合理的に計画",
+      "principle4": "コミット前にstart_reviewを使用 - コード品質を保証",
+      "principle5": "リリース前にstart_releaseを使用 - リリースプロセスを標準化"
+    },
+    "resources": {
+      "title": "その他のリソース",
+      "allTools": "完全なツールリファレンス",
+      "allToolsDesc": "全22ツールの詳細説明を表示",
+      "gettingStarted": "インストールと設定",
+      "gettingStartedDesc": "クイックスタートガイド",
+      "migration": "移行ガイド",
+      "migrationDesc": "v2.xからv3.0への移行",
+      "github": "GitHubリポジトリ",
+      "githubDesc": "ソースコードと問題報告"
+    },
+    "practice": {
+      "title": "🚀 実践を始める",
+      "description": "これらのベストプラクティスをプロジェクトに適用",
+      "install": "📖 インストールと設定",
+      "allTools": "🛠️ すべてのツールを表示"
+    }
+  }
+}

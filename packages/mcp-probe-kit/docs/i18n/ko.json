@@ -1,0 +1,557 @@
+{
+  "meta": {
+    "title": "MCP Probe Kit - AI 기반 완전한 개발 툴킷 | 전체 개발 라이프사이클을 커버하는 22개 도구",
+    "description": "MCP Probe Kit은 요구사항 분석, 코드 개발, 품질 보증, 버그 수정, 릴리스 관리를 커버하는 22개의 AI 기반 개발 도구를 제공합니다. Cursor, Cline, Claude Desktop을 지원하며 100% 구조화된 출력을 제공합니다.",
+    "keywords": "MCP Probe Kit, AI 개발 도구, 코드 생성, 코드 리뷰, Git 도구, UI 개발, 개발 효율성, Cursor, Cline, Claude, MCP 서버"
+  },
+  "nav": {
+    "home": "문서",
+    "docs": "문서",
+    "mainSite": "메인 사이트",
+    "github": "GitHub",
+    "npm": "npm"
+  },
+  "hero": {
+    "title": "🚀 MCP Probe Kit",
+    "subtitle": "AI 개발 강화 툴킷 · 문서 센터",
+    "version": "v3.0.16",
+    "quickStart": "빠른 시작",
+    "visitMainSite": "ByteZoneX 방문"
+  },
+  "sections": {
+    "quickStart": {
+      "title": "빠른 시작",
+      "description": "5분 안에 MCP Probe Kit v3.0.16 시작하기",
+      "installConfig": "설치 및 구성"
+    },
+    "tools": {
+      "title": "도구 문서",
+      "description": "22개 실용 도구의 완전한 참조. 코드 그래프 인사이트와 오케스트레이션 포함",
+      "allTools": "모든 도구"
+    },
+    "guides": {
+      "title": "가이드",
+      "description": "마이그레이션 가이드 및 모범 사례",
+      "migration": "v2.x → v3.0 마이그레이션 가이드",
+      "bestPractices": "모범 사례"
+    },
+    "resources": {
+      "title": "리소스",
+      "description": "소스 코드 및 커뮤니티 지원",
+      "mainSite": "ByteZoneX 메인 사이트",
+      "githubRepo": "GitHub 저장소",
+      "npmPackage": "npm 패키지",
+      "issues": "이슈 추적"
+    }
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "license": "MIT License",
+    "mainSite": "메인 사이트 ByteZoneX"
+  },
+  "sidebar": {
+    "quickStart": "빠른 시작",
+    "home": "문서 홈",
+    "installation": "설치 및 구성",
+    "toolsDocs": "도구 문서",
+    "allTools": "모든 도구",
+    "guides": "가이드",
+    "migration": "마이그레이션 가이드",
+    "examples": "모범 사례",
+    "followUs": "팔로우",
+    "getTechSharing": "기술 정보 받기"
+  },
+  "gettingStarted": {
+    "title": "설치 및 구성",
+    "subtitle": "5분 안에 MCP Probe Kit v3.0.10 시작하기. Cursor, Cline, Claude Desktop 지원",
+    "breadcrumb": {
+      "home": "문서",
+      "quickStart": "빠른 시작",
+      "installation": "설치"
+    },
+    "step1": {
+      "title": "설치 방법 선택",
+      "npx": {
+        "title": "npx로 직접 사용",
+        "recommended": "권장",
+        "description": "설치 불필요, 최신 버전 직접 사용：",
+        "advantage": "장점：",
+        "advantageText": "수동 업데이트 불필요, 시작할 때마다 자동으로 최신 버전 사용",
+        "copy": "복사"
+      },
+      "global": {
+        "title": "전역 설치",
+        "description": "시스템에 전역 설치：",
+        "configFile": "구성 파일：",
+        "note": "참고：",
+        "noteText": "수동으로 실행 필요",
+        "updateText": "버전 업데이트"
+      },
+      "windowsGraph": {
+        "title": "Windows 그래프 도구 안내",
+        "description": "그래프 관련 도구는 기본적으로 GitNexus 를 npx 로 시작하므로 Windows 에서 첫 실행이 느릴 수 있습니다.",
+        "item1": "첫 콜드 스타트에서는 npx 가 의존성을 확인하거나 다운로드하므로 20초 이상 걸릴 수 있습니다.",
+        "item2": "GitNexus 의 일부 의존성은 tree-sitter 네이티브 모듈을 사용하며 Windows 에서는 Visual Studio Build Tools 가 필요할 수 있습니다.",
+        "item3": "MCP 클라이언트가 env 를 지원하면, 미리 설치한 gitnexus CLI 를 우선 사용하고 GitNexus 타임아웃을 늘리세요.",
+        "item4": "Windows 에서 Build Tools 빠른 설치: winget install Microsoft.VisualStudio.2022.BuildTools",
+        "quickInstallTitle": "빠른 설치 명령:",
+        "exampleTitle": "미리 설치한 gitnexus CLI 를 사용하는 구성 예시:"
+      },
+      "source": {
+        "title": "소스에서 빌드",
+        "description": "소스 코드에서 빌드, 개발자용：",
+        "step1": "1. 저장소 복제",
+        "step2": "2. 종속성 설치 및 빌드",
+        "step3": "3. 구성 파일",
+        "tip": "팁：",
+        "tipText": "Windows 사용자는 전체 경로 사용, 예：",
+        "note": "참고：",
+        "noteText": "코드 수정 후 다시 실행 필요",
+        "compileText": "컴파일"
+      }
+    },
+    "step2": {
+      "title": "구성 파일 찾기",
+      "description": "사용 중인 MCP 클라이언트에 따라 해당 구성 파일 찾기：",
+      "cursor": {
+        "title": "Cursor / Cline",
+        "description": "프로젝트 루트 디렉토리에 생성 또는 편집",
+        "tip": "팁：",
+        "tipText": "Cursor와 Cline은 프로젝트 수준 구성을 사용하며, 각 프로젝트는 독립적인 MCP 서버 구성을 가질 수 있습니다."
+      },
+      "claudeWin": {
+        "title": "Claude Desktop (Windows)",
+        "path": "구성 파일 경로：",
+        "example": "예："
+      },
+      "claudeMac": {
+        "title": "Claude Desktop (macOS)",
+        "path": "구성 파일 경로："
+      }
+    },
+    "step3": {
+      "title": "설치 확인",
+      "description": "구성 완료 후 다음 단계로 확인：",
+      "step1": "MCP 클라이언트 재시작 (Cursor / Cline / Claude Desktop)",
+      "step2": "채팅 창에 입력：",
+      "step2Command": "gencommit 도구를 사용하여 테스트 커밋 메시지를 생성해주세요",
+      "step3": "Conventional Commits 사양을 따르는 커밋 메시지가 반환되면 설치 성공！",
+      "success": "성공 예：",
+      "successText": "AI가 다음과 같은 메시지 반환",
+      "successExample": "메시지",
+      "successCode": "feat: 사용자 인증 기능 추가",
+      "issues": "일반적인 문제：",
+      "issue1": "\"도구를 찾을 수 없음\" → 구성 파일 형식 확인",
+      "issue2": "\"명령을 찾을 수 없음\" → Node.js 설치 확인",
+      "issue3": "Windows 사용자 → npx 방식 사용 확인"
+    },
+    "step4": {
+      "title": "위임 오케스트레이션 프로토콜",
+      "description": "오케스트레이션 도구는 작업을 직접 실행하지 않고 실행 가능한 계획을 반환합니다.",
+      "keyFields": "주요 필드：",
+      "planExample": "계획 예",
+      "tip": "핵심：",
+      "tipText": "순서대로 실행",
+      "tipText2": "하고",
+      "tipText3": "파일이 실제로 디스크에 기록되는지 확인"
+    },
+    "faq": {
+      "title": "⚠️ 일반적인 문제",
+      "q1": {
+        "title": "문제 1：npx 캐시로 인한 모듈 해결 오류",
+        "error": "오류 메시지：",
+        "solution": "해결책：",
+        "solutionText": "npx 캐시 지우기",
+        "restart": "그런 다음 MCP 클라이언트 재시작"
+      },
+      "q2": {
+        "title": "문제 2：MCP 서버 연결 실패",
+        "possibleReasons": "가능한 원인：",
+        "reason1": "Node.js 버전이 너무 낮음 (>= 16.0.0 필요)",
+        "reason2": "종속성이 설치되지 않았거나 손상됨",
+        "reason3": "구성 파일 형식 오류",
+        "solution": "해결책：",
+        "step1": "Node.js 버전 확인：",
+        "step2": "v16 미만인 경우 Node.js를 업그레이드하세요",
+        "step3": "캐시 지우기 및 재설치：",
+        "step4": "구성 파일 JSON 형식이 올바른지 확인"
+      },
+      "q3": {
+        "title": "문제 3：Windows 에서 그래프 도구의 첫 실행이 느리거나 시간 초과됨",
+        "affected": "영향받는 도구：",
+        "error": "대표 오류：",
+        "reasons": "주요 원인：",
+        "reason1": "`npx -y gitnexus@latest mcp` 는 콜드 스타트이므로 첫 실행 시 의존성 확인 또는 다운로드에 20초 이상 걸릴 수 있습니다.",
+        "reason2": "GitNexus 가 의존하는 tree-sitter 네이티브 모듈은 Windows 에서 Visual Studio Build Tools 가 필요할 수 있습니다.",
+        "solution": "권장 조치：",
+        "step1": "C++ 워크로드가 포함된 Visual Studio Build Tools 를 설치하세요.",
+        "step2": "의존성 설치가 끝난 뒤 다시 한 번 실행해서 첫 콜드 스타트를 정상 지연과 구분하세요.",
+        "step3": "클라이언트가 env 를 지원하면 미리 설치한 gitnexus CLI 를 우선 사용하고 MCP_GITNEXUS_CONNECT_TIMEOUT_MS 와 MCP_GITNEXUS_TIMEOUT_MS 를 늘리세요."
+      }
+    },
+    "common": {
+      "copy": "복사",
+      "copied": "복사됨"
+    }
+  },
+  "migration": {
+    "breadcrumb": {
+      "home": "문서",
+      "guides": "가이드",
+      "migration": "마이그레이션 가이드"
+    },
+    "title": "v3.0 마이그레이션 가이드",
+    "subtitle": "v2.x에서 v3.0으로 원활하게 마이그레이션하고 주요 변경 사항 및 새로운 기능 이해",
+    "overview": {
+      "title": "개요",
+      "description": "MCP Probe Kit v3.0은 주요 버전 업데이트로, 22개 도구로 최적화되어 더 강력한 기능과 더 나은 개발 경험을 제공합니다.",
+      "migrationTime": "마이그레이션 시간：",
+      "migrationTimeText": "대부분의 프로젝트는 10-15분 내에 마이그레이션을 완료할 수 있으며, v2.x의 핵심 도구는 v3.0에서 호환성을 유지합니다."
+    },
+    "changes": {
+      "title": "주요 변경 사항",
+      "toolsOptimization": {
+        "title": "1. 도구 최적화",
+        "description": "v2.x: 39개 도구 → v3.x: 22개 도구 (저빈도 도구 제거, 고가치 도구 유지)"
+      },
+      "workflows": {
+        "title": "2. 새로운 워크플로 오케스트레이션",
+        "description": "11개의",
+        "description2": "워크플로 오케스트레이션 도구, 엔드투엔드 자동화 개발 프로세스 제공：",
+        "startFeature": "기능 개발 워크플로",
+        "startBugfix": "버그 수정 워크플로",
+        "startUi": "UI 개발 워크플로",
+        "startProduct": "제품 설계 워크플로",
+        "startRalph": "Ralph Loop 자동화 개발"
+      },
+      "uiTools": {
+        "title": "3. 새로운 UI/UX 도구 세트",
+        "description": "완전한 UI/UX 도구 체인：",
+        "designSystem": "지능형 디자인 시스템 생성기",
+        "uiSearch": "UI/UX 데이터베이스 검색",
+        "syncUiData": "UI/UX 데이터 동기화",
+        "componentCatalog": "컴포넌트 카탈로그 초기화",
+        "renderUi": "UI 렌더링 엔진"
+      },
+      "codeInsight": {
+        "title": "4. 새로운 코드 그래프 인사이트",
+        "description": "code_insight 가 docs/graph-insights 아래의 베이스라인 그래프 문서를 유지하고, start_feature/start_bugfix 는 계획 전에 GitNexus 인덱스를 갱신해 작업 단위 범위 수렴을 수행합니다."
+      },
+      "structuredOutput": {
+        "title": "5. 구조화된 출력 업그레이드",
+        "description": "핵심 및 오케스트레이션 도구는 구조화된 출력을 우선시하며, 일관되고 예측 가능한 출력 형식으로 도구 연결 및 상태 추적을 용이하게 합니다."
+      }
+    },
+    "steps": {
+      "title": "마이그레이션 단계",
+      "step1": {
+        "title": "단계 1：버전 업데이트",
+        "npxNote": "# npx 사용 시 (권장)",
+        "npxDesc": "# 작업 불필요, 자동으로 최신 버전 사용",
+        "globalNote": "# 전역 설치 시"
+      },
+      "step2": {
+        "title": "단계 2：구성 파일 확인",
+        "description": "v3.0 구성 파일 형식은 v2.x와 완전히 호환되며 수정이 필요하지 않습니다.",
+        "compatible": "하위 호환성：",
+        "compatibleText": "v2.x의 핵심 도구는 v3.0에서 호환성을 유지하며 원활한 업그레이드가 가능합니다."
+      }
+    },
+    "help": {
+      "title": "도움 받기",
+      "description": "마이그레이션 중 문제가 발생하면：",
+      "viewDocs": "보기",
+      "toolsReference": "완전한 도구 참조",
+      "askIn": "에서",
+      "askQuestion": "질문하기",
+      "reportIn": "에서",
+      "reportBug": "버그 보고"
+    },
+    "complete": {
+      "title": "🎉 마이그레이션 완료！",
+      "description": "v3.0의 강력한 기능 탐색 시작",
+      "viewTools": "모든 도구 보기",
+      "learnBestPractices": "모범 사례 학습"
+    }
+  },
+  "examples": {
+    "breadcrumb": {
+      "home": "문서",
+      "guides": "가이드",
+      "examples": "모범 사례"
+    },
+    "title": "모범 사례",
+    "subtitle": "MCP Probe Kit은 완전한 개발 프로세스를 통합, 요구사항부터 배포까지의 모범 사례 가이드",
+    "overview": {
+      "title": "완전한 개발 프로세스",
+      "description": "MCP Probe Kit의 22개 도구는 요구사항 분석부터 코드 배포까지의 완전한 개발 프로세스를 커버합니다. 다음은 권장되는 모범 사례입니다.",
+      "coreIdea": "핵심 철학：",
+      "coreIdeaText": "워크플로 오케스트레이션 도구(start_*)를 통해 전체 개발 프로세스를 연결하여 AI를 개발 어시스턴트로 만듭니다."
+    },
+    "stage0": {
+      "title": "단계 0：제품 설계 (요구사항부터 프로토타입까지)",
+      "workflow": {
+        "title": "0.1 완전한 제품 설계 워크플로 (권장)",
+        "description": "사용",
+        "description2": "워크플로 오케스트레이션, 원클릭으로 요구사항부터 HTML 프로토타입까지 완전한 제품 설계 완료.",
+        "example1": "당신: 제품 요구사항 문서 project.md가 있습니다, 완전한 제품 설계를 생성해주세요",
+        "productName": "온라인 교육 플랫폼",
+        "autoExecute": "→ 자동 실행：",
+        "autoLoop": "→ AI 자동 루프：",
+        "step1": "✓ 단계 1: 프로젝트 컨텍스트 확인/생성",
+        "step2": "✓ 단계 2: PRD 문서 생성",
+        "step3": "✓ 단계 3: 프로토타입 설계 문서 생성",
+        "step4": "✓ 단계 4: 디자인 시스템 생성",
+        "step5": "→ 단계 5: HTML 인터랙티브 프로토타입 생성",
+        "step6": "✓ 단계 6: 프로젝트 컨텍스트 인덱스 업데이트",
+        "outputs": "→ 출력 파일："
+      },
+      "prd": {
+        "title": "0.2 PRD 문서 개별 생성",
+        "description": "사용",
+        "description2": "도구로 제품 요구사항 문서를 개별적으로 생성.",
+        "example1": "당신: 온라인 교육 플랫폼의 PRD를 생성해주세요",
+        "description3": "온라인 교육 플랫폼, 강좌 관리, 비디오 재생, 과제 제출 지원",
+        "aiCreate": "→ AI가 가이드에 따라 docs/prd/product-requirements.md 생성",
+        "includes": "PRD 포함 내용:",
+        "item1": "- 제품 개요 (비전, 대상 사용자, 핵심 가치)",
+        "item2": "- 기능 요구사항 (핵심 기능, 사용자 스토리)",
+        "item3": "- 기능 우선순위 (P0/P1/P2)",
+        "item4": "- 비기능 요구사항 (성능, 보안, 호환성)",
+        "item5": "- 페이지 목록"
+      },
+      "prototype": {
+        "title": "0.3 HTML 인터랙티브 프로토타입 생성",
+        "description": "사용",
+        "description2": "도구로 프로토타입 문서를 기반으로 HTML 프로토타입 생성.",
+        "desc": "프로토타입 문서를 기반으로 모든 페이지의 HTML 프로토타입 생성",
+        "step1": "✓ docs/prototype/ 하위의 모든 프로토타입 문서 읽기",
+        "step2": "✓ docs/design-system.json을 읽어 디자인 사양 가져오기",
+        "step3": "✓ 각 페이지의 HTML 파일 생성",
+        "step4": "✓ 인덱스 페이지 index.html 생성",
+        "features": "→ 특징:",
+        "feature1": "- 디자인 시스템의 색상과 글꼴 사용",
+        "feature2": "- 페이지 네비게이션 포함",
+        "feature3": "- 반응형 디자인"
+      },
+      "summary": {
+        "title": "0.4 제품 설계 워크플로우 요약",
+        "recommended": "권장 프로세스:",
+        "step1": "요구사항 문서 준비 (Markdown 형식)",
+        "step2": "사용",
+        "step2b": "로 원클릭으로 완전한 제품 설계 생성",
+        "step3": "브라우저에서 HTML 프로토타입 확인",
+        "step4": "팀과 프로토타입 검토 및 피드백 수집",
+        "step5": "피드백에 따라 프로토타입 문서 조정",
+        "step6": "사용",
+        "step6b": "로 HTML 프로토타입 재생성",
+        "step7": "확인 후 개발 단계로 진행"
+      }
+    },
+    "stage1": {
+      "title": "단계 1：요구사항 분석 및 계획",
+      "init": {
+        "title": "1.1 신규 프로젝트 초기화",
+        "description": "사용",
+        "description2": "로 Spec-Driven Development 방식에 따라 프로젝트 문서 생성.",
+        "example1": "당신: 작업 관리 시스템을 만들고 싶습니다",
+        "input": "작업 관리 시스템, 작업 생성, 할당, 추적, 알림 지원",
+        "generate": "→ 생성：요구사항 문서, 설계 문서, 작업 목록"
+      },
+      "interview": {
+        "title": "1.2 요구사항 명확화 (오해 방지)",
+        "description": "사용",
+        "description2": "도구로 구조화된 요구사항 인터뷰 진행.",
+        "example1": "당신: 사용자 로그인 기능 추가",
+        "desc": "사용자 로그인 기능 구현",
+        "aiAsk": "→ AI가 질문합니다:",
+        "q1": "- 어떤 로그인 방식을 지원하나요? (이메일/전화/제3자)",
+        "q2": "- 로그인 상태를 기억해야 하나요?",
+        "q3": "- 비밀번호 규칙은 무엇인가요?",
+        "q4": "- 인증 코드가 필요한가요?",
+        "generate": "→ 생성：인터뷰 기록 문서"
+      },
+      "estimate": {
+        "title": "1.3 작업량 추정",
+        "description": "사용",
+        "description2": "도구로 개발 시간과 리소스 추정.",
+        "task": "사용자 인증 기능 구현",
+        "output": "→ 출력:",
+        "sp": "- 스토리 포인트: 8 SP",
+        "time": "- 시간 범위: 낙관적 3일 / 정상 5일 / 비관적 8일",
+        "risk": "- 위험: 제3자 로그인 통합이 지연될 수 있음"
+      },
+      "codeInsight": {
+        "title": "1.4 기존 코드 그래프 인사이트",
+        "description": "사용",
+        "description2": "GitNexus 인덱스를 갱신하고 baseline graph-insights 문서를 저장한 뒤 작업 단위 호출 체인, 컨텍스트, 영향 범위를 분석합니다.",
+        "example1": "당신: 로그인과 토큰 갱신 호출 체인을 분석해서 어떤 모듈이 영향받는지 알려주세요",
+        "goal": "기존 로그인 및 토큰 갱신 흐름 찾기",
+        "taskContext": "인증 모듈 수정 준비",
+        "output": "→ 출력:",
+        "item1": "- 관련 실행 흐름 / 호출 체인",
+        "item2": "- 핵심 심볼과 파일 위치",
+        "item3": "- _meta.graph.snapshotUri / markdownFilePath",
+        "item4": "- 후속 워크플로우가 재사용할 docs/graph-insights/latest.* 및 project-context 인덱스 진입점"
+      }
+    },
+    "common": {
+      "bestPractice": "모범 사례"
+    },
+    "stage2": {
+      "title": "단계 2: 기능 개발",
+      "workflow": {
+        "title": "2.1 완전한 기능 개발 워크플로우 (권장)",
+        "description": "사용",
+        "description2": "워크플로우 오케스트레이션으로 사양에서 추정까지 원클릭 완료.",
+        "example1": "당신: 사용자 인증 기능 개발",
+        "step1": "✓ 프로젝트 컨텍스트를 확인하고 누락된 graph-insights 를 보강한 뒤 GitNexus 인덱스를 갱신",
+        "step2": "✓ 기능 사양 문서 생성",
+        "step3": "✓ 개발 작업량 추정",
+        "step4": "✓ 완전한 개발 계획 출력"
+      },
+      "ui": {
+        "title": "2.2 UI 개발 워크플로우",
+        "description": "사용",
+        "description2": "워크플로우로 디자인 시스템에서 코드까지 한 번에.",
+        "example1": "당신: 로그인 페이지 생성",
+        "step1": "✓ 디자인 시스템 확인/생성",
+        "step2": "✓ 컴포넌트 디렉토리 초기화",
+        "step3": "✓ UI 템플릿 검색/생성",
+        "step4": "✓ 최종 React 코드 렌더링"
+      },
+      "codegen": {
+        "title": "2.3 코드 생성",
+        "description": "필요에 따라 다양한 생성 도구 사용:",
+        "genapi": "API 문서 생성 (OpenAPI/Swagger)",
+        "gensql": "자연어에서 SQL 쿼리 생성",
+        "genmock": "테스트 데이터 생성",
+        "gentest": "단위 테스트 생성"
+      }
+    },
+    "stage3": {
+      "title": "단계 3: 코드 품질 보증",
+      "review": {
+        "title": "3.1 포괄적 코드 리뷰 (권장)",
+        "description": "사용",
+        "description2": "워크플로우로 코드 리뷰, 보안 스캔, 성능 분석을 한 번에 완료.",
+        "example1": "당신: 이 코드를 검토해주세요",
+        "step1": "✓ 코드 리뷰 (품질, 스타일, 모범 사례)",
+        "step2": "✓ 보안 스캔 (SQL 인젝션, XSS, CSRF)",
+        "step3": "✓ 성능 분석 (알고리즘, 메모리, 데이터베이스)",
+        "step4": "✓ 종합 보고서 출력"
+      },
+      "single": {
+        "title": "3.2 개별 검사",
+        "description": "특정 문제에 대해 개별 도구 사용:",
+        "codeReview": "코드 리뷰",
+        "securityScan": "보안 스캔",
+        "perf": "성능 분석",
+        "refactor": "리팩토링 제안"
+      }
+    },
+    "stage4": {
+      "title": "단계 4: 버그 수정",
+      "bugfix": {
+        "title": "4.1 체계적인 버그 수정 (권장)",
+        "description": "사용",
+        "description2": "워크플로우로 기본적으로 TBP 8단계 근본원인 분석을 먼저 수행한 뒤 수정과 테스트로 진행합니다.",
+        "example1": "당신: 로그인 기능에서 오류가 발생했습니다",
+        "step1": "✓ 프로젝트 컨텍스트를 확인하고 누락된 graph-insights 를 보강한 뒤 GitNexus 인덱스를 갱신",
+        "step2": "✓ TBP-1~4로 현상, 타임라인, 공통 패턴을 정리",
+        "step3": "✓ TBP-5/6으로 실패 경계와 인과적 근본원인을 확정",
+        "step4": "✓ 증거 사슬을 바탕으로 수정안과 위험을 제시",
+        "step5": "✓ 검증 절차와 회귀 테스트를 생성"
+      },
+      "quick": {
+        "title": "4.2 빠른 버그 분석",
+        "description": "사용",
+        "description2": "도구로 TBP 8단계 빠른 RCA를 수행하고 수정 및 검증 가이드를 제공합니다."
+      }
+    },
+    "stage5": {
+      "title": "단계 5: 릴리스 관리",
+      "release": {
+        "title": "5.1 자동화된 릴리스 프로세스 (권장)",
+        "description": "사용",
+        "description2": "워크플로우로 Changelog 및 PR 설명 자동 생성.",
+        "example1": "당신: v2.0.0 릴리스 준비",
+        "step1": "✓ CHANGELOG 생성 (feat/fix/breaking으로 분류)",
+        "step2": "✓ PR 설명 생성 (변경 요약, 영향 범위)",
+        "step3": "✓ 릴리스 체크리스트 출력"
+      },
+      "git": {
+        "title": "5.2 Git 워크플로우",
+        "description": "Git 도구로 협업 효율성 향상:",
+        "gencommit": "표준 커밋 메시지 생성",
+        "genchangelog": "CHANGELOG 생성",
+        "genpr": "PR 설명 생성",
+        "resolveConflict": "병합 충돌 해결"
+      }
+    },
+    "stage6": {
+      "title": "단계 6: 프로젝트 유지보수",
+      "onboard": {
+        "title": "6.1 신규 멤버 온보딩",
+        "description": "사용",
+        "description2": "워크플로우로 프로젝트를 빠르게 이해.",
+        "example1": "새 멤버: 프로젝트에 막 합류했는데, 프로젝트 구조를 이해해야 합니다",
+        "step1": "✓ 컨텍스트 문서 생성",
+        "step2": "✓ 개발 규범 출력"
+      },
+      "doc": {
+        "title": "6.2 문서 유지보수",
+        "description": "사용",
+        "description2": "워크플로우로 프로젝트 문서를 원클릭으로 완성.",
+        "step1": "✓ 코드 주석 생성 (JSDoc/TSDoc)",
+        "step2": "✓ README 문서 생성",
+        "step3": "✓ API 문서 생성",
+        "step4": "✓ 완전한 문서 세트 출력"
+      }
+    },
+    "ralph": {
+      "title": "고급 실습: Ralph Wiggum Loop",
+      "advancedPractice": "고급 실습",
+      "loop": {
+        "title": "자동화 루프 개발",
+        "description": "사용",
+        "description2": "로 자동화 개발 루프 시작, AI가 목표 달성까지 지속적으로 반복.",
+        "example1": "당신: 사용자 인증 기능 구현",
+        "round1": "1라운드: 요구사항 분석 → 코드 생성",
+        "round2": "2라운드: 테스트 실행 → 오류 수정",
+        "round3": "3라운드: 코드 리뷰 → 코드 최적화",
+        "until": "까지: 테스트 통과 + 요구사항 충족"
+      },
+      "warning": {
+        "title": "⚠️ 안전 알림:",
+        "text": "Ralph Loop는 기본적으로 여러 안전 보호 기능(최대 반복 횟수, 실행 시간, 코드 변경량 제한)을 활성화하여 폭주를 방지합니다."
+      }
+    },
+    "summary": {
+      "title": "모범 사례 요약",
+      "coreTitle": "핵심 원칙:",
+      "principle1": "워크플로우 오케스트레이션 도구(start_*) 우선 사용 - 완전한 프로세스 자동화",
+      "principle2": "요구사항 단계에서 interview 사용 - 오해 방지",
+      "principle3": "개발 전 estimate 사용 - 시간을 합리적으로 계획",
+      "principle4": "커밋 전 start_review 사용 - 코드 품질 보장",
+      "principle5": "릴리스 전 start_release 사용 - 릴리스 프로세스 표준화"
+    },
+    "resources": {
+      "title": "추가 리소스",
+      "allTools": "완전한 도구 참조",
+      "allToolsDesc": "모든 22개 도구의 자세한 설명 보기",
+      "gettingStarted": "설치 및 구성",
+      "gettingStartedDesc": "빠른 시작 가이드",
+      "migration": "마이그레이션 가이드",
+      "migrationDesc": "v2.x에서 v3.0으로 마이그레이션",
+      "github": "GitHub 저장소",
+      "githubDesc": "소스 코드 및 이슈 피드백"
+    },
+    "practice": {
+      "title": "🚀 실습 시작",
+      "description": "이러한 모범 사례를 프로젝트에 적용",
+      "install": "📖 설치 및 구성",
+      "allTools": "🛠️ 모든 도구 보기"
+    }
+  }
+}

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速开始 - 安装配置指南 | MCP Probe Kit</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="MCP Probe Kit 快速开始指南：支持 Cursor、Cline、Claude Desktop 三大平台，5分钟完成安装配置。">
+    <meta name="keywords" content="MCP Probe Kit 安装, Cursor 配置, Cline 配置, Claude Desktop 配置">
+    <meta name="author" content="小墨 (Kyle) - ByteZoneX">
+    
+    <script src="../assets/js/tailwind.js" data-cfasync="false"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#2563EB',
+                            hover: '#1D4ED8',
+                        },
+                        text: {
+                            primary: '#0F172A',
+                            secondary: '#475569',
+                            tertiary: '#64748B',
+                        },
+                        bg: {
+                            page: '#F8FAFC',
+                            card: '#FFFFFF',
+                        },
+                        border: '#E2E8F0',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .code-block { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* 移动端抽屉效果 */
+        .sidebar-drawer { transition: transform 0.3s ease; }
+        @media (max-width: 767px) {
+            .sidebar-drawer { transform: translateX(-100%); }
+            .sidebar-drawer.open { transform: translateX(0); }
+        }
+        .backdrop { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .backdrop.active { opacity: 1; pointer-events: auto; }
+        
+        /* i18n 加载优化：防止内容闪烁 */
+        body:not(.i18n-ready) [data-i18n] {
+            visibility: hidden;
+        }
+        body.i18n-ready [data-i18n] {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="font-sans bg-bg-page text-text-primary leading-relaxed min-h-screen flex flex-col">
+    <!-- A. 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-md border-b border-border z-50">
+        <div class="h-full px-4 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-2 text-base font-semibold text-text-primary no-underline">
+                <span>🚀</span>
+                <span class="sm:inline hidden">MCP Probe Kit</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <div id="lang-switcher-container"></div>
+                <button onclick="toggleSidebar()" class="md:hidden p-2 text-text-secondary hover:text-primary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 侧边栏遮罩 -->
+    <div class="fixed inset-0 bg-black/50 z-40 backdrop opacity-0 pointer-events-none transition-opacity duration-300 md:opacity-100 md:pointer-events-auto md:hidden" onclick="toggleSidebar()" id="backdrop"></div>
+
+    <!-- B. 侧边栏 -->
+    <aside class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-border z-50 sidebar-drawer overflow-y-auto md:translate-x-0 md:block" id="sidebar">
+        <div class="p-4">
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.quickStart">快速开始</div>
+                <a href="../index.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🏠</span>
+                    <span data-i18n="sidebar.home">文档首页</span>
+                </a>
+                <a href="./getting-started.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-blue-50 text-primary no-underline border-l-3 border-primary">
+                    <span>📖</span>
+                    <span data-i18n="sidebar.installation">安装配置</span>
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.toolsDocs">工具文档</div>
+                <a href="./all-tools.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🛠️</span>
+                    <span data-i18n="sidebar.allTools">所有工具</span>
+                    <span class="ml-auto bg-bg-page text-xs px-2 py-0.5 rounded-full">22</span>
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.guides">指南</div>
+                <a href="./migration.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🚀</span>
+                    <span data-i18n="sidebar.migration">迁移指南</span>
+                </a>
+                <a href="./examples.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>💡</span>
+                    <span data-i18n="sidebar.examples">最佳实践</span>
+                </a>
+            </div>
+            
+            <div class="pt-4 border-t border-border">
+                <a href="https://github.com/mybolide/mcp-probe-kit" target="_blank" rel="noopener" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>💻</span>
+                    <span>GitHub</span>
+                    <span class="ml-auto text-xs">↗</span>
+                </a>
+                <a href="https://npmjs.com/package/mcp-probe-kit" target="_blank" rel="noopener" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>📦</span>
+                    <span>npm</span>
+                    <span class="ml-auto text-xs">↗</span>
+                </a>
+            </div>
+
+            <!-- QR Code -->
+            <div class="mt-4 pt-4 border-t border-border">
+                <div class="text-center">
+                    <div class="text-xs font-semibold text-text-tertiary mb-2" data-i18n="sidebar.followUs">关注公众号</div>
+                    <img src="https://oss.bolzjb.com/wx_qrcode.jpg" alt="微信公众号" class="w-[100px] h-[100px] mx-auto rounded-lg border border-border" />
+                    <div class="text-xs text-text-tertiary mt-2" data-i18n="sidebar.getTechSharing">获取更多技术分享</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- C. 主内容区 -->
+    <main class="flex-1 mt-14 min-h-screen md:ml-64">
+        <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+            
+            <!-- 面包屑 -->
+            <nav class="flex items-center gap-1 text-sm text-text-secondary mb-4 overflow-x-auto whitespace-nowrap">
+                <a href="../index.html" class="hover:text-primary transition-colors no-underline flex-shrink-0" data-i18n="gettingStarted.breadcrumb.home">文档首页</a>
+                <span class="text-text-tertiary">/</span>
+                <span class="text-text-primary flex-shrink-0" data-i18n="gettingStarted.breadcrumb.quickStart">快速开始</span>
+                <span class="text-text-tertiary">/</span>
+                <span class="text-text-primary flex-shrink-0" data-i18n="gettingStarted.breadcrumb.installation">安装配置</span>
+            </nav>
+
+            <!-- 页面标题 -->
+            <div class="mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-text-primary mb-2" data-i18n="gettingStarted.title">安装配置</h1>
+                    <p class="text-sm sm:text-base text-text-secondary" data-i18n="gettingStarted.subtitle">5 分钟快速上手 MCP Probe Kit v3.0.10，支持 Cursor、Cline 和 Claude Desktop</p>
+                <div class="flex flex-wrap items-center gap-2 mt-3 text-xs text-text-tertiary">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">v3.0.10</span>
+                    <span>MCP 2025-11-25</span>
+                    <span>SDK 1.27.1</span>
+                </div>
+            </div>
+
+            <!-- Step 1: 选择安装方式 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-primary-hover text-white rounded-full flex items-center justify-center font-semibold text-sm sm:text-base flex-shrink-0">1</div>
+                    <h2 class="text-lg sm:text-xl font-semibold text-text-primary" data-i18n="gettingStarted.step1.title">选择安装方式</h2>
+                </div>
+                
+                <!-- 安装方式 Tab -->
+                <div class="space-y-4">
+                    <!-- npx 方式 -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleInstall('npx')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">⚡</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step1.npx.title">npx 直接使用</span>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-medium" data-i18n="gettingStarted.step1.npx.recommended">推荐</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="npx-icon" style="transform: rotate(180deg);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                            <div id="npx-content" class="p-4 border-t border-border">
+                            <p class="text-text-secondary mb-3 text-sm" data-i18n="gettingStarted.step1.npx.description">无需安装，直接使用最新版本：</p>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">JSON</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                </div>
+                                <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>{
+  "mcpServers": {
+    "mcp-probe-kit": {
+      "command": "npx",
+      "args": ["-y", "mcp-probe-kit@latest"]
+    }
+  }
+}</code></pre>
+                            </div>
+                            <div class="mt-3 p-3 bg-blue-50 border-l-3 border-blue-500 rounded-r text-sm text-text-primary">
+                                <strong data-i18n="gettingStarted.step1.npx.advantage">优势：</strong><span data-i18n="gettingStarted.step1.npx.advantageText">无需手动更新，每次启动自动使用最新版本</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 全局安装 -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleInstall('global')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">📦</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step1.global.title">全局安装</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="global-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="global-content" class="hidden p-4 border-t border-border">
+                            <p class="text-text-secondary mb-3 text-sm" data-i18n="gettingStarted.step1.global.description">全局安装到系统：</p>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">Bash</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                </div>
+                                <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>npm install -g mcp-probe-kit</code></pre>
+                            </div>
+                            <p class="text-text-secondary mt-3 mb-2 text-sm" data-i18n="gettingStarted.step1.global.configFile">配置文件：</p>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">JSON</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                </div>
+                                <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>{
+  "mcpServers": {
+    "mcp-probe-kit": {
+      "command": "mcp-probe-kit"
+    }
+  }
+}</code></pre>
+                            </div>
+                            <div class="mt-3 p-3 bg-amber-50 border-l-3 border-amber-500 rounded-r text-sm text-text-primary">
+                                <strong data-i18n="gettingStarted.step1.global.note">注意：</strong><span data-i18n="gettingStarted.step1.global.noteText">需要手动运行</span> <code class="bg-gray-200 px-1 rounded text-xs">npm update -g mcp-probe-kit</code> <span data-i18n="gettingStarted.step1.global.updateText">更新版本</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 源码编译 -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleInstall('source')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">🔧</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step1.source.title">源码编译</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="source-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="source-content" class="hidden p-4 border-t border-border">
+                            <p class="text-text-secondary mb-3 text-sm" data-i18n="gettingStarted.step1.source.description">从源码编译安装，适合开发者：</p>
+                            
+                            <div class="mb-4">
+                                <p class="font-medium text-sm mb-2" data-i18n="gettingStarted.step1.source.step1">1. 克隆仓库</p>
+                                <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                    <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                        <span class="text-xs text-slate-300 font-medium">Bash</span>
+                                        <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                    </div>
+                                    <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>git clone https://github.com/mybolide/mcp-probe-kit.git
+cd mcp-probe-kit</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p class="font-medium text-sm mb-2" data-i18n="gettingStarted.step1.source.step2">2. 安装依赖并编译</p>
+                                <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                    <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                        <span class="text-xs text-slate-300 font-medium">Bash</span>
+                                        <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                    </div>
+                                    <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>npm install
+npm run build</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p class="font-medium text-sm mb-2" data-i18n="gettingStarted.step1.source.step3">3. 配置文件</p>
+                                <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                    <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                        <span class="text-xs text-slate-300 font-medium">JSON</span>
+                                        <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                    </div>
+                                    <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>{
+  "mcpServers": {
+    "mcp-probe-kit": {
+      "command": "node",
+      "args": ["/path/to/mcp-probe-kit/build/index.js"]
+    }
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="p-3 bg-blue-50 border-l-3 border-blue-500 rounded-r text-sm text-text-primary mb-2">
+                                <strong data-i18n="gettingStarted.step1.source.tip">提示：</strong><span data-i18n="gettingStarted.step1.source.tipText">Windows 用户使用完整路径，如</span> <code class="bg-gray-200 px-1 rounded text-xs">D:/workspace/mcp-probe-kit/build/index.js</code>
+                            </div>
+                            <div class="p-3 bg-amber-50 border-l-3 border-amber-500 rounded-r text-sm text-text-primary">
+                                <strong data-i18n="gettingStarted.step1.source.note">注意：</strong><span data-i18n="gettingStarted.step1.source.noteText">修改代码后需要重新运行</span> <code class="bg-gray-200 px-1 rounded text-xs">npm run build</code> <span data-i18n="gettingStarted.step1.source.compileText">编译</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r text-sm text-text-primary">
+                        <h3 class="font-semibold mb-2" data-i18n="gettingStarted.step1.windowsGraph.title">Windows Notes for Graph Tools</h3>
+                        <p class="mb-2 text-text-secondary" data-i18n="gettingStarted.step1.windowsGraph.description">Graph-aware tools may have a slower first run on Windows because GitNexus is started through npx by default.</p>
+                        <ul class="list-disc list-inside space-y-1 mb-3">
+                            <li data-i18n="gettingStarted.step1.windowsGraph.item1">The first cold start may take 20+ seconds while npx checks or downloads dependencies.</li>
+                            <li data-i18n="gettingStarted.step1.windowsGraph.item2">Some GitNexus dependencies use tree-sitter native modules and may require Visual Studio Build Tools.</li>
+                            <li data-i18n="gettingStarted.step1.windowsGraph.item3">If your MCP client supports env, prefer a preinstalled gitnexus CLI and raise GitNexus timeouts.</li>
+                            <li data-i18n="gettingStarted.step1.windowsGraph.item4">Quick install Build Tools on Windows: winget install Microsoft.VisualStudio.2022.BuildTools</li>
+                        </ul>
+                        <p class="mb-2" data-i18n="gettingStarted.step1.windowsGraph.quickInstallTitle">Quick install command:</p>
+                        <pre class="code-block mb-3 p-3 text-sm text-slate-200 bg-slate-900 rounded overflow-x-auto"><code>winget install Microsoft.VisualStudio.2022.BuildTools</code></pre>
+                        <p class="mb-2" data-i18n="gettingStarted.step1.windowsGraph.exampleTitle">Example using a preinstalled gitnexus CLI:</p>
+                        <div class="bg-slate-900 rounded-lg overflow-hidden">
+                            <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                <span class="text-xs text-slate-300 font-medium">JSON</span>
+                                <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋</button>
+                            </div>
+                            <pre class="code-block p-3 text-sm text-slate-200 overflow-x-auto"><code>{
+  "mcpServers": {
+    "mcp-probe-kit": {
+      "command": "mcp-probe-kit",
+      "env": {
+        "MCP_GITNEXUS_COMMAND": "gitnexus",
+        "MCP_GITNEXUS_ARGS": "mcp",
+        "MCP_GITNEXUS_CONNECT_TIMEOUT_MS": "30000",
+        "MCP_GITNEXUS_TIMEOUT_MS": "45000"
+      }
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: 配置文件位置 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-primary-hover text-white rounded-full flex items-center justify-center font-semibold text-sm sm:text-base flex-shrink-0">2</div>
+                    <h2 class="text-lg sm:text-xl font-semibold text-text-primary" data-i18n="gettingStarted.step2.title">找到配置文件</h2>
+                </div>
+                
+                <p class="text-text-secondary mb-4 text-sm" data-i18n="gettingStarted.step2.description">根据你使用的 MCP 客户端，找到对应的配置文件：</p>
+                
+                <!-- 客户端选择 -->
+                <div class="space-y-3">
+                    <!-- Cursor / Cline -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleClient('cursor')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">📝</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step2.cursor.title">Cursor / Cline</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="cursor-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="cursor-content" class="hidden p-4 border-t border-border">
+                            <p class="text-text-secondary text-sm mb-3"><span data-i18n="gettingStarted.step2.cursor.description">在项目根目录创建或编辑</span> <code class="bg-gray-200 px-1 rounded text-xs">.cursor/mcp.json</code> 或 <code class="bg-gray-200 px-1 rounded text-xs">.cline/mcp.json</code></p>
+                            <div class="p-3 bg-blue-50 border-l-3 border-blue-500 rounded-r text-sm">
+                                <strong>💡 <span data-i18n="gettingStarted.step2.cursor.tip">提示：</span></strong><span data-i18n="gettingStarted.step2.cursor.tipText">Cursor 和 Cline 使用项目级配置，每个项目可以有独立的 MCP 服务器配置。</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Claude Desktop Windows -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleClient('claude-win')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">🪟</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step2.claudeWin.title">Claude Desktop (Windows)</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="claude-win-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="claude-win-content" class="hidden p-4 border-t border-border">
+                            <p class="text-text-secondary text-sm mb-2" data-i18n="gettingStarted.step2.claudeWin.path">配置文件路径：</p>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">Path</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                </div>
+                                <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>%APPDATA%\Claude\claude_desktop_config.json</code></pre>
+                            </div>
+                            <p class="text-text-secondary text-sm mt-2"><span data-i18n="gettingStarted.step2.claudeWin.example">示例：</span><code class="bg-gray-200 px-1 rounded text-xs">C:\Users\YourName\AppData\Roaming\Claude\claude_desktop_config.json</code></p>
+                        </div>
+                    </div>
+
+                    <!-- Claude Desktop macOS -->
+                    <div class="border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleClient('claude-mac')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">🍎</span>
+                                <span class="font-medium text-text-primary" data-i18n="gettingStarted.step2.claudeMac.title">Claude Desktop (macOS)</span>
+                            </div>
+                            <svg class="w-5 h-5 text-text-tertiary transition-transform" id="claude-mac-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="claude-mac-content" class="hidden p-4 border-t border-border">
+                            <p class="text-text-secondary text-sm mb-2" data-i18n="gettingStarted.step2.claudeMac.path">配置文件路径：</p>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">Path</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋 复制</button>
+                                </div>
+                                <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: 验证安装 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-primary-hover text-white rounded-full flex items-center justify-center font-semibold text-sm sm:text-base flex-shrink-0">3</div>
+                    <h2 class="text-lg sm:text-xl font-semibold text-text-primary" data-i18n="gettingStarted.step3.title">验证安装</h2>
+                </div>
+                
+                <div class="pl-0 sm:pl-0">
+                    <p class="text-text-secondary mb-3 text-sm" data-i18n="gettingStarted.step3.description">完成配置后，按以下步骤验证：</p>
+                    <ol class="list-decimal list-inside space-y-2 text-sm text-text-primary mb-4">
+                        <li data-i18n="gettingStarted.step3.step1">重启 MCP 客户端（Cursor / Cline / Claude Desktop）</li>
+                        <li data-i18n="gettingStarted.step3.step2">在聊天窗口中输入：<code class="bg-gray-200 px-1 rounded text-xs">请使用 gencommit 工具生成一个测试提交消息</code></li>
+                        <li data-i18n="gettingStarted.step3.step3">如果返回符合 Conventional Commits 规范的提交消息，说明安装成功！</li>
+                    </ol>
+                    
+                    <div class="p-3 bg-green-50 border-l-3 border-green-500 rounded-r text-sm text-text-primary mb-2">
+                        <strong>✅ <span data-i18n="gettingStarted.step3.success">成功示例：</span></strong><span data-i18n="gettingStarted.step3.successText">AI 返回类似</span> <code class="bg-gray-200 px-1 rounded text-xs" data-i18n="gettingStarted.step3.successCode">feat: 添加用户认证功能</code> <span data-i18n="gettingStarted.step3.successExample">的消息</span>
+                    </div>
+                    <div class="p-3 bg-red-50 border-l-3 border-red-500 rounded-r text-sm">
+                        <strong>❌ <span data-i18n="gettingStarted.step3.issues">常见问题：</span></strong>
+                        <ul class="list-disc list-inside mt-1 text-text-primary">
+                            <li data-i18n="gettingStarted.step3.issue1">提示找不到工具 → 检查配置文件格式</li>
+                            <li data-i18n="gettingStarted.step3.issue2">提示命令不存在 → 确认 Node.js 已安装</li>
+                            <li data-i18n="gettingStarted.step3.issue3">Windows 用户 → 确保使用 npx 方式</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4: 委托式编排 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-primary-hover text-white rounded-full flex items-center justify-center font-semibold text-sm sm:text-base flex-shrink-0">4</div>
+                    <h2 class="text-lg sm:text-xl font-semibold text-text-primary" data-i18n="gettingStarted.step4.title">委托式编排协议</h2>
+                </div>
+                
+                <div class="pl-0 sm:pl-0 text-sm text-text-primary space-y-3">
+                    <p><code class="bg-gray-200 px-1 rounded text-xs">start_*</code> <span data-i18n="gettingStarted.step4.description">编排工具不会直接执行操作，而是返回一个可执行计划。</span></p>
+                    <p><strong data-i18n="gettingStarted.step4.keyFields">关键字段：</strong><code class="bg-gray-200 px-1 rounded text-xs">mode: "delegated"</code>、<code class="bg-gray-200 px-1 rounded text-xs">steps[]</code>、<code class="bg-gray-200 px-1 rounded text-xs">outputs[]</code></p>
+                    
+                    <div class="bg-slate-900 rounded-lg overflow-hidden">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="gettingStarted.step4.planExample">Plan 示例</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>{
+  "mode": "delegated",
+  "steps": [
+    {
+      "id": "spec",
+      "tool": "add_feature",
+      "args": { "feature_name": "user-auth" },
+      "outputs": ["docs/specs/user-auth/requirements.md"]
+    }
+  ]
+}</code></pre>
+                    </div>
+                    
+                    <div class="p-3 bg-blue-50 border-l-3 border-blue-500 rounded-r text-sm">
+                        <strong>💡 <span data-i18n="gettingStarted.step4.tip">要点：</span></strong><span data-i18n="gettingStarted.step4.tipText">按顺序执行</span> <code class="bg-gray-200 px-1 rounded text-xs">steps</code><span data-i18n="gettingStarted.step4.tipText2">，并确保</span> <code class="bg-gray-200 px-1 rounded text-xs">outputs</code> <span data-i18n="gettingStarted.step4.tipText3">文件真实落盘</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 常见问题 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="gettingStarted.faq.title">⚠️ 常见问题</h2>
+                
+                <!-- 问题 1 -->
+                <div class="border border-border rounded-lg overflow-hidden mb-4">
+                    <button onclick="toggleFaq('faq1')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                        <span class="font-medium text-text-primary" data-i18n="gettingStarted.faq.q1.title">问题 1：npx 缓存导致的模块解析错误</span>
+                        <svg class="w-5 h-5 text-text-tertiary transition-transform" id="faq1-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="faq1-content" class="hidden p-4 border-t border-border">
+                        <div class="p-3 bg-red-50 border-l-3 border-red-500 rounded-r text-sm text-text-primary mb-3">
+                            <strong data-i18n="gettingStarted.faq.q1.error">错误信息：</strong>
+                            <pre class="code-block mt-2 text-xs text-slate-200 bg-slate-900 p-2 rounded overflow-x-auto"><code>Error: Cannot find package 'yallist'</code></pre>
+                        </div>
+                        <p class="text-sm text-text-primary mb-2"><strong data-i18n="gettingStarted.faq.q1.solution">解决方案：</strong><span data-i18n="gettingStarted.faq.q1.solutionText">清理 npx 缓存</span></p>
+                        <div class="space-y-2">
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">Windows CMD</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋</button>
+                                </div>
+                                <pre class="code-block p-3 text-sm text-slate-200 overflow-x-auto"><code>rmdir /s /q %LOCALAPPDATA%\npm-cache\_npx</code></pre>
+                            </div>
+                            <div class="bg-slate-900 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                                    <span class="text-xs text-slate-300 font-medium">macOS/Linux</span>
+                                    <button onclick="copyCode(this)" class="text-xs text-slate-300 hover:text-white transition-colors">📋</button>
+                                </div>
+                                <pre class="code-block p-3 text-sm text-slate-200 overflow-x-auto"><code>rm -rf ~/.npm/_npx</code></pre>
+                            </div>
+                        </div>
+                        <p class="text-sm text-text-secondary mt-2" data-i18n="gettingStarted.faq.q1.restart">然后重启 MCP 客户端</p>
+                    </div>
+                </div>
+
+                <!-- 问题 2 -->
+                <div class="border border-border rounded-lg overflow-hidden">
+                    <button onclick="toggleFaq('faq2')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                        <span class="font-medium text-text-primary" data-i18n="gettingStarted.faq.q2.title">问题 2：MCP 服务器连接失败</span>
+                        <svg class="w-5 h-5 text-text-tertiary transition-transform" id="faq2-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="faq2-content" class="hidden p-4 border-t border-border">
+                        <div class="p-3 bg-red-50 border-l-3 border-red-500 rounded-r text-sm text-text-primary mb-3">
+                            <strong data-i18n="gettingStarted.faq.q2.possibleReasons">可能原因：</strong>
+                            <ul class="list-disc list-inside mt-1">
+                                <li data-i18n="gettingStarted.faq.q2.reason1">Node.js 版本过低（需要 >= 16.0.0）</li>
+                                <li data-i18n="gettingStarted.faq.q2.reason2">依赖未安装或损坏</li>
+                                <li data-i18n="gettingStarted.faq.q2.reason3">配置文件格式错误</li>
+                            </ul>
+                        </div>
+                        <p class="text-sm text-text-primary mb-2"><strong data-i18n="gettingStarted.faq.q2.solution">解决方案：</strong></p>
+                        <ol class="list-decimal list-inside space-y-2 text-sm text-text-primary">
+                            <li><span data-i18n="gettingStarted.faq.q2.step1">检查 Node.js 版本：</span>
+                                <div class="bg-slate-900 rounded-lg overflow-hidden mt-1">
+                                    <pre class="code-block p-3 text-sm text-slate-200 overflow-x-auto"><code>node --version</code></pre>
+                                </div>
+                            </li>
+                            <li data-i18n="gettingStarted.faq.q2.step2">如果低于 v16，请升级 Node.js</li>
+                            <li><span data-i18n="gettingStarted.faq.q2.step3">清理缓存并重新安装：</span>
+                                <div class="bg-slate-900 rounded-lg overflow-hidden mt-1">
+                                    <pre class="code-block p-3 text-sm text-slate-200 overflow-x-auto"><code>npm cache clean --force</code></pre>
+                                </div>
+                            </li>
+                            <li data-i18n="gettingStarted.faq.q2.step4">检查配置文件 JSON 格式是否正确</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="border border-border rounded-lg overflow-hidden mt-4">
+                    <button onclick="toggleFaq('faq3')" class="w-full px-4 py-3 bg-bg-page flex items-center justify-between text-left hover:bg-gray-100 transition-colors">
+                        <span class="font-medium text-text-primary" data-i18n="gettingStarted.faq.q3.title">问题 3：Windows 下图谱工具首次启动很慢或超时</span>
+                        <svg class="w-5 h-5 text-text-tertiary transition-transform" id="faq3-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="faq3-content" class="hidden p-4 border-t border-border">
+                        <div class="p-3 bg-yellow-50 border-l-3 border-yellow-500 rounded-r text-sm text-text-primary mb-3">
+                            <strong data-i18n="gettingStarted.faq.q3.affected">Affected tools:</strong>
+                            <div class="mt-1"><code class="bg-gray-200 px-1 rounded text-xs">code_insight</code>, <code class="bg-gray-200 px-1 rounded text-xs">start_feature</code>, <code class="bg-gray-200 px-1 rounded text-xs">start_bugfix</code>, <code class="bg-gray-200 px-1 rounded text-xs">init_project_context</code></div>
+                        </div>
+                        <div class="p-3 bg-red-50 border-l-3 border-red-500 rounded-r text-sm text-text-primary mb-3">
+                            <strong data-i18n="gettingStarted.faq.q3.error">Typical error:</strong>
+                            <pre class="code-block mt-2 text-xs text-slate-200 bg-slate-900 p-2 rounded overflow-x-auto"><code>gyp ERR! find VS could not find a version of Visual Studio 2017 or newer to use
+gyp ERR! find VS - missing any VC++ toolset</code></pre>
+                        </div>
+                        <p class="text-sm text-text-primary mb-2"><strong data-i18n="gettingStarted.faq.q3.reasons">Common causes:</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-sm text-text-primary mb-3">
+                            <li data-i18n="gettingStarted.faq.q3.reason1">npx -y gitnexus@latest mcp may spend 20+ seconds checking or downloading dependencies on cold start.</li>
+                            <li data-i18n="gettingStarted.faq.q3.reason2">GitNexus depends on tree-sitter native modules, which may require Visual Studio Build Tools on Windows.</li>
+                        </ul>
+                        <p class="text-sm text-text-primary mb-2"><strong data-i18n="gettingStarted.faq.q3.solution">Recommended actions:</strong></p>
+                        <ol class="list-decimal list-inside space-y-2 text-sm text-text-primary">
+                            <li data-i18n="gettingStarted.faq.q3.step1">Install Visual Studio Build Tools with the C++ workload.</li>
+                            <li data-i18n="gettingStarted.faq.q3.step2">Retry once after dependencies finish installing so the first cold start is not mistaken for steady-state latency.</li>
+                            <li data-i18n="gettingStarted.faq.q3.step3">If your client supports env, prefer a preinstalled gitnexus CLI and raise MCP_GITNEXUS_CONNECT_TIMEOUT_MS plus MCP_GITNEXUS_TIMEOUT_MS.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center text-sm text-text-tertiary py-4 border-t border-border">
+                <p>Made with ❤️ by <a href="https://www.bytezonex.com/" target="_blank" rel="noopener" class="text-primary hover:underline">小墨 (Kyle)</a></p>
+                <p class="mt-1">© 2024-2026 MCP Probe Kit · <a href="https://github.com/mybolide/mcp-probe-kit" target="_blank" rel="noopener" class="text-primary hover:underline">GitHub ↗</a></p>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        // 侧边栏切换
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('backdrop');
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('active');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.add('active');
+            }
+        }
+
+        // 安装方式折叠
+        function toggleInstall(type) {
+            const content = document.getElementById(type + '-content');
+            const icon = document.getElementById(type + '-icon');
+            content.classList.toggle('hidden');
+            icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+        }
+
+        // 客户端折叠
+        function toggleClient(type) {
+            const content = document.getElementById(type + '-content');
+            const icon = document.getElementById(type + '-icon');
+            content.classList.toggle('hidden');
+            icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+        }
+
+        // FAQ 折叠
+        function toggleFaq(id) {
+            const content = document.getElementById(id + '-content');
+            const icon = document.getElementById(id + '-icon');
+            content.classList.toggle('hidden');
+            icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+        }
+
+        // 复制代码
+        function copyCode(btn) {
+            const code = btn.closest('.bg-slate-900').querySelector('code');
+            navigator.clipboard.writeText(code.textContent).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = '✅ 已复制';
+                setTimeout(() => btn.textContent = originalText, 2000);
+            });
+        }
+    </script>
+    <script src="../assets/js/i18n.js"></script>
+</body>
+</html>

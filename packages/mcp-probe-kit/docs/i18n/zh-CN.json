@@ -1,0 +1,557 @@
+{
+  "meta": {
+    "title": "MCP Probe Kit - AI 驱动的完整研发工具集 | 22个工具覆盖开发全流程",
+    "description": "MCP Probe Kit 提供 22 个 AI 驱动的研发工具，覆盖需求分析、代码开发、质量保障、Bug修复、版本发布全流程。支持 Cursor、Cline、Claude Desktop，100% 结构化输出。",
+    "keywords": "MCP Probe Kit, AI开发工具, 代码生成, 代码审查, Git工具, UI开发, 研发效率, Cursor, Cline, Claude, MCP Server"
+  },
+  "nav": {
+    "home": "文档首页",
+    "docs": "文档",
+    "mainSite": "主站",
+    "github": "GitHub",
+    "npm": "npm"
+  },
+  "hero": {
+    "title": "🚀 MCP Probe Kit",
+    "subtitle": "AI 开发增强工具集 · 文档中心",
+    "version": "v3.0.16",
+    "quickStart": "快速开始",
+    "visitMainSite": "访问主站 ByteZoneX"
+  },
+  "sections": {
+    "quickStart": {
+      "title": "快速开始",
+      "description": "5 分钟快速上手 MCP Probe Kit v3.0.16",
+      "installConfig": "安装配置"
+    },
+    "tools": {
+      "title": "工具文档",
+      "description": "22 个实用工具的完整参考，含图谱洞察与编排工作流",
+      "allTools": "所有工具"
+    },
+    "guides": {
+      "title": "指南",
+      "description": "迁移指南和最佳实践",
+      "migration": "v2.x → v3.0 迁移指南",
+      "bestPractices": "最佳实践"
+    },
+    "resources": {
+      "title": "资源",
+      "description": "源代码和社区支持",
+      "mainSite": "ByteZoneX 主站",
+      "githubRepo": "GitHub 仓库",
+      "npmPackage": "npm 包",
+      "issues": "问题反馈"
+    }
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "license": "MIT License",
+    "mainSite": "主站 ByteZoneX"
+  },
+  "sidebar": {
+    "quickStart": "快速开始",
+    "home": "文档首页",
+    "installation": "安装配置",
+    "toolsDocs": "工具文档",
+    "allTools": "所有工具",
+    "guides": "指南",
+    "migration": "迁移指南",
+    "examples": "最佳实践",
+    "followUs": "关注公众号",
+    "getTechSharing": "获取更多技术分享"
+  },
+  "gettingStarted": {
+    "title": "安装配置",
+    "subtitle": "5 分钟快速上手 MCP Probe Kit v3.0.10，支持 Cursor、Cline 和 Claude Desktop",
+    "breadcrumb": {
+      "home": "文档首页",
+      "quickStart": "快速开始",
+      "installation": "安装配置"
+    },
+    "step1": {
+      "title": "选择安装方式",
+      "npx": {
+        "title": "npx 直接使用",
+        "recommended": "推荐",
+        "description": "无需安装，直接使用最新版本：",
+        "advantage": "优势：",
+        "advantageText": "无需手动更新，每次启动自动使用最新版本",
+        "copy": "复制"
+      },
+      "global": {
+        "title": "全局安装",
+        "description": "全局安装到系统：",
+        "configFile": "配置文件：",
+        "note": "注意：",
+        "noteText": "需要手动运行",
+        "updateText": "更新版本"
+      },
+      "windowsGraph": {
+        "title": "Windows 图谱工具特别说明",
+        "description": "图谱相关工具在 Windows 上首次运行可能更慢，因为 GitNexus 默认通过 npx 启动。",
+        "item1": "首次冷启动时，npx 可能检查或下载依赖，耗时可能超过 20 秒。",
+        "item2": "GitNexus 的部分依赖使用 tree-sitter 原生模块，在 Windows 上可能需要 Visual Studio Build Tools。",
+        "item3": "如果 MCP 客户端支持 env，优先使用预装的 gitnexus CLI，并适当增大 GitNexus 超时。",
+        "item4": "Windows 下可用 winget 快速安装 Build Tools：winget install Microsoft.VisualStudio.2022.BuildTools",
+        "quickInstallTitle": "快速安装命令：",
+        "exampleTitle": "使用预装 gitnexus CLI 的配置示例："
+      },
+      "source": {
+        "title": "源码编译",
+        "description": "从源码编译安装，适合开发者：",
+        "step1": "1. 克隆仓库",
+        "step2": "2. 安装依赖并编译",
+        "step3": "3. 配置文件",
+        "tip": "提示：",
+        "tipText": "Windows 用户使用完整路径，如",
+        "note": "注意：",
+        "noteText": "修改代码后需要重新运行",
+        "compileText": "编译"
+      }
+    },
+    "step2": {
+      "title": "找到配置文件",
+      "description": "根据你使用的 MCP 客户端，找到对应的配置文件：",
+      "cursor": {
+        "title": "Cursor / Cline",
+        "description": "在项目根目录创建或编辑",
+        "tip": "提示：",
+        "tipText": "Cursor 和 Cline 使用项目级配置，每个项目可以有独立的 MCP 服务器配置。"
+      },
+      "claudeWin": {
+        "title": "Claude Desktop (Windows)",
+        "path": "配置文件路径：",
+        "example": "示例："
+      },
+      "claudeMac": {
+        "title": "Claude Desktop (macOS)",
+        "path": "配置文件路径："
+      }
+    },
+    "step3": {
+      "title": "验证安装",
+      "description": "完成配置后，按以下步骤验证：",
+      "step1": "重启 MCP 客户端（Cursor / Cline / Claude Desktop）",
+      "step2": "在聊天窗口中输入：",
+      "step2Command": "请使用 gencommit 工具生成一个测试提交消息",
+      "step3": "如果返回符合 Conventional Commits 规范的提交消息，说明安装成功！",
+      "success": "成功示例：",
+      "successText": "AI 返回类似",
+      "successExample": "的消息",
+      "successCode": "feat: 添加用户认证功能",
+      "issues": "常见问题：",
+      "issue1": "提示找不到工具 → 检查配置文件格式",
+      "issue2": "提示命令不存在 → 确认 Node.js 已安装",
+      "issue3": "Windows 用户 → 确保使用 npx 方式"
+    },
+    "step4": {
+      "title": "委托式编排协议",
+      "description": "编排工具不会直接执行操作，而是返回一个可执行计划。",
+      "keyFields": "关键字段：",
+      "planExample": "Plan 示例",
+      "tip": "要点：",
+      "tipText": "按顺序执行",
+      "tipText2": "，并确保",
+      "tipText3": "文件真实落盘"
+    },
+    "faq": {
+      "title": "⚠️ 常见问题",
+      "q1": {
+        "title": "问题 1：npx 缓存导致的模块解析错误",
+        "error": "错误信息：",
+        "solution": "解决方案：",
+        "solutionText": "清理 npx 缓存",
+        "restart": "然后重启 MCP 客户端"
+      },
+      "q2": {
+        "title": "问题 2：MCP 服务器连接失败",
+        "possibleReasons": "可能原因：",
+        "reason1": "Node.js 版本过低（需要 >= 16.0.0）",
+        "reason2": "依赖未安装或损坏",
+        "reason3": "配置文件格式错误",
+        "solution": "解决方案：",
+        "step1": "检查 Node.js 版本：",
+        "step2": "如果低于 v16，请升级 Node.js",
+        "step3": "清理缓存并重新安装：",
+        "step4": "检查配置文件 JSON 格式是否正确"
+      },
+      "q3": {
+        "title": "问题 3：Windows 下图谱工具首次启动很慢或超时",
+        "affected": "受影响工具：",
+        "error": "典型错误：",
+        "reasons": "常见原因：",
+        "reason1": "`npx -y gitnexus@latest mcp` 冷启动时可能花 20 秒以上检查或下载依赖。",
+        "reason2": "GitNexus 依赖的 tree-sitter 原生模块在 Windows 上可能需要 Visual Studio Build Tools。",
+        "solution": "建议处理：",
+        "step1": "安装带 C++ 工作负载的 Visual Studio Build Tools。",
+        "step2": "依赖安装完成后重试一次，避免把首次冷启动误判为稳定耗时。",
+        "step3": "如果客户端支持 env，优先使用预装的 gitnexus CLI，并增大 MCP_GITNEXUS_CONNECT_TIMEOUT_MS 与 MCP_GITNEXUS_TIMEOUT_MS。"
+      }
+    },
+    "common": {
+      "copy": "复制",
+      "copied": "已复制"
+    }
+  },
+  "migration": {
+    "breadcrumb": {
+      "home": "文档首页",
+      "guides": "指南",
+      "migration": "迁移指南"
+    },
+    "title": "v3.0 迁移指南",
+    "subtitle": "从 v2.x 平滑迁移到 v3.0，了解重大变更和新特性",
+    "overview": {
+      "title": "概述",
+      "description": "MCP Probe Kit v3.0 是一个重大版本更新，精简优化到 22 个工具，带来了更强大的功能和更好的开发体验。",
+      "migrationTime": "迁移时间：",
+      "migrationTimeText": "大多数项目可以在 10-15 分钟内完成迁移，v2.x 的核心工具在 v3.0 中都保持兼容。"
+    },
+    "changes": {
+      "title": "主要变更",
+      "toolsOptimization": {
+        "title": "1. 工具精简优化",
+        "description": "v2.x: 39 个工具 → v3.x: 22 个工具（移除低频工具，保留高价值工具）"
+      },
+      "workflows": {
+        "title": "2. 新增工作流编排",
+        "description": "11 个",
+        "description2": "工作流编排工具，提供端到端的自动化开发流程：",
+        "startFeature": "功能开发工作流",
+        "startBugfix": "Bug 修复工作流",
+        "startUi": "UI 开发工作流",
+        "startProduct": "产品设计工作流",
+        "startRalph": "Ralph Loop 自动化开发"
+      },
+      "uiTools": {
+        "title": "3. 新增 UI/UX 工具集",
+        "description": "完整的 UI/UX 工具链：",
+        "designSystem": "智能设计系统生成器",
+        "uiSearch": "UI/UX 数据库搜索",
+        "syncUiData": "UI/UX 数据同步",
+        "componentCatalog": "组件目录初始化",
+        "renderUi": "UI 渲染引擎"
+      },
+      "codeInsight": {
+        "title": "4. 新增代码图谱洞察",
+        "description": "code_insight 负责维护 docs/graph-insights 下的基线图谱文档，start_feature/start_bugfix 会在规划前刷新 GitNexus 索引并执行任务级范围收敛。"
+      },
+      "structuredOutput": {
+        "title": "5. 结构化输出升级",
+        "description": "核心与编排工具优先支持结构化输出，输出格式一致、可预测，便于工具串联与状态追踪。"
+      }
+    },
+    "steps": {
+      "title": "迁移步骤",
+      "step1": {
+        "title": "步骤 1：更新版本",
+        "npxNote": "# 如果使用 npx（推荐）",
+        "npxDesc": "# 无需操作，自动使用最新版本",
+        "globalNote": "# 如果全局安装"
+      },
+      "step2": {
+        "title": "步骤 2：检查配置文件",
+        "description": "v3.0 的配置文件格式与 v2.x 完全兼容，无需修改。",
+        "compatible": "向后兼容：",
+        "compatibleText": "v2.x 的核心工具在 v3.0 中都保持兼容，可以无缝升级。"
+      }
+    },
+    "help": {
+      "title": "获取帮助",
+      "description": "如果在迁移过程中遇到问题：",
+      "viewDocs": "查看",
+      "toolsReference": "完整工具参考",
+      "askIn": "在",
+      "askQuestion": "提问",
+      "reportIn": "在",
+      "reportBug": "报告 Bug"
+    },
+    "complete": {
+      "title": "🎉 迁移完成！",
+      "description": "开始探索 v3.0 的强大功能",
+      "viewTools": "查看所有工具",
+      "learnBestPractices": "学习最佳实践"
+    }
+  },
+  "examples": {
+    "breadcrumb": {
+      "home": "文档首页",
+      "guides": "指南",
+      "examples": "最佳实践"
+    },
+    "title": "最佳实践",
+    "subtitle": "MCP Probe Kit 融合完整研发流程，从需求到上线的最佳实践指南",
+    "overview": {
+      "title": "完整研发流程",
+      "description": "MCP Probe Kit 的 22 个工具覆盖了从需求分析到代码上线的完整研发流程。以下是推荐的最佳实践。",
+      "coreIdea": "核心理念：",
+      "coreIdeaText": "通过工作流编排工具（start_*）串联整个开发流程，让 AI 成为你的研发助手。"
+    },
+    "stage0": {
+      "title": "阶段 0：产品设计（从需求到原型）",
+      "workflow": {
+        "title": "0.1 完整产品设计流程（推荐）",
+        "description": "使用",
+        "description2": "工作流编排，一键完成从需求到 HTML 原型的完整产品设计。",
+        "example1": "你: 我有一个产品需求文档 project.md，帮我生成完整的产品设计",
+        "productName": "在线教育平台",
+        "autoExecute": "→ 自动执行：",
+        "autoLoop": "→ AI 自动循环：",
+        "step1": "✓ 步骤 1: 检查/生成项目上下文",
+        "step2": "✓ 步骤 2: 生成 PRD 文档",
+        "step3": "✓ 步骤 3: 生成原型设计文档",
+        "step4": "✓ 步骤 4: 生成设计系统",
+        "step5": "→ 步骤 5: 生成 HTML 可交互原型",
+        "step6": "✓ 步骤 6: 更新项目上下文索引",
+        "outputs": "→ 输出文件："
+      },
+      "prd": {
+        "title": "0.2 单独生成 PRD 文档",
+        "description": "使用",
+        "description2": "工具单独生成产品需求文档。",
+        "example1": "你: 生成一个在线教育平台的 PRD",
+        "description3": "在线教育平台，支持课程管理、视频播放、作业提交",
+        "aiCreate": "→ AI 根据指导创建 docs/prd/product-requirements.md",
+        "includes": "PRD 包含：",
+        "item1": "- 产品概述（愿景、目标用户、核心价值）",
+        "item2": "- 功能需求（核心功能、用户故事）",
+        "item3": "- 功能优先级（P0/P1/P2）",
+        "item4": "- 非功能性需求（性能、安全、兼容性）",
+        "item5": "- 页面清单"
+      },
+      "prototype": {
+        "title": "0.3 生成 HTML 可交互原型",
+        "description": "使用",
+        "description2": "工具基于原型文档生成 HTML 原型。",
+        "desc": "基于原型文档生成所有页面的 HTML 原型",
+        "step1": "✓ 读取 docs/prototype/ 下的所有原型文档",
+        "step2": "✓ 读取 docs/design-system.json 获取设计规范",
+        "step3": "✓ 为每个页面生成 HTML 文件",
+        "step4": "✓ 生成索引页面 index.html",
+        "features": "→ 特点：",
+        "feature1": "- 使用设计系统的颜色和字体",
+        "feature2": "- 包含页面导航",
+        "feature3": "- 响应式设计"
+      },
+      "summary": {
+        "title": "0.4 产品设计工作流总结",
+        "recommended": "推荐流程：",
+        "step1": "准备需求文档（Markdown 格式）",
+        "step2": "使用",
+        "step2b": "一键生成完整产品设计",
+        "step3": "在浏览器中查看 HTML 原型",
+        "step4": "与团队评审原型，收集反馈",
+        "step5": "根据反馈调整原型文档",
+        "step6": "使用",
+        "step6b": "重新生成 HTML 原型",
+        "step7": "确认后进入开发阶段"
+      }
+    },
+    "stage1": {
+      "title": "阶段 1：需求分析与规划",
+      "init": {
+        "title": "1.1 新项目启动",
+        "description": "使用",
+        "description2": "按 Spec-Driven Development 方式生成项目文档。",
+        "example1": "你: 我要创建一个任务管理系统",
+        "input": "任务管理系统，支持任务创建、分配、跟踪、提醒",
+        "generate": "→ 生成：需求文档、设计文档、任务清单"
+      },
+      "interview": {
+        "title": "1.2 需求澄清（避免理解偏差）",
+        "description": "使用",
+        "description2": "工具进行结构化需求访谈。",
+        "example1": "你: 添加用户登录功能",
+        "desc": "实现用户登录功能",
+        "aiAsk": "→ AI 会提问：",
+        "q1": "- 支持哪些登录方式？（邮箱/手机/第三方）",
+        "q2": "- 是否需要记住登录状态？",
+        "q3": "- 密码规则是什么？",
+        "q4": "- 是否需要验证码？",
+        "generate": "→ 生成：访谈记录文档"
+      },
+      "estimate": {
+        "title": "1.3 工作量估算",
+        "description": "使用",
+        "description2": "工具估算开发时间和资源。",
+        "task": "实现用户认证功能",
+        "output": "→ 输出：",
+        "sp": "- 故事点：8 SP",
+        "time": "- 时间范围：乐观 3天 / 正常 5天 / 悲观 8天",
+        "risk": "- 风险点：第三方登录集成可能延期"
+      },
+      "codeInsight": {
+        "title": "1.4 现有代码图谱洞察",
+        "description": "使用",
+        "description2": "用于刷新 GitNexus 图谱、落盘基线 graph-insights 文档，并生成任务级调用链、上下文和影响面分析。",
+        "example1": "你: 请分析登录与 token 刷新相关的调用链，看看改动会影响哪些模块",
+        "goal": "找出现有登录与 token 刷新流程",
+        "taskContext": "准备修改认证模块",
+        "output": "→ 输出：",
+        "item1": "- 相关执行流 / 调用链",
+        "item2": "- 关键符号与文件位置",
+        "item3": "- _meta.graph.snapshotUri / markdownFilePath",
+        "item4": "- 供后续编排复用的 docs/graph-insights/latest.* 与 project-context 索引入口"
+      }
+    },
+    "common": {
+      "bestPractice": "最佳实践"
+    },
+    "stage2": {
+      "title": "阶段 2：功能开发",
+      "workflow": {
+        "title": "2.1 完整功能开发流程（推荐）",
+        "description": "使用",
+        "description2": "工作流编排，一键完成从规格到估算。",
+        "example1": "你: 开发用户认证功能",
+        "step1": "✓ 检查项目上下文，补齐缺失的 graph-insights，并刷新 GitNexus 索引",
+        "step2": "✓ 生成功能规格文档",
+        "step3": "✓ 估算开发工作量",
+        "step4": "✓ 输出完整开发计划"
+      },
+      "ui": {
+        "title": "2.2 UI 开发流程",
+        "description": "使用",
+        "description2": "工作流，从设计系统到代码一气呵成。",
+        "example1": "你: 创建登录页面",
+        "step1": "✓ 检查/生成设计系统",
+        "step2": "✓ 初始化组件目录",
+        "step3": "✓ 搜索/生成 UI 模板",
+        "step4": "✓ 渲染最终 React 代码"
+      },
+      "codegen": {
+        "title": "2.3 代码生成",
+        "description": "根据需要使用各种生成工具：",
+        "genapi": "生成 API 文档（OpenAPI/Swagger）",
+        "gensql": "自然语言生成 SQL 查询",
+        "genmock": "生成测试数据",
+        "gentest": "生成单元测试"
+      }
+    },
+    "stage3": {
+      "title": "阶段 3：代码质量保障",
+      "review": {
+        "title": "3.1 全面代码审查（推荐）",
+        "description": "使用",
+        "description2": "工作流，一次性完成代码审查、安全扫描、性能分析。",
+        "example1": "你: 审查这段代码",
+        "step1": "✓ 代码审查（质量、风格、最佳实践）",
+        "step2": "✓ 安全扫描（SQL注入、XSS、CSRF）",
+        "step3": "✓ 性能分析（算法、内存、数据库）",
+        "step4": "✓ 输出综合报告"
+      },
+      "single": {
+        "title": "3.2 单项检查",
+        "description": "针对特定问题使用单项工具：",
+        "codeReview": "代码审查",
+        "securityScan": "安全扫描",
+        "perf": "性能分析",
+        "refactor": "重构建议"
+      }
+    },
+    "stage4": {
+      "title": "阶段 4：Bug 修复",
+      "bugfix": {
+        "title": "4.1 系统化 Bug 修复（推荐）",
+        "description": "使用",
+        "description2": "工作流，默认按 TBP 8 步法先做真因分析，再进入修复与测试。",
+        "example1": "你: 登录功能报错了",
+        "step1": "✓ 检查项目上下文，补齐缺失的 graph-insights，并刷新 GitNexus 索引",
+        "step2": "✓ 用 TBP-1~TBP-4 建立现象、时间线和共同模式",
+        "step3": "✓ 用 TBP-5/6 锁定问题边界与因果真因",
+        "step4": "✓ 基于证据链输出修复方案与风险",
+        "step5": "✓ 生成验证步骤与回归测试用例"
+      },
+      "quick": {
+        "title": "4.2 快速 Bug 分析",
+        "description": "使用",
+        "description2": "工具按 TBP 8 步法做快速真因分析，并给出修复与验证建议。"
+      }
+    },
+    "stage5": {
+      "title": "阶段 5：版本发布",
+      "release": {
+        "title": "5.1 自动化发布流程（推荐）",
+        "description": "使用",
+        "description2": "工作流，自动生成 Changelog 和 PR 描述。",
+        "example1": "你: 准备发布 v2.0.0",
+        "step1": "✓ 生成 CHANGELOG（按 feat/fix/breaking 分类）",
+        "step2": "✓ 生成 PR 描述（变更摘要、影响范围）",
+        "step3": "✓ 输出发布检查清单"
+      },
+      "git": {
+        "title": "5.2 Git 工作流",
+        "description": "使用 Git 工具提升协作效率：",
+        "gencommit": "生成规范的 commit 消息",
+        "genchangelog": "生成 CHANGELOG",
+        "genpr": "生成 PR 描述",
+        "resolveConflict": "解决合并冲突"
+      }
+    },
+    "stage6": {
+      "title": "阶段 6：项目维护",
+      "onboard": {
+        "title": "6.1 新成员上手",
+        "description": "使用",
+        "description2": "工作流，快速了解项目。",
+        "example1": "新成员: 我刚加入项目，需要了解项目结构",
+        "step1": "✓ 生成上下文文档",
+        "step2": "✓ 输出开发规范"
+      },
+      "doc": {
+        "title": "6.2 文档维护",
+        "description": "使用",
+        "description2": "工作流，一键补全项目文档。",
+        "step1": "✓ 生成代码注释（JSDoc/TSDoc）",
+        "step2": "✓ 生成 README 文档",
+        "step3": "✓ 生成 API 文档",
+        "step4": "✓ 输出完整文档集"
+      }
+    },
+    "ralph": {
+      "title": "高级实践：Ralph Wiggum Loop",
+      "advancedPractice": "高级实践",
+      "loop": {
+        "title": "自动化循环开发",
+        "description": "使用",
+        "description2": "启动自动化开发循环，AI 持续迭代直到完成目标。",
+        "example1": "你: 实现用户认证功能",
+        "round1": "第1轮：分析需求 → 生成代码",
+        "round2": "第2轮：运行测试 → 修复错误",
+        "round3": "第3轮：代码审查 → 优化代码",
+        "until": "直到：测试通过 + 需求满足"
+      },
+      "warning": {
+        "title": "⚠️ 安全提示：",
+        "text": "Ralph Loop 默认启用多重安全保护（最大迭代次数、运行时间、代码变更量限制），防止失控。"
+      }
+    },
+    "summary": {
+      "title": "最佳实践总结",
+      "coreTitle": "核心原则：",
+      "principle1": "优先使用工作流编排工具（start_*）- 自动化完整流程",
+      "principle2": "需求阶段使用 interview - 避免理解偏差",
+      "principle3": "开发前使用 estimate - 合理规划时间",
+      "principle4": "提交前使用 start_review - 保证代码质量",
+      "principle5": "发布前使用 start_release - 规范发布流程"
+    },
+    "resources": {
+      "title": "更多资源",
+      "allTools": "完整工具参考",
+      "allToolsDesc": "查看所有 22 个工具的详细说明",
+      "gettingStarted": "安装配置",
+      "gettingStartedDesc": "快速开始使用",
+      "migration": "迁移指南",
+      "migrationDesc": "从 v2.x 迁移到 v3.0",
+      "github": "GitHub 仓库",
+      "githubDesc": "源代码和问题反馈"
+    },
+    "practice": {
+      "title": "🚀 开始实践",
+      "description": "将这些最佳实践应用到你的项目中",
+      "install": "📖 安装配置",
+      "allTools": "🛠️ 查看所有工具"
+    }
+  }
+}

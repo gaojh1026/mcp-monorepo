@@ -1,0 +1,557 @@
+{
+  "meta": {
+    "title": "MCP Probe Kit - AI-Powered Complete Development Toolkit | 22 Tools Covering Entire Development Lifecycle",
+    "description": "MCP Probe Kit provides 22 AI-powered development tools covering requirements analysis, code development, quality assurance, bug fixing, and release management. Supports Cursor, Cline, Claude Desktop with 100% structured output.",
+    "keywords": "MCP Probe Kit, AI development tools, code generation, code review, Git tools, UI development, development efficiency, Cursor, Cline, Claude, MCP Server"
+  },
+  "nav": {
+    "home": "Documentation",
+    "docs": "Docs",
+    "mainSite": "Main Site",
+    "github": "GitHub",
+    "npm": "npm"
+  },
+  "hero": {
+    "title": "🚀 MCP Probe Kit",
+    "subtitle": "AI Development Enhancement Toolkit · Documentation Center",
+    "version": "v3.0.16",
+    "quickStart": "Quick Start",
+    "visitMainSite": "Visit ByteZoneX"
+  },
+  "sections": {
+    "quickStart": {
+      "title": "Quick Start",
+      "description": "Get started with MCP Probe Kit v3.0.16 in 5 minutes",
+      "installConfig": "Installation & Configuration"
+    },
+    "tools": {
+      "title": "Tools Documentation",
+      "description": "Complete reference for 22 practical tools, including code graph insight and orchestration workflows",
+      "allTools": "All Tools"
+    },
+    "guides": {
+      "title": "Guides",
+      "description": "Migration guides and best practices",
+      "migration": "v2.x → v3.0 Migration Guide",
+      "bestPractices": "Best Practices"
+    },
+    "resources": {
+      "title": "Resources",
+      "description": "Source code and community support",
+      "mainSite": "ByteZoneX Main Site",
+      "githubRepo": "GitHub Repository",
+      "npmPackage": "npm Package",
+      "issues": "Issue Tracker"
+    }
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "license": "MIT License",
+    "mainSite": "Main Site ByteZoneX"
+  },
+  "sidebar": {
+    "quickStart": "Quick Start",
+    "home": "Documentation Home",
+    "installation": "Installation & Configuration",
+    "toolsDocs": "Tools Documentation",
+    "allTools": "All Tools",
+    "guides": "Guides",
+    "migration": "Migration Guide",
+    "examples": "Best Practices",
+    "followUs": "Follow Us",
+    "getTechSharing": "Get More Tech Insights"
+  },
+  "gettingStarted": {
+    "title": "Installation & Configuration",
+    "subtitle": "Get started with MCP Probe Kit v3.0.10 in 5 minutes. Supports Cursor, Cline, and Claude Desktop",
+    "breadcrumb": {
+      "home": "Documentation",
+      "quickStart": "Quick Start",
+      "installation": "Installation"
+    },
+    "step1": {
+      "title": "Choose Installation Method",
+      "npx": {
+        "title": "Use npx Directly",
+        "recommended": "Recommended",
+        "description": "No installation required, use the latest version directly:",
+        "advantage": "Advantage:",
+        "advantageText": "No manual updates needed, automatically uses the latest version on each startup",
+        "copy": "Copy"
+      },
+      "global": {
+        "title": "Global Installation",
+        "description": "Install globally to system:",
+        "configFile": "Configuration file:",
+        "note": "Note:",
+        "noteText": "Need to manually run",
+        "updateText": "to update version"
+      },
+      "windowsGraph": {
+        "title": "Windows Notes for Graph Tools",
+        "description": "Graph-aware tools may have a slower first run on Windows because GitNexus is started through npx by default.",
+        "item1": "The first cold start may take 20+ seconds while npx checks or downloads dependencies.",
+        "item2": "Some GitNexus dependencies use tree-sitter native modules and may require Visual Studio Build Tools.",
+        "item3": "If your MCP client supports env, prefer a preinstalled gitnexus CLI and raise GitNexus timeouts.",
+        "item4": "Quick install Build Tools on Windows: winget install Microsoft.VisualStudio.2022.BuildTools",
+        "quickInstallTitle": "Quick install command:",
+        "exampleTitle": "Example using a preinstalled gitnexus CLI:"
+      },
+      "source": {
+        "title": "Build from Source",
+        "description": "Build from source code, suitable for developers:",
+        "step1": "1. Clone repository",
+        "step2": "2. Install dependencies and build",
+        "step3": "3. Configuration file",
+        "tip": "Tip:",
+        "tipText": "Windows users should use full path, e.g.",
+        "note": "Note:",
+        "noteText": "After modifying code, need to re-run",
+        "compileText": "to compile"
+      }
+    },
+    "step2": {
+      "title": "Locate Configuration File",
+      "description": "Find the corresponding configuration file based on your MCP client:",
+      "cursor": {
+        "title": "Cursor / Cline",
+        "description": "Create or edit in project root directory",
+        "tip": "Tip:",
+        "tipText": "Cursor and Cline use project-level configuration, each project can have independent MCP server configuration."
+      },
+      "claudeWin": {
+        "title": "Claude Desktop (Windows)",
+        "path": "Configuration file path:",
+        "example": "Example:"
+      },
+      "claudeMac": {
+        "title": "Claude Desktop (macOS)",
+        "path": "Configuration file path:"
+      }
+    },
+    "step3": {
+      "title": "Verify Installation",
+      "description": "After completing configuration, verify with the following steps:",
+      "step1": "Restart MCP client (Cursor / Cline / Claude Desktop)",
+      "step2": "Type in chat window:",
+      "step2Command": "Please use gencommit tool to generate a test commit message",
+      "step3": "If it returns a commit message following Conventional Commits specification, installation is successful!",
+      "success": "Success example:",
+      "successText": "AI returns something like",
+      "successExample": "message",
+      "successCode": "feat: add user authentication",
+      "issues": "Common issues:",
+      "issue1": "\"Tool not found\" → Check configuration file format",
+      "issue2": "\"Command not found\" → Confirm Node.js is installed",
+      "issue3": "Windows users → Ensure using npx method"
+    },
+    "step4": {
+      "title": "Delegated Orchestration Protocol",
+      "description": "orchestration tools do not execute operations directly, but return an executable plan.",
+      "keyFields": "Key fields:",
+      "planExample": "Plan Example",
+      "tip": "Key point:",
+      "tipText": "Execute",
+      "tipText2": "in order, and ensure",
+      "tipText3": "files are actually written to disk"
+    },
+    "faq": {
+      "title": "⚠️ Common Issues",
+      "q1": {
+        "title": "Issue 1: Module resolution error caused by npx cache",
+        "error": "Error message:",
+        "solution": "Solution:",
+        "solutionText": "Clear npx cache",
+        "restart": "Then restart MCP client"
+      },
+      "q2": {
+        "title": "Issue 2: MCP server connection failed",
+        "possibleReasons": "Possible reasons:",
+        "reason1": "Node.js version too low (requires >= 16.0.0)",
+        "reason2": "Dependencies not installed or corrupted",
+        "reason3": "Configuration file format error",
+        "solution": "Solution:",
+        "step1": "Check Node.js version:",
+        "step2": "If below v16, please upgrade Node.js",
+        "step3": "Clear cache and reinstall:",
+        "step4": "Check if configuration file JSON format is correct"
+      },
+      "q3": {
+        "title": "Issue 3: Graph-aware tools are slow or time out on first run on Windows",
+        "affected": "Affected tools:",
+        "error": "Typical error:",
+        "reasons": "Common causes:",
+        "reason1": "`npx -y gitnexus@latest mcp` may spend 20+ seconds checking or downloading dependencies on cold start.",
+        "reason2": "GitNexus depends on tree-sitter native modules, which may require Visual Studio Build Tools on Windows.",
+        "solution": "Recommended actions:",
+        "step1": "Install Visual Studio Build Tools with the C++ workload.",
+        "step2": "Retry once after dependencies finish installing so the first cold start is not mistaken for steady-state latency.",
+        "step3": "If your client supports env, prefer a preinstalled gitnexus CLI and raise MCP_GITNEXUS_CONNECT_TIMEOUT_MS plus MCP_GITNEXUS_TIMEOUT_MS."
+      }
+    },
+    "common": {
+      "copy": "Copy",
+      "copied": "Copied"
+    }
+  },
+  "migration": {
+    "breadcrumb": {
+      "home": "Documentation",
+      "guides": "Guides",
+      "migration": "Migration Guide"
+    },
+    "title": "v3.0 Migration Guide",
+    "subtitle": "Smoothly migrate from v2.x to v3.0, understand breaking changes and new features",
+    "overview": {
+      "title": "Overview",
+      "description": "MCP Probe Kit v3.0 is a major version update, streamlined to 22 tools, bringing more powerful features and better development experience.",
+      "migrationTime": "Migration Time:",
+      "migrationTimeText": "Most projects can complete migration in 10-15 minutes, v2.x core tools remain compatible in v3.0."
+    },
+    "changes": {
+      "title": "Major Changes",
+      "toolsOptimization": {
+        "title": "1. Tools Streamlining",
+        "description": "v2.x: 39 tools → v3.x: 22 tools (removed low-frequency tools, kept high-value tools)"
+      },
+      "workflows": {
+        "title": "2. New Workflow Orchestration",
+        "description": "11",
+        "description2": "workflow orchestration tools, providing end-to-end automated development process:",
+        "startFeature": "Feature development workflow",
+        "startBugfix": "Bug fix workflow",
+        "startUi": "UI development workflow",
+        "startProduct": "Product design workflow",
+        "startRalph": "Ralph Loop automated development"
+      },
+      "uiTools": {
+        "title": "3. New UI/UX Toolset",
+        "description": "Complete UI/UX toolchain:",
+        "designSystem": "Intelligent design system generator",
+        "uiSearch": "UI/UX database search",
+        "syncUiData": "UI/UX data synchronization",
+        "componentCatalog": "Component catalog initialization",
+        "renderUi": "UI rendering engine"
+      },
+      "codeInsight": {
+        "title": "4. New Code Graph Insight",
+        "description": "code_insight maintains baseline graph docs under docs/graph-insights, while start_feature/start_bugfix refresh the GitNexus index and run task-level narrowing before planning."
+      },
+      "structuredOutput": {
+        "title": "5. Structured Output Upgrade",
+        "description": "Core and orchestration tools prioritize structured output, consistent and predictable output format, facilitating tool chaining and state tracking."
+      }
+    },
+    "steps": {
+      "title": "Migration Steps",
+      "step1": {
+        "title": "Step 1: Update Version",
+        "npxNote": "# If using npx (recommended)",
+        "npxDesc": "# No action needed, automatically uses latest version",
+        "globalNote": "# If globally installed"
+      },
+      "step2": {
+        "title": "Step 2: Check Configuration File",
+        "description": "v3.0 configuration file format is fully compatible with v2.x, no modification needed.",
+        "compatible": "Backward Compatible:",
+        "compatibleText": "v2.x core tools remain compatible in v3.0, seamless upgrade possible."
+      }
+    },
+    "help": {
+      "title": "Get Help",
+      "description": "If you encounter problems during migration:",
+      "viewDocs": "View",
+      "toolsReference": "Complete Tools Reference",
+      "askIn": "Ask in",
+      "askQuestion": "ask questions",
+      "reportIn": "Report in",
+      "reportBug": "report bugs"
+    },
+    "complete": {
+      "title": "🎉 Migration Complete!",
+      "description": "Start exploring v3.0's powerful features",
+      "viewTools": "View All Tools",
+      "learnBestPractices": "Learn Best Practices"
+    }
+  },
+  "examples": {
+    "breadcrumb": {
+      "home": "Documentation",
+      "guides": "Guides",
+      "examples": "Best Practices"
+    },
+    "title": "Best Practices",
+    "subtitle": "MCP Probe Kit integrates complete development process, best practices guide from requirements to deployment",
+    "overview": {
+      "title": "Complete Development Process",
+      "description": "MCP Probe Kit's 22 tools cover the complete development process from requirements analysis to code deployment. Here are the recommended best practices.",
+      "coreIdea": "Core Philosophy:",
+      "coreIdeaText": "Chain the entire development process through workflow orchestration tools (start_*), making AI your development assistant."
+    },
+    "stage0": {
+      "title": "Stage 0: Product Design (From Requirements to Prototype)",
+      "workflow": {
+        "title": "0.1 Complete Product Design Workflow (Recommended)",
+        "description": "Use",
+        "description2": "workflow orchestration to complete the entire product design from requirements to HTML prototype with one click.",
+        "example1": "You: I have a product requirements document project.md, help me generate complete product design",
+        "productName": "Online Education Platform",
+        "autoExecute": "→ Auto Execute:",
+        "autoLoop": "→ AI Auto Loop:",
+        "step1": "✓ Step 1: Check/Generate Project Context",
+        "step2": "✓ Step 2: Generate PRD Document",
+        "step3": "✓ Step 3: Generate Prototype Design Document",
+        "step4": "✓ Step 4: Generate Design System",
+        "step5": "→ Step 5: Generate HTML Interactive Prototype",
+        "step6": "✓ Step 6: Update Project Context Index",
+        "outputs": "→ Output Files:"
+      },
+      "prd": {
+        "title": "0.2 Generate PRD Document Separately",
+        "description": "Use",
+        "description2": "tool to generate product requirements document separately.",
+        "example1": "You: Generate a PRD for an online education platform",
+        "description3": "Online education platform with course management, video playback, and assignment submission",
+        "aiCreate": "→ AI creates docs/prd/product-requirements.md based on guidance",
+        "includes": "PRD includes:",
+        "item1": "- Product Overview (vision, target users, core value)",
+        "item2": "- Functional Requirements (core features, user stories)",
+        "item3": "- Feature Priority (P0/P1/P2)",
+        "item4": "- Non-functional Requirements (performance, security, compatibility)",
+        "item5": "- Page List"
+      },
+      "prototype": {
+        "title": "0.3 Generate HTML Interactive Prototype",
+        "description": "Use",
+        "description2": "tool to generate HTML prototype based on prototype documents.",
+        "desc": "Generate HTML prototypes for all pages based on prototype documents",
+        "step1": "✓ Read all prototype documents under docs/prototype/",
+        "step2": "✓ Read docs/design-system.json to get design specifications",
+        "step3": "✓ Generate HTML files for each page",
+        "step4": "✓ Generate index page index.html",
+        "features": "→ Features:",
+        "feature1": "- Uses design system colors and fonts",
+        "feature2": "- Includes page navigation",
+        "feature3": "- Responsive design"
+      },
+      "summary": {
+        "title": "0.4 Product Design Workflow Summary",
+        "recommended": "Recommended Process:",
+        "step1": "Prepare requirements document (Markdown format)",
+        "step2": "Use",
+        "step2b": "to generate complete product design with one click",
+        "step3": "View HTML prototype in browser",
+        "step4": "Review prototype with team and collect feedback",
+        "step5": "Adjust prototype documents based on feedback",
+        "step6": "Use",
+        "step6b": "to regenerate HTML prototype",
+        "step7": "Proceed to development phase after confirmation"
+      }
+    },
+    "stage1": {
+      "title": "Stage 1: Requirements Analysis and Planning",
+      "init": {
+        "title": "1.1 New Project Initialization",
+        "description": "Use",
+        "description2": "to generate project documents following Spec-Driven Development approach.",
+        "example1": "You: I want to create a task management system",
+        "input": "Task management system with task creation, assignment, tracking, and reminders",
+        "generate": "→ Generate: Requirements document, design document, task list"
+      },
+      "interview": {
+        "title": "1.2 Requirements Clarification (Avoid Misunderstandings)",
+        "description": "Use",
+        "description2": "tool for structured requirements interviews.",
+        "example1": "You: Add user login functionality",
+        "desc": "Implement user login functionality",
+        "aiAsk": "→ AI will ask:",
+        "q1": "- Which login methods are supported? (Email/Phone/Third-party)",
+        "q2": "- Do you need to remember login status?",
+        "q3": "- What are the password rules?",
+        "q4": "- Do you need verification code?",
+        "generate": "→ Generate: Interview record document"
+      },
+      "estimate": {
+        "title": "1.3 Workload Estimation",
+        "description": "Use",
+        "description2": "tool to estimate development time and resources.",
+        "task": "Implement user authentication functionality",
+        "output": "→ Output:",
+        "sp": "- Story Points: 8 SP",
+        "time": "- Time Range: Optimistic 3 days / Normal 5 days / Pessimistic 8 days",
+        "risk": "- Risk: Third-party login integration may be delayed"
+      },
+      "codeInsight": {
+        "title": "1.4 Existing Code Graph Insight",
+        "description": "Use",
+        "description2": "to refresh the GitNexus index, persist baseline graph docs, and produce task-level call-chain/context/impact analysis.",
+        "example1": "You: Analyze the login and token refresh call chain and tell me which modules will be affected",
+        "goal": "Find the existing login and token refresh flow",
+        "taskContext": "Preparing to modify the auth module",
+        "output": "→ Output:",
+        "item1": "- Related execution flows / call chains",
+        "item2": "- Key symbols and file locations",
+        "item3": "- _meta.graph.snapshotUri / markdownFilePath",
+        "item4": "- docs/graph-insights/latest.* and project-context index entries for downstream workflows"
+      }
+    },
+    "common": {
+      "bestPractice": "Best Practice"
+    },
+    "stage2": {
+      "title": "Stage 2: Feature Development",
+      "workflow": {
+        "title": "2.1 Complete Feature Development Workflow (Recommended)",
+        "description": "Use",
+        "description2": "workflow orchestration to complete from spec to estimation with one click.",
+        "example1": "You: Develop user authentication feature",
+        "step1": "✓ Check project context, bootstrap missing graph docs, and refresh the GitNexus index",
+        "step2": "✓ Generate feature specification document",
+        "step3": "✓ Estimate development workload",
+        "step4": "✓ Output complete development plan"
+      },
+      "ui": {
+        "title": "2.2 UI Development Workflow",
+        "description": "Use",
+        "description2": "workflow, from design system to code in one go.",
+        "example1": "You: Create login page",
+        "step1": "✓ Check/generate design system",
+        "step2": "✓ Initialize component directory",
+        "step3": "✓ Search/generate UI template",
+        "step4": "✓ Render final React code"
+      },
+      "codegen": {
+        "title": "2.3 Code Generation",
+        "description": "Use various generation tools as needed:",
+        "genapi": "Generate API documentation (OpenAPI/Swagger)",
+        "gensql": "Natural language to SQL queries",
+        "genmock": "Generate test data",
+        "gentest": "Generate unit tests"
+      }
+    },
+    "stage3": {
+      "title": "Stage 3: Code Quality Assurance",
+      "review": {
+        "title": "3.1 Comprehensive Code Review (Recommended)",
+        "description": "Use",
+        "description2": "workflow to complete code review, security scan, and performance analysis at once.",
+        "example1": "You: Review this code",
+        "step1": "✓ Code Review (quality, style, best practices)",
+        "step2": "✓ Security Scan (SQL injection, XSS, CSRF)",
+        "step3": "✓ Performance Analysis (algorithms, memory, database)",
+        "step4": "✓ Output comprehensive report"
+      },
+      "single": {
+        "title": "3.2 Single Item Check",
+        "description": "Use single tools for specific issues:",
+        "codeReview": "Code review",
+        "securityScan": "Security scan",
+        "perf": "Performance analysis",
+        "refactor": "Refactoring suggestions"
+      }
+    },
+    "stage4": {
+      "title": "Stage 4: Bug Fixing",
+      "bugfix": {
+        "title": "4.1 Systematic Bug Fix (Recommended)",
+        "description": "Use",
+        "description2": "workflow to run TBP 8-step root-cause analysis before repair and testing.",
+        "example1": "You: Login function is throwing an error",
+        "step1": "✓ Check project context, backfill missing graph docs, and refresh the GitNexus index",
+        "step2": "✓ Use TBP-1~TBP-4 to define the symptom, timeline, and common pattern",
+        "step3": "✓ Use TBP-5/6 to lock the failure boundary and causal root cause",
+        "step4": "✓ Produce repair options and risks from the evidence chain",
+        "step5": "✓ Generate validation steps and regression tests"
+      },
+      "quick": {
+        "title": "4.2 Quick Bug Analysis",
+        "description": "Use",
+        "description2": "tool for fast TBP 8-step RCA with repair and validation guidance."
+      }
+    },
+    "stage5": {
+      "title": "Stage 5: Release Management",
+      "release": {
+        "title": "5.1 Automated Release Process (Recommended)",
+        "description": "Use",
+        "description2": "workflow to automatically generate Changelog and PR descriptions.",
+        "example1": "You: Prepare to release v2.0.0",
+        "step1": "✓ Generate CHANGELOG (categorized by feat/fix/breaking)",
+        "step2": "✓ Generate PR description (change summary, impact scope)",
+        "step3": "✓ Output release checklist"
+      },
+      "git": {
+        "title": "5.2 Git Workflow",
+        "description": "Use Git tools to improve collaboration efficiency:",
+        "gencommit": "Generate standard commit messages",
+        "genchangelog": "Generate CHANGELOG",
+        "genpr": "Generate PR descriptions",
+        "resolveConflict": "Resolve merge conflicts"
+      }
+    },
+    "stage6": {
+      "title": "Stage 6: Project Maintenance",
+      "onboard": {
+        "title": "6.1 New Member Onboarding",
+        "description": "Use",
+        "description2": "workflow to quickly understand the project.",
+        "example1": "New member: I just joined the project, need to understand the project structure",
+        "step1": "✓ Generate context documentation",
+        "step2": "✓ Output development guidelines"
+      },
+      "doc": {
+        "title": "6.2 Documentation Maintenance",
+        "description": "Use",
+        "description2": "workflow to complete project documentation with one click.",
+        "step1": "✓ Generate code comments (JSDoc/TSDoc)",
+        "step2": "✓ Generate README documentation",
+        "step3": "✓ Generate API documentation",
+        "step4": "✓ Output complete documentation set"
+      }
+    },
+    "ralph": {
+      "title": "Advanced Practice: Ralph Wiggum Loop",
+      "advancedPractice": "Advanced Practice",
+      "loop": {
+        "title": "Automated Loop Development",
+        "description": "Use",
+        "description2": "to start automated development loop, AI continuously iterates until goal is achieved.",
+        "example1": "You: Implement user authentication feature",
+        "round1": "Round 1: Analyze requirements → Generate code",
+        "round2": "Round 2: Run tests → Fix errors",
+        "round3": "Round 3: Code review → Optimize code",
+        "until": "Until: Tests pass + Requirements met"
+      },
+      "warning": {
+        "title": "⚠️ Safety Notice:",
+        "text": "Ralph Loop enables multiple safety protections by default (max iterations, runtime, code change limits) to prevent runaway."
+      }
+    },
+    "summary": {
+      "title": "Best Practices Summary",
+      "coreTitle": "Core Principles:",
+      "principle1": "Prioritize workflow orchestration tools (start_*) - automate complete processes",
+      "principle2": "Use interview during requirements phase - avoid misunderstandings",
+      "principle3": "Use estimate before development - plan time reasonably",
+      "principle4": "Use start_review before commit - ensure code quality",
+      "principle5": "Use start_release before release - standardize release process"
+    },
+    "resources": {
+      "title": "More Resources",
+      "allTools": "Complete Tools Reference",
+      "allToolsDesc": "View detailed descriptions of all 22 tools",
+      "gettingStarted": "Installation & Configuration",
+      "gettingStartedDesc": "Quick start guide",
+      "migration": "Migration Guide",
+      "migrationDesc": "Migrate from v2.x to v3.0",
+      "github": "GitHub Repository",
+      "githubDesc": "Source code and issue feedback"
+    },
+    "practice": {
+      "title": "🚀 Start Practicing",
+      "description": "Apply these best practices to your project",
+      "install": "📖 Installation & Configuration",
+      "allTools": "🛠️ View All Tools"
+    }
+  }
+}

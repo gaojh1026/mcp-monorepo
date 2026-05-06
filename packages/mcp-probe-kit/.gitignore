@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+
+# Build output
+build/
+*.js
+*.d.ts
+!test-server.js
+!docs/**/*.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Docs
+docs/specs/
+docs/*.md
+docs/project-context
+.kiro
+skills
+
+test-*
+vitest.config.ts
+test-output.txt
+
+tests/
+
+# AI Agent
+.sisyphus/
+mcp-publisher.exe
+.mcpregistry_github_token
+.mcpregistry_registry_token
+
+.sisyphus
+.gitnexus
+.mcp-probe-kit/

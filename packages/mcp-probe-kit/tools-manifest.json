@@ -1,0 +1,217 @@
+{
+  "version": "3.0.5",
+  "protocol": "2025-11-25",
+  "totalTools": 20,
+  "toolsets": {
+    "core": {
+      "description": "9 个核心工具（日常高频）",
+      "count": 9,
+      "tools": [
+        "gencommit",
+        "code_review",
+        "gentest",
+        "refactor",
+        "fix_bug",
+        "add_feature",
+        "init_project",
+        "init_project_context",
+        "estimate"
+      ]
+    },
+    "ui": {
+      "description": "4 个 UI/UX 工具（推荐使用 start_ui 统一入口）",
+      "count": 4,
+      "tools": [
+        "start_ui",
+        "ui_design_system",
+        "ui_search",
+        "sync_ui_data"
+      ]
+    },
+    "workflow": {
+      "description": "20 个工作流工具（包含 core + 编排 + 交互 + UI）",
+      "count": 20,
+      "tools": [
+        "gencommit",
+        "code_review",
+        "gentest",
+        "refactor",
+        "fix_bug",
+        "add_feature",
+        "init_project",
+        "init_project_context",
+        "estimate",
+        "start_feature",
+        "start_bugfix",
+        "start_onboard",
+        "start_ui",
+        "start_product",
+        "start_ralph",
+        "interview",
+        "ask_user",
+        "ui_design_system",
+        "ui_search",
+        "sync_ui_data"
+      ]
+    },
+    "full": {
+      "description": "所有 20 个工具",
+      "count": 20,
+      "note": "默认工具集，包含所有工具"
+    }
+  },
+  "categories": {
+    "orchestration": {
+      "description": "智能编排工具（6 个）",
+      "tools": [
+        "start_feature",
+        "start_bugfix",
+        "start_onboard",
+        "start_ui",
+        "start_product",
+        "start_ralph"
+      ]
+    },
+    "daily": {
+      "description": "日常工具（9 个）",
+      "tools": [
+        "gencommit",
+        "code_review",
+        "gentest",
+        "refactor",
+        "fix_bug",
+        "add_feature",
+        "init_project",
+        "init_project_context",
+        "estimate"
+      ]
+    },
+    "interactive": {
+      "description": "交互工具（2 个）",
+      "tools": [
+        "interview",
+        "ask_user"
+      ]
+    },
+    "ui-ux": {
+      "description": "UI/UX 工具（3 个，不含编排工具）",
+      "tools": [
+        "ui_design_system",
+        "ui_search",
+        "sync_ui_data"
+      ]
+    }
+  },
+  "structuredOutput": {
+    "description": "支持结构化输出的工具（v2.0+）",
+    "version": "3.0.0",
+    "guidanceOnly": {
+      "description": "指南型工具（返回 okText）- AI 应根据指南执行任务，Schema 供参考",
+      "count": 6,
+      "tools": [
+        "fix_bug",
+        "add_feature",
+        "estimate",
+        "gentest",
+        "code_review",
+        "refactor"
+      ]
+    },
+    "dataDriven": {
+      "description": "数据驱动工具（返回 okStructured）- 返回真实的执行计划或数据",
+      "count": 14,
+      "tools": [
+        "gencommit",
+        "start_feature",
+        "start_bugfix",
+        "start_onboard",
+        "start_ui",
+        "start_product",
+        "start_ralph",
+        "init_project",
+        "init_project_context",
+        "interview",
+        "ask_user",
+        "ui_design_system",
+        "ui_search",
+        "sync_ui_data"
+      ]
+    },
+    "schemas": {
+      "gencommit": "CommitMessageSchema (reference only)",
+      "fix_bug": "BugAnalysisSchema (reference only)",
+      "add_feature": "FeatureSpecSchema (reference only)",
+      "estimate": "EstimateSchema (reference only)",
+      "gentest": "TestSuiteSchema (reference only)",
+      "code_review": "CodeReviewReportSchema (reference only)",
+      "refactor": "RefactorPlanSchema (reference only)",
+      "start_feature": "FeatureReportSchema",
+      "start_bugfix": "BugFixReportSchema",
+      "start_ui": "UIReportSchema",
+      "start_onboard": "OnboardingReportSchema",
+      "start_ralph": "RalphLoopReportSchema",
+      "start_product": "WorkflowReportSchema",
+      "init_project": "ProjectInitSchema",
+      "init_project_context": "ProjectContextSchema",
+      "interview": "InterviewReportSchema",
+      "ask_user": "UserQuestionSchema",
+      "ui_design_system": "DesignSystemSchema",
+      "ui_search": "UISearchResultSchema",
+      "sync_ui_data": "SyncReportSchema"
+    },
+    "coverage": {
+      "total": 20,
+      "completed": 20,
+      "percentage": 100
+    }
+  },
+  "v3Changes": {
+    "description": "v3.0 重大变更：工具精简 51%",
+    "removed": {
+      "count": 19,
+      "tools": [
+        "start_review",
+        "start_refactor",
+        "start_api",
+        "start_doc",
+        "start_release",
+        "security_scan",
+        "perf",
+        "genchangelog",
+        "genpr",
+        "resolve_conflict",
+        "gendoc",
+        "genapi",
+        "gensql",
+        "genreadme",
+        "gen_mock",
+        "gen_prd",
+        "gen_prototype",
+        "init_component_catalog",
+        "render_ui"
+      ],
+      "reasons": {
+        "start_review": "直接使用 code_review 工具即可",
+        "start_refactor": "直接使用 refactor 工具即可",
+        "start_api": "AI 可直接生成 API",
+        "start_doc": "AI 可直接生成文档",
+        "start_release": "低频操作，手动进行更合适",
+        "security_scan": "功能已集成到 code_review",
+        "perf": "功能已集成到 code_review",
+        "genchangelog": "低频操作，AI 可直接生成",
+        "genpr": "AI 可直接写 PR 描述",
+        "resolve_conflict": "极低频操作",
+        "gendoc": "AI 可直接生成代码注释",
+        "genapi": "AI 可直接生成 API 文档",
+        "gensql": "AI 可直接生成 SQL",
+        "genreadme": "低频操作",
+        "gen_mock": "AI 可直接生成 Mock 数据",
+        "gen_prd": "已集成到 start_product",
+        "gen_prototype": "已集成到 start_product",
+        "init_component_catalog": "start_ui 内部调用",
+        "render_ui": "start_ui 内部调用"
+      }
+    },
+    "philosophy": "专注核心竞争力，减少工具选择困难，让 AI 做更多原生工作"
+  }
+}

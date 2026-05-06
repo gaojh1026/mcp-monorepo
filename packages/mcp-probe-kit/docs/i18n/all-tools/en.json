@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "title": "All Tools - Complete List of 22 AI Development Tools | MCP Probe Kit",
+    "description": "MCP Probe Kit complete tool list: 6 workflow orchestration tools, 4 code analysis tools, 2 Git tools, 1 generation tool, 6 project management tools, 3 UI/UX tools.",
+    "keywords": "AI development tools, code generation tools, code review tools, Git automation, UI generation, code refactoring, performance optimization, security scanning"
+  },
+  "page": {
+    "subtitle": "MCP Probe Kit provides 22 practical tools with structured output support for core and orchestration tools"
+  },
+  "search": {
+    "placeholder": "🔍 Search tool name or description...",
+    "found": "Found {count} matching tools",
+    "noResults": "No matching tools found"
+  },
+  "footer": {
+    "lastUpdate": "Last Update",
+    "protocol": "Protocol",
+    "sdk": "SDK",
+    "editPage": "Edit this page",
+    "reportIssue": "Report Issue"
+  },
+  "toolShortDesc": {
+    "start_feature": "New Feature",
+    "start_bugfix": "Fix Bug",
+    "start_onboard": "Quick Start",
+    "start_ralph": "Loop Dev",
+    "start_product": "Product Design",
+    "start_ui": "UI Dev",
+    "code_review": "Code Review",
+    "fix_bug": "Fix Bug",
+    "refactor": "Refactor",
+    "gencommit": "Gen Commit",
+    "gentest": "Gen Test",
+    "git_work_report": "Work Report",
+    "init_project": "Init Project",
+    "init_project_context": "Project Context",
+    "add_feature": "Add Feature",
+    "estimate": "Estimate",
+    "interview": "Interview",
+    "ask_user": "Ask User",
+    "ui_design_system": "Design System",
+    "ui_search": "Search UI",
+    "sync_ui_data": "Sync Data",
+    "code_insight": "Code Insight"
+  },
+  "categories": {
+    "workflow": {
+      "title": "Workflow Orchestration",
+      "count": "6 tools"
+    },
+    "analysis": {
+      "title": "Code Analysis",
+      "count": "4 tools"
+    },
+    "git": {
+      "title": "Git Tools",
+      "count": "2 tools"
+    },
+    "generation": {
+      "title": "Code Generation",
+      "count": "1 tool"
+    },
+    "project": {
+      "title": "Project Management",
+      "count": "6 tools"
+    },
+    "uiux": {
+      "title": "UI/UX Design",
+      "count": "3 tools"
+    }
+  },
+  "toolsData": {
+    "start_feature": {
+      "description": "Complete feature development workflow orchestration: bootstrap graph baseline → refresh GitNexus index → narrow scope → generate specs → estimate workload",
+      "usage": "Used to start the full feature flow, backfill graph-insights when missing, then use GitNexus query/context/impact analysis to narrow scope before spec and estimation"
+    },
+    "start_bugfix": {
+      "description": "Bug fix workflow orchestration: bootstrap graph baseline → refresh GitNexus index → narrow failure boundary → TBP 8-step root-cause analysis → fix plan → generate tests",
+      "usage": "Use it for bugs, regressions, and anomalies; it backfills graph-insights first and uses GitNexus to constrain boundary and impact before TBP RCA"
+    },
+    "start_onboard": {
+      "description": "Project onboarding workflow: generate context documentation to help new members quickly understand the project",
+      "usage": "Help new members quickly understand project structure, tech stack, and development standards"
+    },
+    "start_ralph": {
+      "description": "Ralph Wiggum Loop automated development, start loop development process with multiple safety protections enabled by default",
+      "usage": "Start automated loop development, AI will continuously iterate until goal is achieved or safety limits are reached"
+    },
+    "start_product": {
+      "description": "Complete product design workflow orchestration: PRD → prototype docs → design system → HTML prototype → project context update",
+      "usage": "One-click completion from requirements to HTML prototype, generating directly demonstrable product prototypes"
+    },
+    "start_ui": {
+      "description": "Unified UI development entry: check design system → generate component catalog → search/generate templates → render code",
+      "usage": "One-click completion of entire UI development process, from design system to final code"
+    },
+    "code_review": {
+      "description": "Intelligent code review, analyzing code from multiple dimensions including security, performance, quality, style, and best practices",
+      "usage": "Comprehensive code quality review, outputting structured issue list (severity/category/suggestion)"
+    },
+    "fix_bug": {
+      "description": "TBP 8-step bug RCA and repair guidance with evidence chain, fix plan, test plan, and prevention measures",
+      "usage": "Use it when you need to find the true cause first and close the chain from symptom and boundary to repair"
+    },
+    "refactor": {
+      "description": "Refactoring suggestion tool, analyzing code structure, providing refactoring steps, risk assessment, and rollback plan",
+      "usage": "Analyze code structure, provide refactoring suggestions, refactoring steps, and risk assessment"
+    },
+    "gencommit": {
+      "description": "Automatically generate Git commit messages compliant with Conventional Commits specification based on code changes",
+      "usage": "Generate commit messages compliant with Conventional Commits specification based on code changes"
+    },
+    "git_work_report": {
+      "description": "Generate work reports (daily/periodic) based on Git diff analysis, intelligently extracting actual work content",
+      "usage": "Automatically read Git commits for specified dates, analyze diff content, generate concise professional work reports. If direct command fails, provides temporary script solution (auto-deleted after execution)"
+    },
+    "gentest": {
+      "description": "Generate unit tests, supporting Jest/Vitest/Mocha frameworks, including edge cases and mock data",
+      "usage": "Generate unit test code, including edge cases and mocks"
+    },
+    "init_project": {
+      "description": "Generate requirement/design/task documents following Spec-Driven Development approach",
+      "usage": "Generate requirement/design/task documents following Spec-Driven Development approach"
+    },
+    "init_project_context": {
+      "description": "Generate or maintain project context documentation and bootstrap graph-insights entry points",
+      "usage": "Creates context docs for new projects; if project-context.md already exists, it preserves the old docs and only backfills graph-insights plus the index entry"
+    },
+    "add_feature": {
+      "description": "Generate new feature specification documents (requirements/design/task list) based on project context",
+      "usage": "Generate new feature specification documents (requirements/design/task list) based on project context"
+    },
+    "estimate": {
+      "description": "Estimate development workload, output story points, time range (optimistic/normal/pessimistic), risk points",
+      "usage": "Estimate development workload, output story points, time range (optimistic/normal/pessimistic), risk points"
+    },
+    "interview": {
+      "description": "Requirements interview tool, clarifying requirements through structured questioning to avoid misunderstandings and rework",
+      "usage": "Requirements interview tool, clarifying requirements through structured questioning before development"
+    },
+    "ask_user": {
+      "description": "AI proactive questioning tool, supporting single or multiple questions, providing options, marking importance",
+      "usage": "AI proactively asks users questions, supporting single or multiple questions, providing options, marking importance"
+    },
+    "ui_design_system": {
+      "description": "Intelligent design system generator, generating complete design specifications based on product type reasoning",
+      "usage": "Based on product type and requirements, use AI reasoning engine to generate complete design system recommendations"
+    },
+    "ui_search": {
+      "description": "Search UI/UX database, including colors, icons, charts, components, design patterns, etc.",
+      "usage": "Search UI/UX database using BM25 algorithm for intelligent search"
+    },
+    "sync_ui_data": {
+      "description": "Sync UI/UX data to local cache, supporting automatic update checking and forced sync",
+      "usage": "Sync UI/UX data to local cache, downloading latest data from npm package uipro-cli"
+    },
+    "code_insight": {
+      "description": "Code graph insight tool, bridging GitNexus to analyze call chains, context, and impact (auto-degrades when unavailable)",
+      "usage": "Refresh the GitNexus index, perform task-level call-chain/context/impact analysis, and persist results to docs/graph-insights plus the project-context index"
+    }
+  }
+}

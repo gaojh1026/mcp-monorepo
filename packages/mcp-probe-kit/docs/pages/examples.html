@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最佳实践 - 完整研发流程实战指南 | MCP Probe Kit</title>
+    
+    <meta name="description" content="MCP Probe Kit 最佳实践：从需求分析到版本发布的完整研发流程。涵盖需求规划、功能开发、代码质量、Bug修复、版本发布、项目维护 6 大阶段，以及 Ralph Wiggum Loop 自动化开发实践。">
+    <meta name="keywords" content="研发最佳实践, 开发流程, 需求分析, 代码质量, Bug修复, 版本发布, 自动化开发, Ralph Wiggum Loop, CI/CD">
+    <meta name="author" content="小墨 (Kyle) - ByteZoneX">
+    <meta name="robots" content="index, follow">
+    
+    <script src="../assets/js/tailwind.js" data-cfasync="false"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: '#2563EB', hover: '#1D4ED8' },
+                        text: { primary: '#0F172A', secondary: '#475569', tertiary: '#64748B' },
+                        bg: { page: '#F8FAFC', card: '#FFFFFF', hover: '#F1F5F9' },
+                        border: '#E2E8F0',
+                    },
+                    fontFamily: { 
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"PingFang SC"', '"Microsoft YaHei"', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans CJK SC"', 'sans-serif'],
+                        mono: ['ui-monospace', '"SF Mono"', '"Cascadia Code"', '"Consolas"', 'Menlo', 'Monaco', '"PingFang SC"', '"Microsoft YaHei"', '"Courier New"', 'monospace']
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .code-block { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .sidebar-drawer { transition: transform 0.3s ease; }
+        @media (max-width: 767px) {
+            .sidebar-drawer { transform: translateX(-100%); }
+            .sidebar-drawer.open { transform: translateX(0); }
+        }
+        .backdrop { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .backdrop.active { opacity: 1; pointer-events: auto; }
+        
+        /* i18n 加载优化：防止内容闪烁 */
+        body:not(.i18n-ready) [data-i18n] {
+            visibility: hidden;
+        }
+        body.i18n-ready [data-i18n] {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="font-sans bg-bg-page text-text-primary leading-relaxed min-h-screen flex flex-col">
+    <!-- A. 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-md border-b border-border z-50">
+        <div class="h-full px-4 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-2 text-base font-semibold text-text-primary no-underline">
+                <span>🚀</span>
+                <span class="sm:inline hidden">MCP Probe Kit</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <div id="lang-switcher-container"></div>
+                <button onclick="toggleSidebar()" class="md:hidden p-2 text-text-secondary hover:text-primary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 侧边栏遮罩 -->
+    <div class="fixed inset-0 bg-black/50 z-40 backdrop opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" onclick="toggleSidebar()" id="backdrop"></div>
+
+    <!-- B. 侧边栏 -->
+    <aside class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-border z-50 sidebar-drawer overflow-y-auto md:translate-x-0 md:block" id="sidebar">
+        <div class="p-4">
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.quickStart">快速开始</div>
+                <a href="../index.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🏠</span>
+                    <span data-i18n="sidebar.home">文档首页</span>
+                </a>
+                <a href="./getting-started.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>📖</span>
+                    <span data-i18n="sidebar.installation">安装配置</span>
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.toolsDocs">工具文档</div>
+                <a href="./all-tools.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🛠️</span>
+                    <span data-i18n="sidebar.allTools">所有工具</span>
+                    <span class="ml-auto bg-bg-page text-xs px-2 py-0.5 rounded-full">22</span>
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2 px-2" data-i18n="sidebar.guides">指南</div>
+                <a href="./migration.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>🚀</span>
+                    <span data-i18n="sidebar.migration">迁移指南</span>
+                </a>
+                <a href="./examples.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-blue-50 text-primary no-underline border-l-3 border-primary">
+                    <span>💡</span>
+                    <span data-i18n="sidebar.examples">最佳实践</span>
+                </a>
+            </div>
+            
+            <div class="pt-4 border-t border-border">
+                <a href="https://github.com/mybolide/mcp-probe-kit" target="_blank" rel="noopener" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>💻</span>
+                    <span>GitHub</span>
+                    <span class="ml-auto text-xs">↗</span>
+                </a>
+                <a href="https://npmjs.com/package/mcp-probe-kit" target="_blank" rel="noopener" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-bg-page hover:text-primary transition-colors no-underline">
+                    <span>📦</span>
+                    <span>npm</span>
+                    <span class="ml-auto text-xs">↗</span>
+                </a>
+            </div>
+
+            <!-- QR Code -->
+            <div class="mt-4 pt-4 border-t border-border">
+                <div class="text-center">
+                    <div class="text-xs font-semibold text-text-tertiary mb-2" data-i18n="sidebar.followUs">关注公众号</div>
+                    <img src="https://oss.bolzjb.com/wx_qrcode.jpg" alt="微信公众号" class="w-[100px] h-[100px] mx-auto rounded-lg border border-border" />
+                    <div class="text-xs text-text-tertiary mt-2" data-i18n="sidebar.getTechSharing">获取更多技术分享</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- C. 主内容区 -->
+    <main class="flex-1 mt-14 min-h-screen md:ml-64">
+        <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+            <!-- 面包屑 -->
+            <nav class="flex items-center gap-1 text-sm text-text-secondary mb-4 overflow-x-auto whitespace-nowrap">
+                <a href="../index.html" class="hover:text-primary transition-colors no-underline flex-shrink-0" data-i18n="examples.breadcrumb.home">文档首页</a>
+                <span class="text-text-tertiary">/</span>
+                <span class="text-text-primary flex-shrink-0" data-i18n="examples.breadcrumb.guides">指南</span>
+                <span class="text-text-tertiary">/</span>
+                <span class="text-text-primary flex-shrink-0" data-i18n="examples.breadcrumb.examples">最佳实践</span>
+            </nav>
+
+            <!-- 页面标题 -->
+            <div class="mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-text-primary mb-2" data-i18n="examples.title">最佳实践</h1>
+                <p class="text-sm sm:text-base text-text-secondary" data-i18n="examples.subtitle">MCP Probe Kit 融合完整研发流程，从需求到上线的最佳实践指南</p>
+                <div class="flex flex-wrap items-center gap-2 mt-3 text-xs text-text-tertiary">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">v3.0.10</span>
+                    <span>MCP 2025-11-25</span>
+                    <span>SDK 1.27.1</span>
+                </div>
+            </div>
+
+            <!-- 研发流程概览 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.overview.title">完整研发流程</h2>
+                <p class="text-text-secondary mb-4 text-sm" data-i18n="examples.overview.description">MCP Probe Kit 的 22 个工具覆盖了从需求分析到代码上线的完整研发流程。以下是推荐的最佳实践。</p>
+                <div class="p-3 bg-blue-50 border-l-3 border-blue-500 rounded-r text-sm">
+                    <strong>💡 <span data-i18n="examples.overview.coreIdea">核心理念：</span></strong><span data-i18n="examples.overview.coreIdeaText">通过工作流编排工具（start_*）串联整个开发流程，让 AI 成为你的研发助手。</span>
+                </div>
+            </section>
+
+            <!-- 阶段 0：产品设计 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage0.title">阶段 0：产品设计（从需求到原型）</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🎯</span>
+                        <span data-i18n="examples.stage0.workflow.title">0.1 完整产品设计流程（推荐）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage0.workflow.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_product</code> <span data-i18n="examples.stage0.workflow.description2">工作流编排，一键完成从需求到 HTML 原型的完整产品设计。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage0.workflow.example1">你: 我有一个产品需求文档 project.md，帮我生成完整的产品设计</span>
+
+AI: 使用 start_product 工具
+requirements_file: "project.md"
+product_name: "<span data-i18n="examples.stage0.workflow.productName">在线教育平台</span>"
+product_type: "Education"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage0.workflow.step1">✓ 步骤 1: 检查/生成项目上下文</span>
+  <span data-i18n="examples.stage0.workflow.step2">✓ 步骤 2: 生成 PRD 文档</span>
+  <span data-i18n="examples.stage0.workflow.step3">✓ 步骤 3: 生成原型设计文档</span>
+  <span data-i18n="examples.stage0.workflow.step4">✓ 步骤 4: 生成设计系统</span>
+  <span data-i18n="examples.stage0.workflow.step5">→ 步骤 5: 生成 HTML 可交互原型</span>
+  <span data-i18n="examples.stage0.workflow.step6">✓ 步骤 6: 更新项目上下文索引</span>
+
+<span data-i18n="examples.stage0.workflow.outputs">→ 输出文件：</span>
+  - docs/prd/product-requirements.md
+  - docs/prototype/prototype-index.md
+  - docs/prototype/page-*.md
+  - docs/design-system.json
+  - docs/html-prototype/index.html</code></pre>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>📄</span>
+                        <span data-i18n="examples.stage0.prd.title">0.2 单独生成 PRD 文档</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage0.prd.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">gen_prd</code> <span data-i18n="examples.stage0.prd.description2">工具单独生成产品需求文档。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage0.prd.example1">你: 生成一个在线教育平台的 PRD</span>
+
+AI: 使用 gen_prd 工具
+description: "<span data-i18n="examples.stage0.prd.description3">在线教育平台，支持课程管理、视频播放、作业提交</span>"
+product_name: "EduPlatform"
+
+<span data-i18n="examples.stage0.prd.aiCreate">→ AI 根据指导创建 docs/prd/product-requirements.md</span>
+
+<span data-i18n="examples.stage0.prd.includes">PRD 包含：</span>
+  <span data-i18n="examples.stage0.prd.item1">- 产品概述（愿景、目标用户、核心价值）</span>
+  <span data-i18n="examples.stage0.prd.item2">- 功能需求（核心功能、用户故事）</span>
+  <span data-i18n="examples.stage0.prd.item3">- 功能优先级（P0/P1/P2）</span>
+  <span data-i18n="examples.stage0.prd.item4">- 非功能性需求（性能、安全、兼容性）</span>
+  <span data-i18n="examples.stage0.prd.item5">- 页面清单</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🎨</span>
+                        <span data-i18n="examples.stage0.prototype.title">0.3 生成 HTML 可交互原型</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage0.prototype.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_ui</code> <span data-i18n="examples.stage0.prototype.description2">工具基于原型文档生成 HTML 原型。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>AI: 使用 start_ui 工具
+description: "<span data-i18n="examples.stage0.prototype.desc">基于原型文档生成所有页面的 HTML 原型</span>"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage0.prototype.step1">✓ 读取 docs/prototype/ 下的所有原型文档</span>
+  <span data-i18n="examples.stage0.prototype.step2">✓ 读取 docs/design-system.json 获取设计规范</span>
+  <span data-i18n="examples.stage0.prototype.step3">✓ 为每个页面生成 HTML 文件</span>
+  <span data-i18n="examples.stage0.prototype.step4">✓ 生成索引页面 index.html</span>
+
+<span data-i18n="examples.stage0.workflow.outputs">→ 输出：</span>
+  - docs/html-prototype/index.html
+  - docs/html-prototype/page-*.html
+
+<span data-i18n="examples.stage0.prototype.features">→ 特点：</span>
+  <span data-i18n="examples.stage0.prototype.feature1">- 使用设计系统的颜色和字体</span>
+  <span data-i18n="examples.stage0.prototype.feature2">- 包含页面导航</span>
+  <span data-i18n="examples.stage0.prototype.feature3">- 响应式设计</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>✅</span>
+                        <span data-i18n="examples.stage0.summary.title">0.4 产品设计工作流总结</span>
+                    </h3>
+                    <div class="ml-7 p-3 bg-green-50 border-l-3 border-green-500 rounded-r text-sm">
+                        <p class="font-medium mb-2"><strong data-i18n="examples.stage0.summary.recommended">推荐流程：</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li data-i18n="examples.stage0.summary.step1">准备需求文档（Markdown 格式）</li>
+                            <li><span data-i18n="examples.stage0.summary.step2">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_product</code> <span data-i18n="examples.stage0.summary.step2b">一键生成完整产品设计</span></li>
+                            <li data-i18n="examples.stage0.summary.step3">在浏览器中查看 HTML 原型</li>
+                            <li data-i18n="examples.stage0.summary.step4">与团队评审原型，收集反馈</li>
+                            <li data-i18n="examples.stage0.summary.step5">根据反馈调整原型文档</li>
+                            <li><span data-i18n="examples.stage0.summary.step6">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_ui</code> <span data-i18n="examples.stage0.summary.step6b">重新生成 HTML 原型</span></li>
+                            <li data-i18n="examples.stage0.summary.step7">确认后进入开发阶段</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 阶段 1：需求阶段 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage1.title">阶段 1：需求分析与规划</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🚀</span>
+                        <span data-i18n="examples.stage1.init.title">1.1 新项目启动</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage1.init.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">init_project</code> <span data-i18n="examples.stage1.init.description2">按 Spec-Driven Development 方式生成项目文档。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage1.init.example1">你: 我要创建一个任务管理系统</span>
+
+AI: 使用 init_project 工具
+input: "<span data-i18n="examples.stage1.init.input">任务管理系统，支持任务创建、分配、跟踪、提醒</span>"
+project_name: "TaskManager"
+
+<span data-i18n="examples.stage1.init.generate">→ 生成：需求文档、设计文档、任务清单</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>💬</span>
+                        <span data-i18n="examples.stage1.interview.title">1.2 需求澄清（避免理解偏差）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage1.interview.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">interview</code> <span data-i18n="examples.stage1.interview.description2">工具进行结构化需求访谈。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage1.interview.example1">你: 添加用户登录功能</span>
+
+AI: 使用 interview 工具
+description: "<span data-i18n="examples.stage1.interview.desc">实现用户登录功能</span>"
+
+<span data-i18n="examples.stage1.interview.aiAsk">→ AI 会提问：</span>
+  <span data-i18n="examples.stage1.interview.q1">- 支持哪些登录方式？（邮箱/手机/第三方）</span>
+  <span data-i18n="examples.stage1.interview.q2">- 是否需要记住登录状态？</span>
+  <span data-i18n="examples.stage1.interview.q3">- 密码规则是什么？</span>
+  <span data-i18n="examples.stage1.interview.q4">- 是否需要验证码？</span>
+
+<span data-i18n="examples.stage1.interview.generate">→ 生成：访谈记录文档</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>📊</span>
+                        <span data-i18n="examples.stage1.estimate.title">1.3 工作量估算</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage1.estimate.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">estimate</code> <span data-i18n="examples.stage1.estimate.description2">工具估算开发时间和资源。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>AI: 使用 estimate 工具
+task_description: "<span data-i18n="examples.stage1.estimate.task">实现用户认证功能</span>"
+experience_level: "mid"
+team_size: 2
+
+<span data-i18n="examples.stage1.estimate.output">→ 输出：</span>
+  <span data-i18n="examples.stage1.estimate.sp">- 故事点：8 SP</span>
+  <span data-i18n="examples.stage1.estimate.time">- 时间范围：乐观 3天 / 正常 5天 / 悲观 8天</span>
+  <span data-i18n="examples.stage1.estimate.risk">- 风险点：第三方登录集成可能延期</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🕸️</span>
+                        <span data-i18n="examples.stage1.codeInsight.title">1.4 现有代码图谱洞察</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage1.codeInsight.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">code_insight</code> <span data-i18n="examples.stage1.codeInsight.description2">快速分析调用链、上下文和影响范围，并为后续 start_feature/start_bugfix 提供图谱上下文。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage1.codeInsight.example1">你: 请分析登录与 token 刷新相关的调用链，看看改动会影响哪些模块</span>
+
+AI: 使用 code_insight 工具
+mode: "query"
+query: "login token refresh auth flow"
+goal: "<span data-i18n="examples.stage1.codeInsight.goal">找出现有登录与 token 刷新流程</span>"
+task_context: "<span data-i18n="examples.stage1.codeInsight.taskContext">准备修改认证模块</span>"
+
+<span data-i18n="examples.stage1.codeInsight.output">→ 输出：</span>
+  <span data-i18n="examples.stage1.codeInsight.item1">- 相关执行流 / 调用链</span>
+  <span data-i18n="examples.stage1.codeInsight.item2">- 关键符号与文件位置</span>
+  <span data-i18n="examples.stage1.codeInsight.item3">- _meta.graph.snapshotUri / markdownFilePath</span>
+  <span data-i18n="examples.stage1.codeInsight.item4">- 供后续编排复用的 docs/graph-insights/latest.* 与 project-context 索引入口</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 阶段 2：开发阶段 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage2.title">阶段 2：功能开发</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🛠️</span>
+                        <span data-i18n="examples.stage2.workflow.title">2.1 完整功能开发流程（推荐）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage2.workflow.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_feature</code> <span data-i18n="examples.stage2.workflow.description2">工作流编排，一键完成从规格到估算。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage2.workflow.example1">你: 开发用户认证功能</span>
+
+AI: 使用 start_feature 工具
+description: "用户认证功能，支持邮箱登录和 Google 登录"
+feature_name: "user-auth"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage2.workflow.step1">✓ 检查项目上下文与可用图谱快照</span>
+  <span data-i18n="examples.stage2.workflow.step2">✓ 生成功能规格文档</span>
+  <span data-i18n="examples.stage2.workflow.step3">✓ 估算开发工作量</span>
+  <span data-i18n="examples.stage2.workflow.step4">✓ 输出完整开发计划</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🎨</span>
+                        <span data-i18n="examples.stage2.ui.title">2.2 UI 开发流程</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage2.ui.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_ui</code> <span data-i18n="examples.stage2.ui.description2">工作流，从设计系统到代码一气呵成。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage2.ui.example1">你: 创建登录页面</span>
+
+AI: 使用 start_ui 工具
+description: "登录页面，包含邮箱密码输入和 Google 登录按钮"
+framework: "react"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage2.ui.step1">✓ 检查/生成设计系统</span>
+  <span data-i18n="examples.stage2.ui.step2">✓ 初始化组件目录</span>
+  <span data-i18n="examples.stage2.ui.step3">✓ 搜索/生成 UI 模板</span>
+  <span data-i18n="examples.stage2.ui.step4">✓ 渲染最终 React 代码</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>⚡</span>
+                        <span data-i18n="examples.stage2.codegen.title">2.3 代码生成</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3" data-i18n="examples.stage2.codegen.description">根据需要使用各种生成工具：</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-text-primary ml-7">
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">genapi</code> - <span data-i18n="examples.stage2.codegen.genapi">生成 API 文档（OpenAPI/Swagger）</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">gensql</code> - <span data-i18n="examples.stage2.codegen.gensql">自然语言生成 SQL 查询</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">gen_mock</code> - <span data-i18n="examples.stage2.codegen.genmock">生成测试数据</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">gentest</code> - <span data-i18n="examples.stage2.codegen.gentest">生成单元测试</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 阶段 3：代码质量 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage3.title">阶段 3：代码质量保障</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🔍</span>
+                        <span data-i18n="examples.stage3.review.title">3.1 全面代码审查（推荐）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage3.review.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_review</code> <span data-i18n="examples.stage3.review.description2">工作流，一次性完成代码审查、安全扫描、性能分析。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage3.review.example1">你: 审查这段代码</span>
+
+AI: 使用 start_review 工具
+code: "function login(user, pass) { ... }"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage3.review.step1">✓ 代码审查（质量、风格、最佳实践）</span>
+  <span data-i18n="examples.stage3.review.step2">✓ 安全扫描（SQL注入、XSS、CSRF）</span>
+  <span data-i18n="examples.stage3.review.step3">✓ 性能分析（算法、内存、数据库）</span>
+  <span data-i18n="examples.stage3.review.step4">✓ 输出综合报告</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🎯</span>
+                        <span data-i18n="examples.stage3.single.title">3.2 单项检查</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3" data-i18n="examples.stage3.single.description">针对特定问题使用单项工具：</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-text-primary ml-7">
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">code_review</code> - <span data-i18n="examples.stage3.single.codeReview">代码审查</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">security_scan</code> - <span data-i18n="examples.stage3.single.securityScan">安全扫描</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">perf</code> - <span data-i18n="examples.stage3.single.perf">性能分析</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">refactor</code> - <span data-i18n="examples.stage3.single.refactor">重构建议</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 阶段 4：Bug 修复 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage4.title">阶段 4：Bug 修复</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🐛</span>
+                        <span data-i18n="examples.stage4.bugfix.title">4.1 系统化 Bug 修复（推荐）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage4.bugfix.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_bugfix</code> <span data-i18n="examples.stage4.bugfix.description2">工作流，从分析到测试一站式解决。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage4.bugfix.example1">你: 登录功能报错了</span>
+
+AI: 使用 start_bugfix 工具
+error_message: "TypeError: Cannot read property 'token' of undefined"
+stack_trace: "at login.js:45:12"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage4.bugfix.step1">✓ 检查项目上下文与可用图谱快照</span>
+  <span data-i18n="examples.stage4.bugfix.step2">✓ 分析错误原因</span>
+  <span data-i18n="examples.stage4.bugfix.step3">✓ 定位问题代码</span>
+  <span data-i18n="examples.stage4.bugfix.step4">✓ 提供修复方案</span>
+  <span data-i18n="examples.stage4.bugfix.step5">✓ 生成测试用例</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span data-i18n="examples.stage4.quick.title">4.2 快速 Bug 分析</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7"><span data-i18n="examples.stage4.quick.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">fix_bug</code> <span data-i18n="examples.stage4.quick.description2">工具快速分析问题并提供修复方案。</span></p>
+                </div>
+            </section>
+
+            <!-- 阶段 5：版本发布 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage5.title">阶段 5：版本发布</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🚀</span>
+                        <span data-i18n="examples.stage5.release.title">5.1 自动化发布流程（推荐）</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage5.release.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_release</code> <span data-i18n="examples.stage5.release.description2">工作流，自动生成 Changelog 和 PR 描述。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage5.release.example1">你: 准备发布 v2.0.0</span>
+
+AI: 使用 start_release 工具
+version: "v2.0.0"
+from_tag: "v1.9.0"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage5.release.step1">✓ 生成 CHANGELOG（按 feat/fix/breaking 分类）</span>
+  <span data-i18n="examples.stage5.release.step2">✓ 生成 PR 描述（变更摘要、影响范围）</span>
+  <span data-i18n="examples.stage5.release.step3">✓ 输出发布检查清单</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🔀</span>
+                        <span data-i18n="examples.stage5.git.title">5.2 Git 工作流</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3" data-i18n="examples.stage5.git.description">使用 Git 工具提升协作效率：</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-text-primary ml-7">
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">gencommit</code> - <span data-i18n="examples.stage5.git.gencommit">生成规范的 commit 消息</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">genchangelog</code> - <span data-i18n="examples.stage5.git.genchangelog">生成 CHANGELOG</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">genpr</code> - <span data-i18n="examples.stage5.git.genpr">生成 PR 描述</span></li>
+                        <li><code class="bg-gray-200 px-1 rounded text-xs">resolve_conflict</code> - <span data-i18n="examples.stage5.git.resolveConflict">解决合并冲突</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 阶段 6：项目维护 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.stage6.title">阶段 6：项目维护</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>👋</span>
+                        <span data-i18n="examples.stage6.onboard.title">6.1 新成员上手</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage6.onboard.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_onboard</code> <span data-i18n="examples.stage6.onboard.description2">工作流，快速了解项目。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.stage6.onboard.example1">新成员: 我刚加入项目，需要了解项目结构</span>
+
+AI: 使用 start_onboard 工具
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage6.onboard.step1">✓ 生成上下文文档</span>
+  <span data-i18n="examples.stage6.onboard.step2">✓ 输出开发规范</span></code></pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>📚</span>
+                        <span data-i18n="examples.stage6.doc.title">6.2 文档维护</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.stage6.doc.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_doc</code> <span data-i18n="examples.stage6.doc.description2">工作流，一键补全项目文档。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.common.bestPractice">最佳实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code>AI: 使用 start_doc 工具
+code: "整个项目代码"
+
+<span data-i18n="examples.stage0.workflow.autoExecute">→ 自动执行：</span>
+  <span data-i18n="examples.stage6.doc.step1">✓ 生成代码注释（JSDoc/TSDoc）</span>
+  <span data-i18n="examples.stage6.doc.step2">✓ 生成 README 文档</span>
+  <span data-i18n="examples.stage6.doc.step3">✓ 生成 API 文档</span>
+  <span data-i18n="examples.stage6.doc.step4">✓ 输出完整文档集</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 高级实践 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.ralph.title">高级实践：Ralph Wiggum Loop</h2>
+                
+                <div class="mb-4">
+                    <h3 class="font-medium text-text-primary mb-2 flex items-center gap-2">
+                        <span>🔄</span>
+                        <span data-i18n="examples.ralph.loop.title">自动化循环开发</span>
+                    </h3>
+                    <p class="text-text-secondary text-sm pl-7 mb-3"><span data-i18n="examples.ralph.loop.description">使用</span> <code class="bg-gray-200 px-1 rounded text-xs">start_ralph</code> <span data-i18n="examples.ralph.loop.description2">启动自动化开发循环，AI 持续迭代直到完成目标。</span></p>
+                    <div class="bg-slate-900 rounded-lg overflow-hidden ml-7">
+                        <div class="flex items-center justify-between px-3 py-2 bg-slate-800">
+                            <span class="text-xs text-slate-300 font-medium" data-i18n="examples.ralph.advancedPractice">高级实践</span>
+                        </div>
+                        <pre class="code-block p-4 text-sm text-slate-200 overflow-x-auto"><code><span data-i18n="examples.ralph.loop.example1">你: 实现用户认证功能</span>
+
+AI: 使用 start_ralph 工具
+goal: "实现用户认证功能，包含登录、注册、密码重置"
+mode: "safe"  // 启用安全保护
+max_iterations: 8
+max_minutes: 25
+
+<span data-i18n="examples.stage0.workflow.autoLoop">→ AI 自动循环：</span>
+  <span data-i18n="examples.ralph.loop.round1">第1轮：分析需求 → 生成代码</span>
+  <span data-i18n="examples.ralph.loop.round2">第2轮：运行测试 → 修复错误</span>
+  <span data-i18n="examples.ralph.loop.round3">第3轮：代码审查 → 优化代码</span>
+  ...
+  <span data-i18n="examples.ralph.loop.until">直到：测试通过 + 需求满足</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="ml-7 p-3 bg-amber-50 border-l-3 border-amber-500 rounded-r text-sm">
+                    <strong data-i18n="examples.ralph.warning.title">⚠️ 安全提示：</strong><span data-i18n="examples.ralph.warning.text">Ralph Loop 默认启用多重安全保护（最大迭代次数、运行时间、代码变更量限制），防止失控。</span>
+                </div>
+            </section>
+
+            <!-- 最佳实践总结 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.summary.title">最佳实践总结</h2>
+                
+                <div class="p-3 bg-green-50 border-l-3 border-green-500 rounded-r text-sm">
+                    <p class="font-medium mb-2"><strong data-i18n="examples.summary.coreTitle">核心原则：</strong></p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li data-i18n="examples.summary.principle1">优先使用工作流编排工具（start_*）- 自动化完整流程</li>
+                        <li data-i18n="examples.summary.principle2">需求阶段使用 interview - 避免理解偏差</li>
+                        <li data-i18n="examples.summary.principle3">开发前使用 estimate - 合理规划时间</li>
+                        <li data-i18n="examples.summary.principle4">提交前使用 start_review - 保证代码质量</li>
+                        <li data-i18n="examples.summary.principle5">发布前使用 start_release - 规范发布流程</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 更多资源 -->
+            <section class="bg-white rounded-xl border border-border p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold text-text-primary mb-4" data-i18n="examples.resources.title">更多资源</h2>
+                <ul class="list-disc list-inside space-y-2 text-sm text-text-primary">
+                    <li><a href="./all-tools.html" class="text-primary hover:underline" data-i18n="examples.resources.allTools">完整工具参考</a> - <span data-i18n="examples.resources.allToolsDesc">查看所有 22 个工具的详细说明</span></li>
+                    <li><a href="./getting-started.html" class="text-primary hover:underline" data-i18n="examples.resources.gettingStarted">安装配置</a> - <span data-i18n="examples.resources.gettingStartedDesc">快速开始使用</span></li>
+                    <li><a href="./migration.html" class="text-primary hover:underline" data-i18n="examples.resources.migration">迁移指南</a> - <span data-i18n="examples.resources.migrationDesc">从 v2.x 迁移到 v3.0</span></li>
+                    <li><a href="https://github.com/mybolide/mcp-probe-kit" target="_blank" rel="noopener" class="text-primary hover:underline" data-i18n="examples.resources.github">GitHub 仓库</a>
+                    <div id="lang-switcher-container"></div> - <span data-i18n="examples.resources.githubDesc">源代码和问题反馈</span></li>
+                </ul>
+            </section>
+
+            <!-- 开始实践 -->
+            <section class="bg-gradient-to-br from-primary to-primary-hover text-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm">
+                <h2 class="text-lg sm:text-xl font-semibold mb-3" data-i18n="examples.practice.title">🚀 开始实践</h2>
+                <p class="text-sm opacity-95 mb-4" data-i18n="examples.practice.description">将这些最佳实践应用到你的项目中</p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="./getting-started.html" class="bg-white/20 text-white px-4 py-2.5 rounded-md text-sm font-medium text-center hover:bg-white/30 transition-colors no-underline">
+                        <span data-i18n="examples.practice.install">📖 安装配置</span>
+                    </a>
+                    <a href="./all-tools.html" class="bg-white/20 text-white px-4 py-2.5 rounded-md text-sm font-medium text-center hover:bg-white/30 transition-colors no-underline">
+                        <span data-i18n="examples.practice.allTools">🛠️ 查看所有工具</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center text-sm text-text-tertiary py-4 border-t border-border">
+                <p>Made with ❤️ by <a href="https://www.bytezonex.com/" target="_blank" rel="noopener" class="text-primary hover:underline">小墨 (Kyle)</a></p>
+                <p class="mt-1">© 2024-2026 MCP Probe Kit · <a href="https://github.com/mybolide/mcp-probe-kit" target="_blank" rel="noopener" class="text-primary hover:underline">GitHub ↗</a></p>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('backdrop');
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('active');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.add('active');
+            }
+        }
+    </script>
+    <script src="../assets/js/i18n.js"></script>
+</body>
+</html>
+
