@@ -844,8 +844,28 @@ for (let {dataset_id, id, description, inputs, defaults = {}} of datasets)
 for (let tool of browser_tools)
     addTool(tool);
 
+/**
+ * 网关 / 本地 HTTP：设置 `HTTP_STREAMABLE_SERVER=true` 后使用 Streamable HTTP（与 mcp-gateway 反代一致）。
+ * - `PORT`：监听端口，默认 `8960`
+ * - `HOST`：绑定地址，默认 `127.0.0.1`
+ */
+const useHttpStream = process.env.HTTP_STREAMABLE_SERVER === 'true';
+const httpPort = Number(process.env.PORT || 8960);
+const httpHost = process.env.HOST || '127.0.0.1';
+
 console.error('Starting server...');
-server.start({transportType: 'stdio'});
+if (useHttpStream) {
+    await server.start({
+        transportType: 'httpStream',
+        httpStream: {
+            port: httpPort,
+            host: httpHost,
+            stateless: true,
+        },
+    });
+} else {
+    await server.start({transportType: 'stdio'});
+}
 function tool_fn(name, fn){
     return async(data, ctx)=>{
         check_rate_limit();
