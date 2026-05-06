@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
+import { createServer } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import {
   InMemoryTaskMessageQueue,
   InMemoryTaskStore,
@@ -80,6 +83,102 @@ function isEnvEnabled(name: string, fallback: boolean = false): boolean {
     return fallback;
   }
   return /^(1|true|yes|on)$/i.test(raw.trim());
+}
+
+/** HTTP JSON body 上限（与网关侧常见限制同量级） */
+const MAX_HTTP_JSON_BYTES = 20 * 1024 * 1024;
+
+/**
+ * 解析运行模式：CLI 优先，其次环境变量（供网关 spawn 注入）。
+ * - `MCP_PROBE_KIT_TRANSPORT`：`http` | `stdio`
+ * - `MCP_PROBE_KIT_PORT`：HTTP 监听端口
+ * - `MCP_PROBE_KIT_HOST`：HTTP 绑定地址
+ */
+function parseRuntimeOptions(): {
+  transport: "stdio" | "http";
+  port: number;
+  host: string;
+} {
+  const envT = process.env.MCP_PROBE_KIT_TRANSPORT?.trim().toLowerCase();
+  let transport: "stdio" | "http" = "stdio";
+  if (envT === "http") {
+    transport = "http";
+  } else if (envT === "stdio") {
+    transport = "stdio";
+  }
+  const envPort = process.env.MCP_PROBE_KIT_PORT?.trim();
+  let port = 8960;
+  if (envPort) {
+    const p = parseInt(envPort, 10);
+    if (!Number.isNaN(p)) {
+      port = p;
+    }
+  }
+  let host = process.env.MCP_PROBE_KIT_HOST?.trim() || "127.0.0.1";
+
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--transport" && argv[i + 1]) {
+      const t = argv[++i];
+      if (t === "http" || t === "stdio") {
+        transport = t;
+      }
+    } else if (a === "--port" && argv[i + 1]) {
+      const p = parseInt(argv[++i], 10);
+      if (!Number.isNaN(p)) {
+        port = p;
+      }
+    } else if (a === "--host" && argv[i + 1]) {
+      host = argv[++i]!;
+    }
+  }
+  return { transport, port, host };
+}
+
+/**
+ * 读取 HTTP JSON body
+ * @param req - Node 入站请求
+ */
+async function readHttpJsonBody(req: IncomingMessage): Promise<unknown> {
+  return await new Promise<unknown>((resolve, reject) => {
+    let body = "";
+    let size = 0;
+    req.on("data", (chunk: Buffer | string) => {
+      const len = Buffer.isBuffer(chunk) ? chunk.length : Buffer.byteLength(chunk);
+      size += len;
+      if (size > MAX_HTTP_JSON_BYTES) {
+        req.destroy();
+        reject(new Error(`请求体超过 ${MAX_HTTP_JSON_BYTES} 字节`));
+        return;
+      }
+      body += typeof chunk === "string" ? chunk : chunk.toString("utf8");
+    });
+    req.on("end", () => {
+      try {
+        const trimmed = body.trim();
+        resolve(trimmed ? JSON.parse(trimmed) : null);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+/**
+ * 为子路径 `/mcp` 写 CORS（经网关反代时与客户端预检一致）
+ * @param res - Node 出站响应
+ */
+function setProbeHttpCors(res: ServerResponse): void {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  /** 与 mcp-gateway `MCP_GATEWAY_CORS_ALLOW_HEADERS` 对齐，便于浏览器客户端经网关预检 */
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, mcp-session-id, MCP-Session-Id, MCP-Protocol-Version, Accept, Authorization, X-API-Key, x-firecrawl-api-key, X-Context7-API-Key, Context7-API-Key"
+  );
+  res.setHeader("Access-Control-Expose-Headers", "mcp-session-id, MCP-Session-Id");
 }
 
 function resolveGraphSnapshotDir(): string {
@@ -521,8 +620,11 @@ function decorateResult(
   return result;
 }
 
-// 创建MCP服务器实例
-const server = new Server(
+/**
+ * 构造 MCP Server（每路 HTTP 请求独立实例，避免 transport 冲突；stdio 模式单实例连接）
+ */
+function createProbeKitServer(): Server {
+  const server = new Server(
   {
     name: NAME,
     version: VERSION,
@@ -1153,11 +1255,99 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   throw new Error(`未知资源: ${uri}`);
 });
 
+  return server;
+}
+
+/**
+ * 处理单条 MCP Streamable HTTP 请求（无 GET/SSE，与网关反代兼容）
+ */
+async function handleProbeMcpHttpRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+  url: URL
+): Promise<void> {
+  setProbeHttpCors(res);
+  if (req.method === "OPTIONS") {
+    res.writeHead(204).end();
+    return;
+  }
+
+  const pathname = (url.pathname.replace(/\/$/, "") || "/") as string;
+  if (pathname !== "/mcp") {
+    res.writeHead(404).end("Not Found");
+    return;
+  }
+
+  if (req.method === "GET") {
+    const payload = JSON.stringify({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "此端点不支持 GET，请使用 POST（Streamable HTTP）",
+      },
+      id: null,
+    });
+    res.writeHead(405, {
+      "Content-Type": "application/json; charset=utf-8",
+    });
+    res.end(payload);
+    return;
+  }
+
+  const body =
+    req.method === "POST" || req.method === "DELETE"
+      ? await readHttpJsonBody(req)
+      : null;
+
+  const sdkServer = createProbeKitServer();
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: false,
+  });
+
+  res.on("close", () => {
+    void transport.close();
+    void sdkServer.close();
+  });
+
+  await sdkServer.connect(transport);
+  await transport.handleRequest(req, res, body);
+}
+
 // 启动服务器
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error("MCP Probe Kit 服务器已启动");
+  const opts = parseRuntimeOptions();
+
+  if (opts.transport === "stdio") {
+    const sdkServer = createProbeKitServer();
+    const transport = new StdioServerTransport();
+    await sdkServer.connect(transport);
+    console.error("MCP Probe Kit 服务器已启动 (stdio)");
+    return;
+  }
+
+  const httpServer = createServer(async (req, res) => {
+    try {
+      const hostHeader = req.headers.host ?? `${opts.host}:${opts.port}`;
+      const url = new URL(req.url ?? "/", `http://${hostHeader}`);
+      await handleProbeMcpHttpRequest(req, res, url);
+    } catch (error) {
+      console.error("[MCP Probe Kit] HTTP 处理失败:", error);
+      if (!res.headersSent) {
+        res.writeHead(500).end("Internal Server Error");
+      }
+    }
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    httpServer.once("error", reject);
+    httpServer.listen(opts.port, opts.host, () => {
+      console.error(
+        `MCP Probe Kit HTTP 已启动 http://${opts.host}:${opts.port}/mcp（网关外部服务模式）`
+      );
+      resolve();
+    });
+  });
 }
 
 // 启动服务器

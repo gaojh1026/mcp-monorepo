@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "pnpm -r --parallel --if-present run dev",
         "start": "pnpm -r --parallel --if-present run start",
-        "start:gateway": "pnpm stop &&pnpm -C packages/mcp-gateway build && pnpm -C packages/mcp-gateway start",
+        "start:gateway": "pnpm stop && pnpm -C packages/mcp-probe-kit build && pnpm -C packages/mcp-gateway build && pnpm -C packages/mcp-gateway start",
         "stop": "lsof -ti :8787 | xargs kill -9",
         "build": "pnpm -r --parallel --if-present run build",
         "preview": "pnpm -r --parallel --if-present run preview",

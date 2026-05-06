@@ -2,8 +2,9 @@
  * @fileoverview 网关侧 MCP 服务：注册表（本地包 + 外部 JSON）与外部进程（TCP 就绪、spawn、HTTP 反代）。
  *
  * **注册表**职责概览：
- * 1. **本地服务**：遍历 monorepo 下 `packages/mcp-*`（跳过 `mcp-gateway`），根据 `package.json`
- *    与源码/构建目录创建 `MCPServer`，供网关同进程托管。
+ * 1. **本地服务**：遍历 monorepo 下 `packages/mcp-*`（跳过 `mcp-gateway`），仅当 `package.json`
+ *    在 `dependencies` / `devDependencies` 中声明了 `mcp-framework` 时才创建 `MCPServer` 同进程托管
+ *    （避免将独立 SDK 型包如 `mcp-probe-kit` 误当作框架工具目录加载）。
  * 2. **外部服务**：读取 `mcp-gateway.external-services.json`，将子进程启动参数、上游 HTTP
  *    与就绪探测（TCP）合并为 `ExternalMcpService`，与本地条目共用同一 `Map` 的 `id` 键。
  *
@@ -31,11 +32,23 @@ import {
     MCP_GATEWAY_CORS_EXPOSE_HEADERS
 } from '../utils/helpers.js'
 
-/** 扫描 `package.json` 时仅需的字段，用于构造 `MCPServer` 的元数据。 */
+/** 扫描 `package.json` 时用于判断是否走 mcp-framework 本地托管及元数据。 */
 type PackageJson = {
     name?: string
     version?: string
+    dependencies?: Record<string, string>
+    devDependencies?: Record<string, string>
 }
+
+/**
+ * 是否应由网关以 mcp-framework 的 {@link MCPServer} 加载（与独立 `@modelcontextprotocol/sdk` 入口区分）。
+ * @param pkg - 包根 `package.json` 解析结果
+ */
+const isFrameworkHostedPackage = (pkg: PackageJson): boolean =>
+    Boolean(
+        pkg.dependencies?.['mcp-framework'] ||
+            pkg.devDependencies?.['mcp-framework']
+    )
 
 /**
  * 本地 MCP 服务：工具逻辑在网关进程内通过 `mcp-framework` 的 `MCPServer` 加载。
@@ -139,6 +152,7 @@ type ExternalServicesConfigFile = {
  * - 路径：`resolve(repoRoot, 'packages')`。若该目录不存在，`readdir` 会向调用方抛错。
  * - 只处理**目录**项；名称须以 `mcp-` 开头且**不等于** `mcp-gateway`（网关自身不作为被托管 MCP）。
  * - `id` = 目录名去掉前缀 `mcp-`（例如 `mcp-poem` → `poem`）。
+ * - 未在 `package.json` 中声明 `mcp-framework` 依赖的包跳过（由外部子进程或其它方式接入）。
  * - 读取 `package.json` 的 `name` / `version`；`pickBasePath` 返回 `null` 时整包跳过（无 `dist/tools` 与 `src/tools` 等）。
  * - `MCPServer` 使用 `ensureInitialized?.()`（若框架提供）；**初始化异常只 `console.error`，仍会 `set` 本地服务**，避免单个包拖死整表。
  *
@@ -171,6 +185,10 @@ export const loadServices = async (
         const pkg = await readJsonFile<PackageJson>(
             join(packageDir, 'package.json')
         )
+
+        if (!isFrameworkHostedPackage(pkg)) {
+            continue
+        }
 
         const basePath = pickBasePath(packageDir)
         if (!basePath) {

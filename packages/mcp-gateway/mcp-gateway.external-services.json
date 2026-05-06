@@ -75,6 +75,37 @@
                 "port": 8950,
                 "timeoutMs": 60000
             }
+        },
+        "probe-kit": {
+            "spawn": {
+                "command": "node",
+                "args": [
+                    "build/index.js",
+                    "--transport",
+                    "http",
+                    "--host",
+                    "127.0.0.1",
+                    "--port",
+                    "8960"
+                ],
+                "cwd": "../mcp-probe-kit",
+                "env": {
+                    "MCP_PROBE_KIT_TRANSPORT": "http",
+                    "MCP_PROBE_KIT_HOST": "127.0.0.1",
+                    "MCP_PROBE_KIT_PORT": "8960"
+                },
+                "shell": false
+            },
+            "upstream": {
+                "baseUrl": "http://127.0.0.1:8960",
+                "path": "/mcp"
+            },
+            "ready": {
+                "type": "tcp",
+                "host": "127.0.0.1",
+                "port": 8960,
+                "timeoutMs": 60000
+            }
         }
     }
 }
