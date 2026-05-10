@@ -17,6 +17,7 @@ import { BearerIngressAuthProvider } from './lib/bearer.js'
 import { OAuth2MyAppsTool } from './tools/oauth2MyAppsTool.js'
 import { WelcomeMessageTool } from './tools/welcomeMessageTool.js'
 import { GitHubRepoTool } from './tools/githubRepoTool.js'
+import { GreetingPrompt } from './tools/greetingPrompt.js'
 
 // ========================================= 常量定义 =========================================
 
@@ -104,21 +105,31 @@ const server = new MCPServer({
 })
 
 /**
- * 注册工具并启动服务器
+ * 注册能力并启动服务器
  *
- * 目前注册的工具有：
- * - welcome_message：生成不同风格的欢迎语
- * - oauth2_my_apps：GET 拉取 Nest `oauth2/my-apps` 数据（Bearer 与 MCP 入口一致）
+ * **addTool（MCPTool）** 与 **addPrompt（MCPPrompt）** 在协议与入口上不同，勿混用：
+ *
+ * | | `server.addTool`（MCPTool） | `server.addPrompt`（MCPPrompt） |
+ * |---|---|---|
+ * | MCP 能力 | `tools`：`tools/list`、`tools/call` | `prompts`：`prompts/list`、`prompts/get` |
+ * | 典型用途 | 算数据、调接口、返回结构化结果给调用方 | 产出「发给模型的消息模板」，由宿主拼进对话 |
+ * | 实现入口 | `execute()` → Tool 执行结果 | `generateMessages()`（框架经 `getMessages` 校验参数后调用） |
+ * | 本包对照 | `WelcomeMessageTool`（`welcome_message`）与下方业务工具 | `GreetingPrompt`（`greeting_prompt`），与欢迎语 tool 语义相近，能力类型不同 |
  */
+// ── MCPTool：addTool → tools/list、tools/call（框架启动时会对每个 tool 调用 injectServer）──
 server.addTool(WelcomeMessageTool)
 server.addTool(OAuth2MyAppsTool)
 server.addTool(GitHubRepoTool)
+
+// ── MCPPrompt：addPrompt → prompts/list、prompts/get（不进 toolsMap，无 injectServer）──
+server.addPrompt(GreetingPrompt)
 
 await server.start()
 
 console.log(`mcp-oauth server running on http://${host}:${port}${endpoint}`)
 console.log('入口鉴权: Authorization: Bearer <token>')
-console.log('Available tools:  welcome_message, oauth2_my_apps')
+console.log('[addTool] tools: welcome_message, oauth2_my_apps, github_repo')
+console.log('[addPrompt] prompts: greeting_prompt')
 
 /**
  * 优雅关闭处理
