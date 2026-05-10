@@ -1,4 +1,4 @@
-import { logger, MCPTool } from 'mcp-framework'
+import { logger, MCPTool, getRequestContext } from 'mcp-framework'
 import { z } from 'zod'
 
 interface GitHubRepoInput {
@@ -50,7 +50,9 @@ export class GitHubRepoTool extends MCPTool<GitHubRepoInput> {
     async execute(input: GitHubRepoInput) {
         const { username, repo } = input
         try {
-            logger.info(`Fetching repo info for ${username}/${repo}`)
+            logger.warn(`Fetching repo info for ${username}/${repo}`)
+            const request = getRequestContext()
+            console.log('request---', request)
             // 使用全局 fetch：MCPTool.fetch 在成功时直接返回 JSON 而非 Response，无法做状态码分支。
             const response = await fetch(
                 `https://api.github.com/repos/${username}/${repo}`,

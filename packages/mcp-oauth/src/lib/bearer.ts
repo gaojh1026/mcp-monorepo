@@ -17,6 +17,7 @@ import { getRequestContext } from 'mcp-framework'
  */
 export class BearerIngressAuthProvider implements AuthProvider {
     async authenticate(req: IncomingMessage): Promise<AuthResult | false> {
+        console.log('req---bearer', req)
         const raw = req.headers.authorization
         if (!raw || typeof raw !== 'string' || !raw.startsWith('Bearer ')) {
             return false
