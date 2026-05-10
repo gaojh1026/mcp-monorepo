@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 import { MCPServer, logger } from 'mcp-framework'
 import { BearerIngressAuthProvider } from './lib/bearer.js'
 import { OAuth2MyAppsTool } from './tools/oauth2MyAppsTool.js'
-import { WelcomeMessageTool } from './tools/welcomeMessageTool.js'
+import { WelcomeMessageTool } from './tools/WelcomeMessageTool.js'
 import { GitHubRepoTool } from './tools/githubRepoTool.js'
 import { GreetingPrompt } from './tools/greetingPrompt.js'
 
