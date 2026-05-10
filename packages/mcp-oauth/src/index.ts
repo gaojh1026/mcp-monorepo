@@ -9,20 +9,22 @@
  * - 任务管理（任务队列、TTL、超时控制）
  */
 
+import './load-env.js'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { MCPServer } from 'mcp-framework'
+import { MCPServer, logger } from 'mcp-framework'
 import { BearerIngressAuthProvider } from './lib/bearer.js'
 import { OAuth2MyAppsTool } from './tools/oauth2MyAppsTool.js'
 import { WelcomeMessageTool } from './tools/welcomeMessageTool.js'
+import { GitHubRepoTool } from './tools/githubRepoTool.js'
 
+// ========================================= 常量定义 =========================================
+
+/** 当前文件的目录 */
 const __dirname = dirname(fileURLToPath(import.meta.url))
-
 /** 服务端口，默认 8788（与同仓库 mcp-poem 一致），可通过环境变量 PORT 配置 */
 const port = Number(process.env.PORT ?? 8788)
-/**
- * 绑定地址，默认 0.0.0.0（本机所有网卡）。客户端请用 `http://127.0.0.1:PORT` 或 `localhost`，不要用 `0.0.0.0` 作为连接目标。
- */
+/** 绑定地址，默认 0.0.0.0（本机所有网卡）。客户端请用 `http://127.0.0.1:PORT` 或 `localhost`，不要用 `0.0.0.0` 作为连接目标。 */
 const host = process.env.HOST ?? '0.0.0.0'
 /** MCP 端点路径，默认 /mcp，可通过环境变量 MCP_ENDPOINT 配置 */
 const endpoint = process.env.MCP_ENDPOINT ?? '/mcp'
@@ -110,6 +112,7 @@ const server = new MCPServer({
  */
 server.addTool(WelcomeMessageTool)
 server.addTool(OAuth2MyAppsTool)
+server.addTool(GitHubRepoTool)
 
 await server.start()
 

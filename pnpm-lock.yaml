@@ -297,6 +297,9 @@ importers:
 
   packages/mcp-oauth:
     dependencies:
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       mcp-framework:
         specifier: ^0.2.15
         version: 0.2.22(@modelcontextprotocol/sdk@1.29.0)(zod@3.25.76)
