@@ -98,10 +98,10 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 #### 启动阶段（顺序）
 
 1. `**findRepoRoot`**：从 `process.cwd()` 向上查找含 `pnpm-workspace.yaml` 的目录作为仓库根。
-2. `**loadOptionalEnvFiles(repoRoot)**`（若存在）：读取根目录与 `packages/mcp-gateway` 下的 `.env`，合并进 `process.env`（不覆盖已有变量）。
+2. `**loadOptionalEnvFiles(repoRoot)`**（若存在）：读取根目录与 `packages/mcp-gateway` 下的 `.env`，合并进 `process.env`（不覆盖已有变量）。
 3. `**loadServices(repoRoot)**`：在 `packages/` 下遍历 `mcp-*` 目录；若存在 `dist/tools` 或 `src/tools`（或开发模式下 `MCP_GATEWAY_DEV=1` 强制用 `src`），则为该包创建 `MCPServer` 并尽量预初始化；再读取 `packages/mcp-gateway/mcp-gateway.external-services.json`，将其中声明的 **external** 服务合并进同一个 `Map<serviceId, McpService>`（同名 **external 会覆盖** 已扫描到的本地服务）。
 4. `**ensureExternalServicesStarted`**：对每个 `type === 'external'` 的项，若 ready 端口暂不可连则按配置 **spawn** 子进程，再 **轮询 TCP** 直到就绪或超时。
-5. `**createGatewayHttpServer(services)`** + `**listen(port, host)**`：开始接受 HTTP。
+5. `**createGatewayHttpServer(services)`** + `**listen(port, host)`**：开始接受 HTTP。
 
 #### HTTP 路由与 MCP 会话（运行时）
 
@@ -113,10 +113,10 @@ MCP_GATEWAY_DEV=1 pnpm -C packages/mcp-gateway dev
 4. `**serviceId` 不在 Map 中**：`404 Service Not Found`。
 5. **服务为 `external`**：**反向代理**到配置的 `upstream.baseUrl` + `upstream.path`，请求体与流式响应透传，并补全 CORS 相关响应头。
 6. **服务为 `local`（本进程 MCP）**：
-  - 将对外路径 `**/{serviceId}/mcp`** 临时改写为 `**/mcp**` 后交给 `@modelcontextprotocol/sdk` 的 `**StreamableHTTPServerTransport**`（与 SDK 默认端点一致）。
+  - 将对外路径 `**/{serviceId}/mcp`** 临时改写为 `**/mcp`** 后交给 `@modelcontextprotocol/sdk` 的 `**StreamableHTTPServerTransport**`（与 SDK 默认端点一致）。
   - **POST** 会读取 JSON body（受 `**MAX_BODY_BYTES`** 限制）。
-  - 若请求头带有已在内存 `**sessions**` 里登记的 `**mcp-session-id**`：复用该会话的 **transport** 处理本次 JSON-RPC。
-  - 若无 session 但 body 为 `**initialize`**（或 session 已失效但再次 **initialize**）：新建 transport 与 `createSDKServerForSession()`，在会话初始化回调里写入 `**sessions`**；连接关闭时清理 session 并关闭 SDK server。
+  - 若请求头带有已在内存 `**sessions`** 里登记的 `**mcp-session-id**`：复用该会话的 **transport** 处理本次 JSON-RPC。
+  - 若无 session 但 body 为 `**initialize`**（或 session 已失效但再次 initialize）：新建 transport 与 `createSDKServerForSession()`，在会话初始化回调里写入 `**sessions`**；连接关闭时清理 session 并关闭 SDK server。
   - 无合法 session 且非初始化：返回 **400**（无 session）；有 session 但找不到：返回 **404 Session not found**（JSON-RPC 包装）。
 
 总览（启动 + 一次 MCP 路径请求）：
@@ -158,7 +158,7 @@ flowchart TB
 - **外部服务清单**：`packages/mcp-gateway/mcp-gateway.external-services.json`（可选；不存在则仅本地扫描结果）。
 - **可选 `.env`**：网关启动时会读取仓库根目录 `**.env**` 与 `**packages/mcp-gateway/.env**`，合并进 `process.env`（**不覆盖**已在 shell 中设置的变量），便于配置 `FIRECRAWL_API_KEY` 等；二者已在 `**.gitignore`** 中忽略，**切勿将密钥提交进 Git**。
 - `**PORT` / `HOST`**：网关监听（默认 `8787`、`0.0.0.0`）。
-- `**MAX_BODY_BYTES**`：POST JSON body 上限（默认约 4MB）。
+- `**MAX_BODY_BYTES`**：POST JSON body 上限（默认约 4MB）。
 - `**MCP_GATEWAY_DEV=1**`：开发时若本地包尚无 `dist/tools`，可强制用 `**src**` 作为 `MCPServer` 的 `basePath`（见 `registry` 内 `pickBasePath` 逻辑）。
 
 ### 将第三方 MCP 适配为网关（流程总结）
@@ -170,7 +170,7 @@ flowchart TB
 
 | 形态                 | 适用情况                                                                                              | 路由                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **local（自动发现）**    | 包内使用 `**mcp-framework`**，且存在 `**src/tools**` 或 `**dist/tools**`（开发可加 `MCP_GATEWAY_DEV=1` 走 `src`） | `http(s)://<网关>/<id>/mcp`，`<id>` = 目录名去掉前缀 `mcp-`（如 `mcp-poem` → `poem`） |
+| **local（自动发现）**    | 包内使用 `**mcp-framework`**，且存在 `**src/tools`** 或 `**dist/tools**`（开发可加 `MCP_GATEWAY_DEV=1` 走 `src`） | `http(s)://<网关>/<id>/mcp`，`<id>` = 目录名去掉前缀 `mcp-`（如 `mcp-poem` → `poem`） |
 | **external（配置驱动）** | 独立进程、其它框架（如 **FastMCP**）、默认仅 **stdio**、或不便改成 `tools` 目录结构                                         | 同上，由 `**mcp-gateway.external-services.json`** 注册同名 `id`                  |
 
 
@@ -181,7 +181,7 @@ flowchart TB
 网关对外统一是 `**/{serviceId}/mcp**`；对 **external** 则把请求**反代**到 `upstream.baseUrl` + `upstream.path`。
 
 - 子进程必须在某 **TCP 端口** 上监听，且 MCP 路径一般为 `**/mcp`**（以该上游实现为准）。
-- 若上游默认只有 **stdio**，需按其文档打开 **HTTP / Streamable HTTP** 等模式。示例（本仓库 **firecrawl**）：设置 `**HTTP_STREAMABLE_SERVER=true`**，并用 `**PORT` / `HOST**` 指定监听地址；编译入口一般为 `**node dist/index.js**`。
+- 若上游默认只有 **stdio**，需按其文档打开 **HTTP / Streamable HTTP** 等模式。示例（本仓库 **firecrawl**）：设置 `**HTTP_STREAMABLE_SERVER=true`**，并用 `**PORT` / `HOST`** 指定监听地址；编译入口一般为 `**node dist/index.js**`。
 
 #### 3. 编辑 `packages/mcp-gateway/mcp-gateway.external-services.json`
 
@@ -191,7 +191,7 @@ flowchart TB
 - `**upstream**`：`baseUrl`（如 `http://127.0.0.1:8940`）与 `**path**`（一般为 `**/mcp**`）。
 - `**ready**`：`type: "tcp"`、`host`、`port`、`timeoutMs`；若启动时端口未监听，网关会先 **spawn** 再轮询直至端口可连。
 
-**环境变量合并**：`external.ts` 里子进程环境为 `**{ ...process.env, ...spawn.env }`**，因此写在仓库 `**.env**` / `**packages/mcp-gateway/.env**` 或 shell 里 `**export**` 的 `FIRECRAWL_API_KEY`、`FIRECRAWL_API_URL` 等会一并传入子进程，无需全部写进 JSON。
+**环境变量合并**：`external.ts` 里子进程环境为 `**{ ...process.env, ...spawn.env }`**，因此写在仓库 `**.env`** / `**packages/mcp-gateway/.env**` 或 shell 里 `**export**` 的 `FIRECRAWL_API_KEY`、`FIRECRAWL_API_URL` 等会一并传入子进程，无需全部写进 JSON。
 
 #### 4. 本机地址与网络约定
 
@@ -199,17 +199,17 @@ flowchart TB
 
 #### 5. CORS 与自定义请求头
 
-若 Cursor 或浏览器需要在预检里声明额外头（例如 `**x-firecrawl-api-key`**），在网关 `**packages/mcp-gateway/src/lib/http.ts**` 与 `**modules/services/external.ts**` 中，为 `**Access-Control-Allow-Headers**` 按需追加，与现有项并列维护即可。
+若 Cursor 或浏览器需要在预检里声明额外头（例如 `**x-firecrawl-api-key`**），在网关 `**packages/mcp-gateway/src/lib/http.ts`** 与 `**modules/services/external.ts**` 中，为 `**Access-Control-Allow-Headers**` 按需追加，与现有项并列维护即可。
 
 #### 6. 子进程健壮性（建议在上游包内修改）
 
-鉴权或配置错误时，应 `**throw` 可序列化错误**返回给 MCP 客户端，**避免 `process.exit`**：否则一次失败请求会结束整个子进程，端口不再监听，网关持续 **502**，客户端表现为**看不到工具**。
+鉴权或配置错误时，应 `**throw` 可序列化错误**返回给 MCP 客户端，避免 `process.exit`：否则一次失败请求会结束整个子进程，端口不再监听，网关持续 502，客户端表现为**看不到工具**。
 
 #### 7. 验证与客户端配置
 
 1. 若有健康检查：`curl http://127.0.0.1:<子进程端口>/health`（以该服务为准）。
-2. `**GET http://<网关主机>:<网关端口>/health`**：确认返回的 `**services**` 数组中含对应 `**serviceId**`。
-3. **Cursor**：在 `**~/.cursor/mcp.json`** 或项目 `**.cursor/mcp.json**` 中配置 `**type": "streamable_http"**` 与 `**url": "http://127.0.0.1:<网关端口>/<serviceId>/mcp"**`；保存后重载 MCP 或重启 Cursor。详见上文「给别人用的配置示例」。
+2. `**GET http://<网关主机>:<网关端口>/health`**：确认返回的 `**services`** 数组中含对应 `**serviceId**`。
+3. **Cursor**：在 `**~/.cursor/mcp.json`** 或项目 `**.cursor/mcp.json`** 中配置 `**type": "streamable_http"**` 与 `**url": "http://127.0.0.1:<网关端口>/<serviceId>/mcp"**`；保存后重载 MCP 或重启 Cursor。详见上文「给别人用的配置示例」。
 
 #### 8. 可选：为子包增加本地调试脚本
 
@@ -234,8 +234,8 @@ flowchart TB
 
 默认子进程从环境变量读 `**FIRECRAWL_API_KEY**`，适合只有你本机用。若要把 `**https://<你的网关>/firecrawl/mcp**` 给多人用、且**每人自带 Firecrawl 密钥**，需要让子进程进入 `**CLOUD_SERVICE`** 模式：从每次 MCP 请求的 **HTTP 头** 取 Key（与官方「云端托管」语义一致），网关反代会**原样转发**客户端发来的 `Authorization` / `x-firecrawl-api-key` 等头。
 
-1. **服务端**：在 `**packages/mcp-gateway/mcp-gateway.external-services.json`** 的 `firecrawl.spawn.env` 中已包含 `**CLOUD_SERVICE": "true"**`（本仓库默认如此）。此时**不必**在服务器 `.env` 里配置公共 `FIRECRAWL_API_KEY`（未配置时启动也不会再误报警告）。
-2. **调用方 Cursor**：在 `**mcp.json`** 里为同一 URL 增加 `**headers**`，并用 Cursor 支持的 `**${env:变量名}**` 从本机环境读取密钥，避免把明文写进配置文件、也不要把密钥提交到 Git：
+1. **服务端**：在 `**packages/mcp-gateway/mcp-gateway.external-services.json`** 的 `firecrawl.spawn.env` 中已包含 `**CLOUD_SERVICE": "true"`**（本仓库默认如此）。此时**不必**在服务器 `.env` 里配置公共 `FIRECRAWL_API_KEY`（未配置时启动也不会再误报警告）。
+2. **调用方 Cursor**：在 `**mcp.json`** 里为同一 URL 增加 `**headers`**，并用 Cursor 支持的 `**${env:变量名}**` 从本机环境读取密钥，避免把明文写进配置文件、也不要把密钥提交到 Git：
 
 ```json
 {
@@ -258,7 +258,7 @@ flowchart TB
 
 ### 部署思路（推荐：单网关）
 
-运行 `@mcp/gateway` 一个服务即可。网关会自动发现 `packages/mcp-*`（排除 `mcp-gateway`），并把每个服务挂载到 `/<service>/mcp`。
+运行 `@mcp/gateway` 一个服务即可。网关会自动发现 `packages/mcp-`*（排除 `mcp-gateway`），并把每个服务挂载到 `/<service>/mcp`。
 
 ### Docker 镜像构建（`Dockerfile`）
 
@@ -298,12 +298,6 @@ flowchart TB
 2. 修改新包的 `package.json#name`、`src/index.ts` 里的 `name/version`
 3. 在 `src/tools/` 里新增你的工具类（每个文件一个 Tool）
 
-
-
-
-
-
-
 ```json
  // "brightdata": {
         //     "requiredEnv": ["API_TOKEN"],
@@ -329,5 +323,43 @@ flowchart TB
         //         "timeoutMs": 120000
         //     }
         // }
+```
+
+
+
+
+
+```json
+"probe-kit": {
+            "spawn": {
+                "command": "node",
+                "args": [
+                    "build/index.js",
+                    "--transport",
+                    "http",
+                    "--host",
+                    "127.0.0.1",
+                    "--port",
+                    "8960"
+                ],
+                "cwd": "../mcp-probe-kit",
+                "env": {
+                    "MCP_PROBE_KIT_TRANSPORT": "http",
+                    "MCP_PROBE_KIT_HOST": "127.0.0.1",
+                    "MCP_PROBE_KIT_PORT": "8960"
+                },
+                "shell": false
+            },
+            "upstream": {
+                "baseUrl": "http://127.0.0.1:8960",
+                "path": "/mcp"
+            },
+            "ready": {
+                "type": "tcp",
+                "host": "127.0.0.1",
+                "port": 8960,
+                "timeoutMs": 60000
+            }
+        }
 ```
 

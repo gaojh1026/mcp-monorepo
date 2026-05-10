@@ -1,6 +1,6 @@
 ################################################################################
 #
-#   本文件产出两种镜像（多阶段构建）
+#   本文件产出三种镜像目标（多阶段构建）
 #
 #   ┌─────────────────────────────────────────────────────────────────────────┐
 #   │ ① 默认镜像：mcp-gateway（不写 --target 时，构建流水线以「最后一个       │
@@ -13,6 +13,12 @@
 #   │    · 构建：docker build -f Dockerfile -t pw-mcp:<TAG> \                 │
 #   │             --target playwright-mcp .                                    │
 #   │    · 可选：--build-arg PLAYWRIGHT_BROWSERS_PATH=/ms-playwright（默认）   │
+#   ├─────────────────────────────────────────────────────────────────────────┤
+#   │ ③ Nginx 反代：独立镜像，需与 runtime 容器同网络，upstream 默认          │
+#   │    mcp-gateway:8787（与网关 PORT 一致；Compose 中网关服务名须匹配）      │
+#   │    · 构建：docker build -f Dockerfile -t mcp-gateway-nginx:<TAG> \      │
+#   │             --target nginx-proxy .                                       │
+#   │    · 修改 upstream：编辑仓库根目录 nginx.conf 后重建                     │
 #   └─────────────────────────────────────────────────────────────────────────┘
 #
 ################################################################################
@@ -29,10 +35,12 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY --parents common/package.json ./
 COPY --parents packages/*/package.json ./
 COPY --parents packages/mcp-context7/packages/*/package.json ./
+# --ignore-scripts：deps 阶段仅复制 package.json，mcp-probe-kit 的 prepare→build→prebuild
+# 会执行 sync-ui-data.ts，缺源码会失败；完整构建在下一阶段 pnpm -r run build 中进行。
 RUN corepack enable \
   && corepack prepare pnpm@8.15.8 --activate \
   && pnpm config set registry "${NPM_REGISTRY}" \
-  && pnpm install --frozen-lockfile
+  && pnpm install --frozen-lockfile --ignore-scripts
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # STAGE: build  |  mcp-gateway  |  拷贝 common/packages 后执行 workspace 构建
@@ -61,6 +69,13 @@ USER ${USERNAME}
 COPY --chown=${USERNAME}:${USERNAME} packages/mcp-playwright/cli.js packages/mcp-playwright/package.json /app/
 WORKDIR /home/${USERNAME}
 ENTRYPOINT ["node", "/app/cli.js", "--headless", "--browser", "chromium", "--no-sandbox"]
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# STAGE: nginx-proxy  |  仅 Nginx 反代至同网段中的 mcp-gateway:8787（须 --target）
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+FROM nginx:1.27-alpine AS nginx-proxy
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # STAGE: runtime  |  mcp-gateway 默认最终阶段 | 仅复制构建产物，Alpine 体积小
