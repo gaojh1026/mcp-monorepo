@@ -4,7 +4,7 @@
 
 import { MCPTool } from 'mcp-framework'
 import { z } from 'zod'
-import { fetchWithMcpRequestAuthorization } from '../lib/upstream.js'
+import { fetchWithMcpRequestAuthorization } from '../lib/bearer.js'
 
 const DEFAULT_MY_APPS_URL = 'http://localhost:4000/nestjs_api/oauth2/my-apps'
 

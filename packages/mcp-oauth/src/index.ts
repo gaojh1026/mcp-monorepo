@@ -12,9 +12,9 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { MCPServer } from 'mcp-framework'
-import { BearerIngressAuthProvider } from './auth/bearerIngressAuthProvider.js'
-import { OAuth2MyAppsTool } from './tools/OAuth2MyAppsTool.js'
-import { WelcomeMessageTool } from './tools/WelcomeMessageTool.js'
+import { BearerIngressAuthProvider } from './lib/bearer.js'
+import { OAuth2MyAppsTool } from './tools/oauth2MyAppsTool.js'
+import { WelcomeMessageTool } from './tools/welcomeMessageTool.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
