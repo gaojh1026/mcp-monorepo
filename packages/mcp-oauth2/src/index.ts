@@ -14,9 +14,12 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Server } from 'node:http'
 import { MCPServer } from 'mcp-framework'
-import { GitHubAccessTokenAuthProvider } from './auth/github-access-token-auth-provider.js'
+import { GitHubAutoTokenAuthProvider } from './auth/github-auto-token-auth-provider.js'
 import { createGithubOAuthUiServer } from './oauth/github-oauth-ui-server.js'
 import { GitHubWhoAmITool } from './tools/github-whoami-tool.js'
+import { GitHubDeviceLoginTool } from './tools/github-device-login-tool.js'
+import { GitHubDevicePollTool } from './tools/github-device-poll-tool.js'
+import { GitHubAuthStatusTool } from './tools/github-auth-status-tool.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -86,7 +89,7 @@ const server = new MCPServer({
                 maxAge: '86400'
             },
             auth: {
-                provider: new GitHubAccessTokenAuthProvider(),
+                provider: new GitHubAutoTokenAuthProvider(),
                 endpoints: {
                     sse: true,
                     messages: true
@@ -97,6 +100,9 @@ const server = new MCPServer({
 })
 
 server.addTool(GitHubWhoAmITool)
+server.addTool(GitHubDeviceLoginTool)
+server.addTool(GitHubDevicePollTool)
+server.addTool(GitHubAuthStatusTool)
 
 await server.start()
 
