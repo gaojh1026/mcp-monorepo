@@ -8,6 +8,8 @@
 #   │    · 构建：docker build -f Dockerfile -t mcp-gateway:<TAG> .            │
 #   │    · 国内：加 --build-arg NPM_REGISTRY=https://registry.npmmirror.com    │
 #   │    · 运行：node packages/mcp-gateway/dist/index.js                      │
+#   │    · 守护：由 Docker/Compose 的 restart 策略负责（勿在镜像内叠 PM2）；   │
+#   │      裸机守护见 packages/mcp-gateway/ecosystem.config.cjs              │
 #   ├─────────────────────────────────────────────────────────────────────────┤
 #   │ ② Playwright MCP：独立镜像，与网关阶段无依赖                             │
 #   │    · 构建：docker build -f Dockerfile -t pw-mcp:<TAG> \                 │

@@ -32,3 +32,26 @@ server.listen(port, host, () => {
         `✅ MCP Gateway listening on ${host}:${port} (routes: /<service>/mcp)`
     )
 })
+
+/**
+ * 优雅关闭：先停止接受新连接，再向本机拉起的外部 MCP 发 SIGTERM（与 PM2 `kill_timeout` 配合）。
+ * @param signal - 收到的信号名，仅用于日志
+ */
+const shutdown = (signal: string) => {
+    console.log(`[mcp-gateway] 收到 ${signal}，停止接受新连接…`)
+    server.close(() => {
+        for (const s of services.values()) {
+            if (s.type === 'external' && s.process && !s.process.killed) {
+                s.process.kill('SIGTERM')
+            }
+        }
+        process.exit(0)
+    })
+    setTimeout(() => {
+        console.error('[mcp-gateway] 关闭超时，强制退出')
+        process.exit(1)
+    }, 10_000).unref()
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))
