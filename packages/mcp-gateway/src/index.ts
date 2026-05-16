@@ -1,57 +1,32 @@
 /**
- * @fileoverview MCP Gateway 入口：加载服务、拉起外部进程、监听 HTTP
+ * @fileoverview MCP Gateway 入口：加载服务、监听 HTTP；外部 MCP 在后台 spawn / 等待 TCP 就绪
  * @module mcp-gateway
  */
-
-import { findRepoRoot, port, host, loadOptionalEnvFiles } from './utils/env.js'
-import { loadServices, ensureExternalServicesStarted } from './mcp/services.js'
-import { createGatewayHttpServer } from './mcp/httpGateway.js'
-import { warnIfFirecrawlApiConfigMissing } from './mcp/integrations/firecrawlHints.js'
+import { findRepoRoot, getPort, getHost, loadOptionalEnvFiles } from './utils/utils.js';
+import { loadServices, ensureExternalServicesStarted } from './mcp/services.js';
+import { createGatewayHttpServer } from './mcp/httpGateway.js';
 
 // 查找仓库根目录并加载可选的 .env 文件
-const repoRoot = findRepoRoot(process.cwd())
+const repoRoot = findRepoRoot(process.cwd());
 
 // 加载可选的 .env 文件
-loadOptionalEnvFiles(repoRoot)
+loadOptionalEnvFiles(repoRoot);
 
 // 加载服务
-const services = await loadServices(repoRoot)
-
-// 确保外部服务已启动
-await ensureExternalServicesStarted(services)
-
-// 警告 Firecrawl API 配置缺失
-warnIfFirecrawlApiConfigMissing(services)
+const services = await loadServices(repoRoot);
 
 // 创建绑定 `services` 的网关 HTTP 服务器
-const server = createGatewayHttpServer(services)
-
-// 监听 HTTP 服务器
-server.listen(port, host, () => {
-    console.log(
-        `✅ MCP Gateway listening on ${host}:${port} (routes: /<service>/mcp)`
-    )
-})
+const server = createGatewayHttpServer(services);
 
 /**
- * 优雅关闭：先停止接受新连接，再向本机拉起的外部 MCP 发 SIGTERM（与 PM2 `kill_timeout` 配合）。
- * @param signal - 收到的信号名，仅用于日志
+ * 外部 MCP（spawn + TCP 就绪）不在 listen 之前阻塞，否则 Docker/Nginx 探活会在超时内永远拿不到 `/health`；
+ * 外部路由在就绪前可能返回 502，就绪日志见控制台。
  */
-const shutdown = (signal: string) => {
-    console.log(`[mcp-gateway] 收到 ${signal}，停止接受新连接…`)
-    server.close(() => {
-        for (const s of services.values()) {
-            if (s.type === 'external' && s.process && !s.process.killed) {
-                s.process.kill('SIGTERM')
-            }
-        }
-        process.exit(0)
-    })
-    setTimeout(() => {
-        console.error('[mcp-gateway] 关闭超时，强制退出')
-        process.exit(1)
-    }, 10_000).unref()
-}
+void ensureExternalServicesStarted(services).catch((error) => {
+    console.error('[mcp-gateway] external services bootstrap failed:', error);
+});
 
-process.on('SIGTERM', () => shutdown('SIGTERM'))
-process.on('SIGINT', () => shutdown('SIGINT'))
+// 监听 HTTP 服务器
+server.listen(getPort(), getHost(), () => {
+    console.log(`✅ MCP Gateway listening on http://${getHost()}:${getPort()} (routes: /fe/<service>/mcp)`);
+});
