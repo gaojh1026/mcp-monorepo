@@ -6,6 +6,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'path'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 
 const devProxyTarget = process.env.VITE_DEV_PROXY_TARGET || 'http://localhost:8998'
 
@@ -15,6 +16,7 @@ export default defineConfig({
         vue(),
         vueJsx(),
         vueDevTools(),
+        viteSingleFile(),
         createSvgIconsPlugin({
             // 指定需要缓存的图标文件夹
             iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
