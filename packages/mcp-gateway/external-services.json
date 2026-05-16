@@ -52,52 +52,6 @@
                 "timeoutMs": 60000
             }
         },
-        "browser-tools-server": {
-            "spawn": {
-                "command": "node",
-                "args": ["dist/browser-connector.js"],
-                "cwd": "../mcp-browser-tools-server",
-                "env": {
-                    "PORT": "3025"
-                },
-                "shell": false
-            },
-            "upstream": {
-                "baseUrl": "http://127.0.0.1:3025",
-                "path": "/mcp"
-            },
-            "ready": {
-                "type": "tcp",
-                "host": "127.0.0.1",
-                "port": 3025,
-                "timeoutMs": 30000
-            }
-        },
-        "browser-tools": {
-            "spawn": {
-                "command": "node",
-                "args": [
-                    "dist/mcp-server.js",
-                    "--transport",
-                    "http",
-                    "--port",
-                    "8952"
-                ],
-                "cwd": "../mcp-browser-tools",
-                "env": {},
-                "shell": false
-            },
-            "upstream": {
-                "baseUrl": "http://127.0.0.1:8952",
-                "path": "/mcp"
-            },
-            "ready": {
-                "type": "tcp",
-                "host": "127.0.0.1",
-                "port": 8952,
-                "timeoutMs": 30000
-            }
-        },
         "probe-kit": {
             "spawn": {
                 "command": "node",
